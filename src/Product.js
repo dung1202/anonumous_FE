@@ -16,10 +16,10 @@ import { Link } from "react-scroll";
 import { Data } from "./Data";
 export default function Product() {
   const navigate = useNavigate();
-  const [array, setarray] = useState(["anh1.png", "anh2.png", "anh3.png"]);
+  const [array] = useState(["anh1.png", "anh2.png", "anh3.png"]);
   const [array_vote, setarray_vote] = useState([]);
   const [sold, setsold] = useState([]);
-  const [giam, setgiam] = useState([]);
+  const [, setgiam] = useState([]);
   const [currentPage, setcurrentPage] = useState(1);
   // const [Product, setProduct] = useState([]);
 
@@ -34,6 +34,7 @@ export default function Product() {
       let giamgia = 0;
       item.vote.map((V) => {
         tong = tong + V.number;
+        return <div></div>;
       });
       number.push(tong / item.vote.length);
 
@@ -50,6 +51,7 @@ export default function Product() {
       giamgia = giamgia.toFixed(0);
       if (giamgia === 100 || giamgia > 99.9) giamgia = 99;
       gia.push(giamgia);
+      return <div></div>;
     });
     setsold(mang);
     setarray_vote(number);
@@ -59,7 +61,7 @@ export default function Product() {
   const ok = (item) => {
     return (
       <Carousel.Item>
-        <img className="d-block w-100" src={item} />
+        <img alt="" className="d-block w-100" src={item} />
       </Carousel.Item>
     );
   };
@@ -78,7 +80,7 @@ export default function Product() {
     }
     return (
       <div className="hover">
-        <img className="img_pro" src={item.img} />
+        <img alt="" className="img_pro" src={item.img} />
 
         <div style={{ padding: "1vw 1vw 0vw 1vw" }}>
           <div className="name_pro">
@@ -131,11 +133,11 @@ export default function Product() {
     if (item >= 5) anh4 = "saodac.png";
     return (
       <div style={{ display: "flex" }}>
-        <img src={anh} className="sao"></img>
-        <img src={anh1} className="sao"></img>
-        <img src={anh2} className="sao"></img>
-        <img src={anh3} className="sao"></img>
-        <img src={anh4} className="sao"></img>
+        <img alt="" src={anh} className="sao"></img>
+        <img alt="" src={anh1} className="sao"></img>
+        <img alt="" src={anh2} className="sao"></img>
+        <img alt="" src={anh3} className="sao"></img>
+        <img alt="" src={anh4} className="sao"></img>
       </div>
     );
   };
@@ -157,7 +159,7 @@ export default function Product() {
   const gotoHome = () => {
     navigate("/");
   };
-  const [array_product, setarray_product] = useState(() => {
+  const [array_product] = useState(() => {
     const dai = Math.ceil(Data.length / 12);
     const mang = [];
     for (let i = 1; i <= dai; i++) {
@@ -201,7 +203,7 @@ export default function Product() {
     return (
       <Pagination.Item
         onClick={() => load(item)}
-        active={item == currentPage ? currentPage : null}
+        active={item === currentPage ? currentPage : null}
       >
         {item}
       </Pagination.Item>
@@ -223,7 +225,7 @@ export default function Product() {
       <div className="windown layer1">
         <div className="header" id="header_top">
           <div className="ok1">
-            <img src="menu.png" className="menu1" onClick={handleShow} />
+            <img alt="" src="menu.png" className="menu1" onClick={handleShow} />
 
             <Offcanvas show={show} onHide={handleClose}>
               <Offcanvas.Header closeButton>
@@ -237,7 +239,7 @@ export default function Product() {
                     type="text"
                     placeholder="Search"
                   />
-                  <img className="layer" src="Layer.png" />
+                  <img alt="" className="layer" src="Layer.png" />
                 </div>
                 <div className="text_header1" onClick={gotoHome}>
                   Home
@@ -258,21 +260,25 @@ export default function Product() {
               onClick={gotoHome}
             >
               <div>
-                <img className="logo" src="./logo-removebg-preview (1).png" />
+                <img
+                  alt=""
+                  className="logo"
+                  src="./logo-removebg-preview (1).png"
+                />
               </div>
               <div style={{ width: "80px", opacity: "0.8" }}>
-                <img className="logo-chu" src="./logo-chu.png" />
+                <img alt="" className="logo-chu" src="./logo-chu.png" />
               </div>
             </div>
           </div>
           <div>
             <div className="ok1">
               <div style={{ display: "flex" }}>
-                <img className="shop" src="Shop.png" />
+                <img alt="" className="shop" src="Shop.png" />
                 <div className="donhang">999</div>
               </div>
               <div>
-                <img className="shop shop1" src="acc.png" />
+                <img alt="" className="shop shop1" src="acc.png" />
               </div>
             </div>
           </div>
@@ -295,14 +301,14 @@ export default function Product() {
               />
             </div>
             <div>
-              <img className="layer" src="Layer.png" />
+              <img alt="" className="layer" src="Layer.png" />
             </div>
             <div style={{ display: "flex" }}>
-              <img className="shop" src="Shop.png" />
+              <img alt="" className="shop" src="Shop.png" />
               <div className="donhang">100</div>
             </div>
             <div>
-              <img className="shop shop1" src="acc.png" />
+              <img alt="" className="shop shop1" src="acc.png" />
             </div>
           </div>
         </div>
@@ -414,16 +420,16 @@ export default function Product() {
             </div>
           </div>
           <div className="footer_flex">
-            <img src="tt1.png" className="img_footer" />
+            <img alt="" src="tt1.png" className="img_footer" />
             <div>
-              <img src="tt2.png" className="img_footer_1" />
+              <img alt="" src="tt2.png" className="img_footer_1" />
             </div>
           </div>
           <div className="footer_flex"></div>
           <div className="footer_flex">
-            <img src="app1.png" className="img_footer app" />
+            <img alt="" src="app1.png" className="img_footer app" />
             <div>
-              <img src="app2.png" className="img_footer app" />
+              <img alt="" src="app2.png" className="img_footer app" />
             </div>
           </div>
         </div>
@@ -437,7 +443,7 @@ export default function Product() {
                 placement="right"
                 overlay={<Tooltip id="tooltip-right">To the top</Tooltip>}
               >
-                <img src="onTop.png" />
+                <img alt="" src="onTop.png" />
               </OverlayTrigger>
             </div>
           </Link>

@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import "./Homecss.css";
+import { Login } from "./Axios";
 import {
   Carousel,
   OverlayTrigger,
@@ -9,6 +10,8 @@ import {
   Form,
   Row,
   Col,
+  Modal,
+  Button,
 } from "react-bootstrap";
 import "bootstrap/dist/css/bootstrap.min.css";
 import { Link } from "react-scroll";
@@ -16,7 +19,10 @@ import { getslider } from "./Axios";
 export default function Home() {
   const navigate = useNavigate();
   const [array, setarray] = useState([]);
-  const [month_3, setmonth_3] = useState([
+  const [err, seterr] = useState("");
+  const [username, setusername] = useState("");
+  const [password, setpassword] = useState("");
+  const [month_3] = useState([
     "Jan",
     "Feb",
     "Mar",
@@ -33,7 +39,9 @@ export default function Home() {
   const [array_vote, setarray_vote] = useState([]);
   const [sold, setsold] = useState([]);
   const [giam, setgiam] = useState([]);
-  const [news, setnews] = useState([
+  const [mouse, setmouse] = useState("password");
+  const [token, setToken] = useState("");
+  const [news] = useState([
     {
       title: "tên news",
       avatar: "kem.jpg",
@@ -67,7 +75,7 @@ export default function Home() {
     },
   ]);
 
-  const [Product, setProduct] = useState([
+  const [Product] = useState([
     {
       name: "kem",
       listedPrice: 9000,
@@ -174,6 +182,7 @@ export default function Home() {
       let giamgia = 0;
       item.vote.map((V) => {
         tong = tong + V.number;
+        return <div></div>;
       });
       number.push(tong / item.vote.length);
 
@@ -190,16 +199,25 @@ export default function Home() {
       giamgia = giamgia.toFixed(0);
       if (giamgia === 100 || giamgia > 99.9) giamgia = 99;
       gia.push(giamgia);
+      return <div></div>;
     });
     setsold(mang);
     setarray_vote(number);
     setgiam(gia);
-  }, []);
+  }, [Product]);
+
+  const [show_acc, setShow_acc] = useState(false);
+
+  const handle_accClose = () => {
+    setShow_acc(false);
+    seterr("");
+  };
+  const handle_accShow = () => setShow_acc(true);
 
   const ok = (item) => {
     return (
       <Carousel.Item>
-        <img className="d-block w-100" src={item} />
+        <img className="d-block w-100" src={item} alt="" />
       </Carousel.Item>
     );
   };
@@ -219,7 +237,7 @@ export default function Home() {
       }
       return (
         <div className="hover1">
-          <img className="img_pro" src={item.img} />
+          <img className="img_pro" src={item.img} alt="" />
 
           <div style={{ padding: "1vw 1vw 0vw 1vw" }}>
             <div className="name_pro">
@@ -257,7 +275,7 @@ export default function Home() {
       }
       return (
         <div className="hover1">
-          <img className="img_pro" src={item.img} />
+          <img className="img_pro" src={item.img} alt="" />
           <div style={{ padding: "1vw 1vw 0vw 1vw" }}>
             <div className="name_pro">
               {string_name.charAt(0).toUpperCase() + string_name.slice(1)}
@@ -313,11 +331,11 @@ export default function Home() {
     if (item >= 5) anh4 = "saodac.png";
     return (
       <div style={{ display: "flex" }}>
-        <img src={anh} className="sao"></img>
-        <img src={anh1} className="sao"></img>
-        <img src={anh2} className="sao"></img>
-        <img src={anh3} className="sao"></img>
-        <img src={anh4} className="sao"></img>
+        <img src={anh} className="sao" alt=""></img>
+        <img src={anh1} className="sao" alt=""></img>
+        <img src={anh2} className="sao" alt=""></img>
+        <img src={anh3} className="sao" alt=""></img>
+        <img src={anh4} className="sao" alt=""></img>
       </div>
     );
   };
@@ -360,7 +378,7 @@ export default function Home() {
           <div>
             <div style={{ display: "flex" }}>
               <div style={{ marginRight: "10px" }}>
-                <img src={item.avatar} className="avatar_news" />
+                <img src={item.avatar} className="avatar_news" alt="" />
               </div>
               <div style={{ marginRight: "5px" }}>
                 <div className="user_news" style={{ fontWeight: "600" }}>
@@ -384,7 +402,7 @@ export default function Home() {
               </div>
             </div>
           </div>
-          <img className="img_news" src={item.img} />
+          <img className="img_news" src={item.img} alt="" />
         </div>
       </div>
     );
@@ -411,12 +429,45 @@ export default function Home() {
   const gotoProduct = () => {
     navigate("/product");
   };
+
+  const mouseOn = () => {
+    setmouse("text");
+  };
+  const mouseOff = () => {
+    setmouse("password");
+  };
+
+  const submit = () => {
+    const body = {
+      username,
+      password,
+    };
+    if (
+      username.length < 8 ||
+      username.length > 30 ||
+      password.length > 30 ||
+      password.length < 8
+    ) {
+      seterr("Username and password between 8 and 30");
+    } else {
+      Login(body).then((res) => {
+        if (res.data.message !== "Login successfully!") {
+          seterr(res.data.message);
+        } else if (res.data.message === "Login successfully!") {
+          setToken(res.data.acctoken);
+          localStorage.setItem("accessToken", token);
+          setShow_acc(false);
+          seterr("");
+        }
+      });
+    }
+  };
   return (
     <div>
       <div className="windown layer1">
         <div className="header" id="header_top">
           <div className="ok1">
-            <img src="menu.png" className="menu1" onClick={handleShow} />
+            <img src="menu.png" className="menu1" onClick={handleShow} alt="" />
 
             <Offcanvas show={show} onHide={handleClose}>
               <Offcanvas.Header closeButton>
@@ -430,7 +481,7 @@ export default function Home() {
                     type="text"
                     placeholder="Search"
                   />
-                  <img className="layer" src="Layer.png" />
+                  <img className="layer" src="Layer.png" alt="" />
                 </div>
                 <div className="text_header1">Home</div>
                 <div className="text_header1" onClick={gotoProduct}>
@@ -447,21 +498,30 @@ export default function Home() {
           <div>
             <div className="ok" style={{ display: "flex", flex: "1" }}>
               <div>
-                <img className="logo" src="./logo-removebg-preview (1).png" />
+                <img
+                  className="logo"
+                  src="./logo-removebg-preview (1).png"
+                  alt=""
+                />
               </div>
               <div style={{ width: "80px", opacity: "0.8" }}>
-                <img className="logo-chu" src="./logo-chu.png" />
+                <img className="logo-chu" src="./logo-chu.png" alt="" />
               </div>
             </div>
           </div>
           <div>
             <div className="ok1">
               <div style={{ display: "flex" }}>
-                <img className="shop" src="Shop.png" />
+                <img className="shop" src="Shop.png" alt="" />
                 <div className="donhang">999</div>
               </div>
               <div>
-                <img className="shop shop1" src="acc.png" />
+                <img
+                  className="shop shop1"
+                  onClick={handle_accShow}
+                  src="acc.png"
+                  alt=""
+                />
               </div>
             </div>
           </div>
@@ -484,14 +544,19 @@ export default function Home() {
               />
             </div>
             <div>
-              <img className="layer" src="Layer.png" />
+              <img className="layer" src="Layer.png" alt="" />
             </div>
             <div style={{ display: "flex" }}>
-              <img className="shop" src="Shop.png" />
+              <img className="shop" src="Shop.png" alt="" />
               <div className="donhang">100</div>
             </div>
             <div>
-              <img className="shop shop1" src="acc.png" />
+              <img
+                className="shop shop1"
+                onClick={handle_accShow}
+                src="acc.png"
+                alt=""
+              />
             </div>
           </div>
         </div>
@@ -588,16 +653,16 @@ export default function Home() {
             </div>
           </div>
           <div className="footer_flex">
-            <img src="tt1.png" className="img_footer" />
+            <img src="tt1.png" className="img_footer" alt="" />
             <div>
-              <img src="tt2.png" className="img_footer_1" />
+              <img src="tt2.png" className="img_footer_1" alt="" />
             </div>
           </div>
           <div className="footer_flex"></div>
           <div className="footer_flex">
-            <img src="app1.png" className="img_footer app" />
+            <img src="app1.png" className="img_footer app" alt="" />
             <div>
-              <img src="app2.png" className="img_footer app" />
+              <img src="app2.png" className="img_footer app" alt="" />
             </div>
           </div>
         </div>
@@ -611,7 +676,7 @@ export default function Home() {
                 placement="right"
                 overlay={<Tooltip id="tooltip-right">To the top</Tooltip>}
               >
-                <img src="onTop.png" />
+                <img src="onTop.png" alt="" />
               </OverlayTrigger>
             </div>
           </Link>
@@ -622,7 +687,7 @@ export default function Home() {
                 placement="right"
                 overlay={<Tooltip id="tooltip-right">Sản phẩm nổi bật</Tooltip>}
               >
-                <img src="pie.png" />
+                <img src="pie.png" alt="" />
               </OverlayTrigger>
             </div>
           </Link>
@@ -633,7 +698,7 @@ export default function Home() {
                 placement="right"
                 overlay={<Tooltip id="tooltip-right">Sản phẩm nổi bật</Tooltip>}
               >
-                <img src="fire.png" />
+                <img src="fire.png" alt="" />
               </OverlayTrigger>
             </div>
           </Link>
@@ -644,12 +709,48 @@ export default function Home() {
                 placement="right"
                 overlay={<Tooltip id="tooltip-right">Sản phẩm nổi bật</Tooltip>}
               >
-                <img src="newspaper.png" />
+                <img src="newspaper.png" alt="" />
               </OverlayTrigger>
             </div>
           </Link>
         </div>
       </div>
+      <Modal show={show_acc} onHide={handle_accClose}>
+        <Modal.Header closeButton>
+          <Modal.Title>Login</Modal.Title>
+        </Modal.Header>
+        <Modal.Body>
+          <div className="text_login">Username: </div>
+          <input
+            className="login"
+            onChange={(e) => {
+              setusername(e.target.value);
+            }}
+            type="text"
+            placeholder="Username"
+          />
+
+          <div className="text_login">Password: </div>
+          <input
+            className="login"
+            type={mouse}
+            onChange={(e) => {
+              setpassword(e.target.value);
+            }}
+            onMouseOver={mouseOn}
+            onMouseOut={mouseOff}
+            placeholder="Password"
+          />
+
+          <div className="check_loi">{err}</div>
+          <div className="check">Do you have account?</div>
+        </Modal.Body>
+        <Modal.Footer>
+          <Button variant="primary" onClick={submit}>
+            Submit
+          </Button>
+        </Modal.Footer>
+      </Modal>
     </div>
   );
 }

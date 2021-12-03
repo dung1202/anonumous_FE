@@ -1,7 +1,7 @@
 @import url("https://fonts.googleapis.com/css?family=Josefin+Sans");
 
 .carousel-control-next-icon,
-.carousel-control-prev-icon{
+.carousel-control-prev-icon {
   background-color: black;
   border-radius: 5px;
 }
@@ -16,7 +16,7 @@
   cursor: pointer;
 }
 
-.text_header_first{
+.text_header_first {
   margin-left: 4vw;
 }
 
@@ -269,9 +269,9 @@
   cursor: pointer;
 }
 
-.slider_container{
+.slider_container {
   padding-right: 5vw;
-  padding-left: 5vw ;
+  padding-left: 5vw;
   padding-top: 2vw;
   cursor: pointer;
 }
@@ -391,6 +391,36 @@
 .cont {
   margin-left: 60px;
   margin-top: 20px;
+}
+
+.login {
+  flex: 3;
+  outline: none;
+  border-radius: 5px;
+  padding: 5px;
+  border: 1px solid red;
+  width: 100%;
+  
+}
+
+.check {
+  margin-top: 5px;
+  cursor: pointer;
+  font-size: 0.85rem;
+}
+
+.check_loi{
+  color: red;
+  font-size: 0.9rem;
+}
+
+.check:hover{
+  color: blue;
+}
+
+.text_login {font-family: "Josefin Sans", cursive;
+  
+  margin-top: 10px;
 }
 
 @media only screen and (max-width: 1280px) and (min-width: 875px) {
