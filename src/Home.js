@@ -206,6 +206,7 @@ export default function Home() {
     setgiam(gia);
   }, [Product]);
 
+  
   const [show_acc, setShow_acc] = useState(false);
 
   const handle_accClose = () => {
