@@ -416,7 +416,7 @@ export default function Product() {
             <div className="menu">News</div>
             <div className="menu us">
               <div>About</div>
-              <div style={{ marginLeft: "4px" }}>us</div>
+              <div style={{ marginLeft: "2px" }}>us</div>
             </div>
           </div>
           <div className="footer_flex">

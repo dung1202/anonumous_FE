@@ -1,7 +1,9 @@
 import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import "./Homecss.css";
-import { Login } from "./Axios";
+import jwt_decode from "jwt-decode";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { faEye } from "@fortawesome/free-solid-svg-icons";
 import {
   Carousel,
   OverlayTrigger,
@@ -15,13 +17,16 @@ import {
 } from "react-bootstrap";
 import "bootstrap/dist/css/bootstrap.min.css";
 import { Link } from "react-scroll";
-import { getslider } from "./Axios";
+import { getslider, getUserById, Login } from "./Axios";
 export default function Home() {
   const navigate = useNavigate();
   const [array, setarray] = useState([]);
   const [err, seterr] = useState("");
   const [username, setusername] = useState("");
   const [password, setpassword] = useState("");
+  const [passwordShown, setPasswordShown] = useState(false);
+  const togglePasswordVisibility = () =>
+    setPasswordShown(!passwordShown ? true : false);
   const [month_3] = useState([
     "Jan",
     "Feb",
@@ -39,8 +44,29 @@ export default function Home() {
   const [array_vote, setarray_vote] = useState([]);
   const [sold, setsold] = useState([]);
   const [giam, setgiam] = useState([]);
-  const [mouse, setmouse] = useState("password");
   const [token, setToken] = useState("");
+  const [Avatar, setAvatar] = useState("");
+
+  useEffect(() => {
+    let token = localStorage.getItem("accessToken");
+    console.log(token);
+    if (token) {
+      try {
+        const userID = jwt_decode(token)._id;
+        console.log(userID);
+        getUserById(userID).then((res) => {
+          const user = res.data;
+          console.log(user);
+          setAvatar(user.photoUrl);
+          setToken(token);
+        });
+      } catch (error) {
+        setToken("");
+        setAvatar("");
+      }
+    }
+  }, [token]);
+
   const [news] = useState([
     {
       title: "tên news",
@@ -206,7 +232,6 @@ export default function Home() {
     setgiam(gia);
   }, [Product]);
 
-  
   const [show_acc, setShow_acc] = useState(false);
 
   const handle_accClose = () => {
@@ -431,13 +456,6 @@ export default function Home() {
     navigate("/product");
   };
 
-  const mouseOn = () => {
-    setmouse("text");
-  };
-  const mouseOff = () => {
-    setmouse("password");
-  };
-
   const submit = () => {
     const body = {
       username,
@@ -449,19 +467,22 @@ export default function Home() {
       password.length > 30 ||
       password.length < 8
     ) {
-      seterr("Username and password between 8 and 30");
+      seterr("Usernames and passwords have 8 to 30 words");
     } else {
       Login(body).then((res) => {
         if (res.data.message !== "Login successfully!") {
           seterr(res.data.message);
         } else if (res.data.message === "Login successfully!") {
-          setToken(res.data.acctoken);
-          localStorage.setItem("accessToken", token);
+          setToken(res.data.accessToken);
+          localStorage.setItem("accessToken", res.data.accessToken);
           setShow_acc(false);
           seterr("");
         }
       });
     }
+  };
+  const gotoRegister = () => {
+    navigate("/register");
   };
   return (
     <div>
@@ -513,16 +534,41 @@ export default function Home() {
           <div>
             <div className="ok1">
               <div style={{ display: "flex" }}>
-                <img className="shop" src="Shop.png" alt="" />
+                <OverlayTrigger
+                  key="bottom"
+                  placement="bottom"
+                  overlay={<Tooltip id="tooltip-bottom">Giỏ hàng</Tooltip>}
+                >
+                  <img className="shop" src="Shop.png" alt="" />
+                </OverlayTrigger>
                 <div className="donhang">999</div>
               </div>
               <div>
-                <img
-                  className="shop shop1"
-                  onClick={handle_accShow}
-                  src="acc.png"
-                  alt=""
-                />
+                <OverlayTrigger
+                  key="bottom"
+                  placement="bottom"
+                  overlay={
+                    <Tooltip id="tooltip-bottom">
+                      {Avatar ? "Profile" : "Sign In"}
+                    </Tooltip>
+                  }
+                >
+                  {Avatar ? (
+                    <img
+                      className="shop shop1"
+                      // onClick={handle_accShow}
+                      src={Avatar}
+                      alt=""
+                    />
+                  ) : (
+                    <img
+                      className="shop shop1"
+                      onClick={handle_accShow}
+                      src="acc.png"
+                      alt=""
+                    />
+                  )}
+                </OverlayTrigger>
               </div>
             </div>
           </div>
@@ -548,16 +594,41 @@ export default function Home() {
               <img className="layer" src="Layer.png" alt="" />
             </div>
             <div style={{ display: "flex" }}>
-              <img className="shop" src="Shop.png" alt="" />
+              <OverlayTrigger
+                key="bottom"
+                placement="bottom"
+                overlay={<Tooltip id="tooltip-bottom">Giỏ hàng</Tooltip>}
+              >
+                <img className="shop" src="Shop.png" alt="" />
+              </OverlayTrigger>
               <div className="donhang">100</div>
             </div>
             <div>
-              <img
-                className="shop shop1"
-                onClick={handle_accShow}
-                src="acc.png"
-                alt=""
-              />
+              <OverlayTrigger
+                key="bottom"
+                placement="bottom"
+                overlay={
+                  <Tooltip id="tooltip-bottom">
+                    {Avatar ? "Profile" : "Sign In"}
+                  </Tooltip>
+                }
+              >
+                {Avatar ? (
+                  <img
+                    className="shop shop1"
+                    // onClick={handle_accShow}
+                    src={Avatar}
+                    alt=""
+                  />
+                ) : (
+                  <img
+                    className="shop shop1"
+                    onClick={handle_accShow}
+                    src="acc.png"
+                    alt=""
+                  />
+                )}
+              </OverlayTrigger>
             </div>
           </div>
         </div>
@@ -650,7 +721,7 @@ export default function Home() {
             <div className="menu">News</div>
             <div className="menu us">
               <div>About</div>
-              <div style={{ marginLeft: "4px" }}>us</div>
+              <div style={{ marginLeft: "2px" }}>us</div>
             </div>
           </div>
           <div className="footer_flex">
@@ -697,7 +768,9 @@ export default function Home() {
               <OverlayTrigger
                 key="right"
                 placement="right"
-                overlay={<Tooltip id="tooltip-right">Sản phẩm nổi bật</Tooltip>}
+                overlay={
+                  <Tooltip id="tooltip-right">Ưu đãi dành cho bạn</Tooltip>
+                }
               >
                 <img src="fire.png" alt="" />
               </OverlayTrigger>
@@ -708,7 +781,7 @@ export default function Home() {
               <OverlayTrigger
                 key="right"
                 placement="right"
-                overlay={<Tooltip id="tooltip-right">Sản phẩm nổi bật</Tooltip>}
+                overlay={<Tooltip id="tooltip-right">Tin Tức</Tooltip>}
               >
                 <img src="newspaper.png" alt="" />
               </OverlayTrigger>
@@ -732,19 +805,25 @@ export default function Home() {
           />
 
           <div className="text_login">Password: </div>
-          <input
-            className="login"
-            type={mouse}
-            onChange={(e) => {
-              setpassword(e.target.value);
-            }}
-            onMouseOver={mouseOn}
-            onMouseOut={mouseOff}
-            placeholder="Password"
-          />
-
+          <label className="signup-password">
+            <input
+              className="login"
+              type={passwordShown ? "text" : "password"}
+              onChange={(e) => {
+                setpassword(e.target.value);
+              }}
+              placeholder="Password"
+            />
+            <FontAwesomeIcon
+              className="fa-icons"
+              icon={faEye}
+              onClick={togglePasswordVisibility}
+            />
+          </label>
           <div className="check_loi">{err}</div>
-          <div className="check">Do you have account?</div>
+          <div className="check" onClick={gotoRegister}>
+            Do you have account?
+          </div>
         </Modal.Body>
         <Modal.Footer>
           <Button variant="primary" onClick={submit}>

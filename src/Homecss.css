@@ -5,6 +5,9 @@
   background-color: black;
   border-radius: 5px;
 }
+.carousel{
+  cursor: pointer;
+}
 
 .text_header {
   color: #d8861bee;
@@ -273,7 +276,6 @@
   padding-right: 5vw;
   padding-left: 5vw;
   padding-top: 2vw;
-  cursor: pointer;
 }
 
 .chu_gt {
@@ -306,8 +308,6 @@
 }
 
 .newslettler {
-  background-color: #2d99d3;
-  /* height: 100px; */
   width: 99.35vw;
   margin-top: 7vh;
   padding: 2vw 10vw 2vw 10vw;
@@ -407,6 +407,7 @@
   margin-top: 5px;
   cursor: pointer;
   font-size: 0.85rem;
+  width: 140px;
 }
 
 .check_loi{
