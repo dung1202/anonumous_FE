@@ -467,11 +467,11 @@ export default function Home() {
       password.length > 30 ||
       password.length < 8
     ) {
-      seterr("Usernames and passwords have 8 to 30 words");
+      seterr("Tên đăng nhập hoặc mật khẩu sai");
     } else {
       Login(body).then((res) => {
         if (res.data.message !== "Login successfully!") {
-          seterr(res.data.message);
+          seterr("Tên đăng nhập hoặc mật khẩu sai");
         } else if (res.data.message === "Login successfully!") {
           setToken(res.data.accessToken);
           localStorage.setItem("accessToken", res.data.accessToken);
@@ -505,14 +505,14 @@ export default function Home() {
                   />
                   <img className="layer" src="Layer.png" alt="" />
                 </div>
-                <div className="text_header1">Home</div>
+                <div className="text_header1">Trang Chủ</div>
                 <div className="text_header1" onClick={gotoProduct}>
-                  Product
+                  Sản Phẩm
                 </div>
-                <div className="text_header1">News</div>
+                <div className="text_header1">Tin Tức</div>
                 <div style={{ display: "flex" }}>
-                  <div className="text_header1">About</div>
-                  <div className="text_header1 Us1">Us</div>
+                  <div className="text_header1">Hỏi đáp</div>
+                  {/* <div className="text_header1 Us1">Us</div> */}
                 </div>
               </Offcanvas.Body>
             </Offcanvas>
@@ -573,13 +573,13 @@ export default function Home() {
             </div>
           </div>
           <div className="ok2">
-            <div className="text_header text_header_first">Home</div>
+            <div className="text_header text_header_first">Trang Chủ</div>
             <div className="text_header" onClick={gotoProduct}>
-              Product
+              Sản Phẩm
             </div>
-            <div className="text_header">News</div>
-            <div className="text_header">About</div>
-            <div className="Us">Us</div>
+            <div className="text_header">Tin Tức</div>
+            <div className="text_header">Hỏi đáp</div>
+            {/* <div className="Us">Us</div> */}
           </div>
           <div className="img_last">
             <div>
@@ -716,12 +716,12 @@ export default function Home() {
 
         <div className="footer2">
           <div style={{ flex: "1", cursor: "pointer" }}>
-            <div className="menu">Home</div>
-            <div className="menu">Product</div>
-            <div className="menu">News</div>
+            <div className="menu">Trang Chủ</div>
+            <div className="menu">Sản Phẩm</div>
+            <div className="menu">Tin Tức</div>
             <div className="menu us">
-              <div>About</div>
-              <div style={{ marginLeft: "2px" }}>us</div>
+              <div>Hỏi đáp</div>
+              {/* <div style={{ marginLeft: "2px" }}>us</div> */}
             </div>
           </div>
           <div className="footer_flex">
@@ -791,20 +791,20 @@ export default function Home() {
       </div>
       <Modal show={show_acc} onHide={handle_accClose}>
         <Modal.Header closeButton>
-          <Modal.Title>Login</Modal.Title>
+          <Modal.Title>Đăng nhập</Modal.Title>
         </Modal.Header>
         <Modal.Body>
-          <div className="text_login">Username: </div>
+          <div className="text_login">Tên đăng nhập: </div>
           <input
             className="login"
             onChange={(e) => {
               setusername(e.target.value);
             }}
             type="text"
-            placeholder="Username"
+            placeholder="Tên đăng nhập"
           />
 
-          <div className="text_login">Password: </div>
+          <div className="text_login">Mật khẩu: </div>
           <label className="signup-password">
             <input
               className="login"
@@ -812,7 +812,7 @@ export default function Home() {
               onChange={(e) => {
                 setpassword(e.target.value);
               }}
-              placeholder="Password"
+              placeholder="Mật khẩu"
             />
             <FontAwesomeIcon
               className="fa-icons"
@@ -821,13 +821,16 @@ export default function Home() {
             />
           </label>
           <div className="check_loi">{err}</div>
-          <div className="check" onClick={gotoRegister}>
-            Do you have account?
+          <div className="signup-redirect" >
+            Bạn chưa có tài khoản?
+            <button id="redirect-signin" onClick={gotoRegister}>
+              Đăng Ký
+            </button>
           </div>
         </Modal.Body>
         <Modal.Footer>
           <Button variant="primary" onClick={submit}>
-            Submit
+            Đăng nhập
           </Button>
         </Modal.Footer>
       </Modal>

@@ -13,6 +13,7 @@ export default function Register() {
   const [password, setPassword] = useState("");
   const [repeatPassword, setRepeatPassword] = useState("");
   const [passwordShown, setPasswordShown] = useState(false);
+  const [passwordShown1, setPasswordShown1] = useState(false);
   const [alertMessage, setAlertMessage] = useState("");
 
   const changeusername = (e) => setusername(e.target.value);
@@ -21,6 +22,11 @@ export default function Register() {
   const changeRepeatPassword = (e) => setRepeatPassword(e.target.value);
   const togglePasswordVisibility = () =>
     setPasswordShown(!passwordShown ? true : false);
+
+
+  const togglePasswordVisibility1 = () =>
+    setPasswordShown1(!passwordShown1 ? true : false);
+
 
   const redirectSignIn = () => history("/");
 
@@ -34,7 +40,7 @@ export default function Register() {
           setAlertMessage(res.data.message);
         } else if (res.data.message === "Register successfully!") {
           localStorage.setItem("accessToken", res.data.accessToken);
-            redirectSignIn();
+          redirectSignIn();
         }
       });
   };
@@ -73,14 +79,14 @@ export default function Register() {
         spellCheck="false"
         autoComplete="off"
       >
-        <h2 id="signup-title">SIGN UP</h2>
+        <h2 id="signup-title">ĐĂNG KÝ</h2>
         <label>
           <input
             className="signup-input"
             name="username"
             type="text"
             value={username}
-            placeholder="Your username"
+            placeholder="Tên đăng nhập"
             onChange={changeusername}
             required
           />
@@ -92,7 +98,7 @@ export default function Register() {
             name="email"
             type="email"
             value={email}
-            placeholder="Your Email"
+            placeholder="Email"
             onChange={changeEmail}
             required
           />
@@ -104,7 +110,7 @@ export default function Register() {
             name="password"
             type={passwordShown ? "text" : "password"}
             value={password}
-            placeholder="Password"
+            placeholder="Mật khẩu"
             onChange={changePassword}
             required
           />
@@ -119,20 +125,21 @@ export default function Register() {
           <input
             className="signup-input"
             name="repeatPassword"
-            type={passwordShown ? "text" : "password"}
+            type={passwordShown1 ? "text" : "password"}
             value={repeatPassword}
-            placeholder="Repeat your password"
+            placeholder="Nhập lại mật khẩu"
             onChange={changeRepeatPassword}
             required
           />
           <FontAwesomeIcon
             className="fa-icons"
             icon={faEye}
-            onClick={togglePasswordVisibility}
+            onClick={togglePasswordVisibility1}
           />
         </label>
+
         <div className="signup-alert">{alertMessage}</div>
-        <label>
+        {/* <label>
           <input
             className="signup-agreement"
             name="termAgreement"
@@ -147,14 +154,14 @@ export default function Register() {
           >
             Terms of service
           </a>
-        </label>
+        </label> */}
 
         <input className="signup-submit" type="submit" value="SIGN UP" />
 
         <div className="signup-redirect">
-          Have already an account ?
+          Bạn đã có tài khoản chưa ?
           <button id="redirect-signin" onClick={redirectSignIn}>
-            Home
+            Trang chủ
           </button>
         </div>
       </form>

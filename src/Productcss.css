@@ -68,9 +68,9 @@
   background: #ffffff;
 }
 
-.hover:hover {
+/* .hover:hover {
   box-shadow: 10px 5px 10px black;
-}
+} */
 
 .hover {
   border-radius: 10px;
@@ -96,7 +96,7 @@
 
 .menu {
   color: blue;
-  width: 4vw;
+  /* width: 4vw; */
   border-radius: 10px;
   padding: 5px 5px 5px 0px;
 }
@@ -163,9 +163,9 @@
   height: 10px;
 }
 
-.news:hover {
+/* .news:hover {
   box-shadow: 10px 5px 10px black;
-}
+} */
 
 .news {
   background: #ffffff;

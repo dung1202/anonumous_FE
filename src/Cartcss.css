@@ -1,0 +1,88 @@
+.cart {
+  margin: 3.5vh 5vw 0px 5vw;
+}
+.sp {
+  padding: 10px 30px;
+  background-color: white;
+  width: 100%;
+  display: flex;
+  margin-bottom: 20px;
+  align-items: center;
+  border-radius: 10px;
+}
+
+.soluong {
+  font-size: 1.25rem;
+  flex: 0.5;
+}
+
+.img_cart {
+  width: 100px;
+  height: 100px;
+  border-radius: 10px;
+}
+
+.ten_cart {
+  font-weight: 600;
+}
+
+.thanhTien {
+  display: flex;
+  color: red;
+  font-weight: 600;
+  font-size: 1.5rem;
+  flex: 1;
+}
+
+.thanhTienTo {
+  display: flex;
+  color: white;
+  font-weight: 600;
+  font-size: 1.25rem;
+  flex: 1;
+  justify-content: space-around;
+}
+
+.discount {
+  display: flex;
+  font-style: italic;
+  color: blue;
+  font-size: 1.25rem;
+}
+
+.tieude {
+  font-weight: 600;
+  font-size: 1.1rem;
+  display: flex;
+  margin: 2vh 5vw 0px 5vw;
+  padding: 10px 30px;
+  background-color: #fdeb93;
+  border-radius: 0px 0px 10px 10px;
+  align-items: center;
+}
+
+.hienTieuDe {
+  position: absolute;
+  position: fixed;
+}
+
+.tieude_sau {
+    font-weight: 600;
+    font-size: 1.1rem;
+    display: flex;
+    margin: 0vh 5vw 0px 5vw;
+    padding: 10px 30px;
+    background-color: #fdeb93;
+    border-radius: 0px 0px 10px 10px;
+    align-items: center;
+    width: 90vw;
+  }
+
+.mua{
+    flex: 1;
+    background-color: red;
+    text-align: center;
+    color: white;
+    border-radius: 10px;
+    cursor: pointer;
+}

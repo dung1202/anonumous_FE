@@ -33,9 +33,11 @@ export default function DetailProduct() {
     // console.log(e.target.value)
     // let k = Number(e.target.value);
     if (!Number(e.target.value)) {
-      setInput_sl(0);
-    } else {
+      setInput_sl(Input_sl);
+    } else if (Number(e.target.value) < Data[0].quantity){
       setInput_sl(Number(e.target.value));
+    }else if (Number(e.target.value) >= Data[0].quantity){
+      setInput_sl(Number(Data[0].quantity));
     }
   };
   const handleClose = () => setShow(false);

@@ -16,3 +16,5 @@ export const getslider = () => instance.get("/slider");
 export const Login = (body) => instance.post("/login", body);
 export const signUp = (body) => instance.post("/register", body);
 export const getUserById = (id) => instance.get(`/user/${id}`);
+export const getProduct = () => instance.get("/product")
+export const getCart = () => instance.get("/cart/auth")
