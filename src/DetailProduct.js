@@ -22,7 +22,6 @@ import {
   Login,
   getProduct,
   getProductById,
-  getCart,
   addCart,
   checkToken,
 } from "./Axios";

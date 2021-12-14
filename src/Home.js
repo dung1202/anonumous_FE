@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { useNavigate, Link } from "react-router-dom";
 import "./Homecss.css";
-import ReactHtmlParser from "react-html-parser";
+// import ReactHtmlParser from "react-html-parser";
 import {
   Carousel,
   OverlayTrigger,
@@ -347,9 +347,9 @@ export default function Home(props) {
     );
   };
 
-  const map_hastack = (item) => {
-    return <div className="map_hastack">{item}</div>;
-  };
+  // const map_hastack = (item) => {
+  //   return <div className="map_hastack">{item}</div>;
+  // };
 
   const [show, setShow] = useState(false);
 
