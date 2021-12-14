@@ -9,12 +9,15 @@ import {
   Form,
   Row,
   Col,
+  Modal,
+  Button,
 } from "react-bootstrap";
 import "bootstrap/dist/css/bootstrap.min.css";
 import { Link } from "react-scroll";
-import { getUserById } from "./Axios";
-import { Data1 } from "./Data";
-export default function Cart() {
+import { getUserById, getCart } from "./Axios";
+// import { Data } from "./Data";
+export default function Cart(props) {
+  // const [Data1, setData1] = useState(Data);
   const navigate = useNavigate();
   const [token, setToken] = useState("");
   const [Avatar, setAvatar] = useState("");
@@ -23,25 +26,31 @@ export default function Cart() {
   const [checkBoxAll, setcheckBoxAll] = useState(false);
   const [Tong, setTong] = useState([]);
   const [tien, settien] = useState(0);
+  const [showXoa, setShowXoa] = useState(false);
+
+  const handleCloseXoa = () => setShowXoa(false);
+  const handleShowXoa = () => setShowXoa(true);
+
+  const [showXoaAll, setShowXoaAll] = useState(false);
+
+  const handleCloseXoaAll = () => setShowXoaAll(false);
+  const handleShowXoaAll = () => setShowXoaAll(true);
+
+  const [cart, setcart] = useState([]);
 
   const input_sl = (e, index) => {
     let newsl = sl;
     if (!Number(e.target.value)) {
-    } else if (
-      Number(e.target.value) < Data1.cart.items[index].product_id.quantity
-    ) {
+    } else if (Number(e.target.value) < cart[index].product_id.quantity) {
       newsl[index] = Number(e.target.value);
-    } else if (
-      Number(e.target.value) >= Data1.cart.items[index].product_id.quantity
-    ) {
-      newsl[index] = Data1.cart.items[index].product_id.quantity;
+    } else if (Number(e.target.value) >= cart[index].product_id.quantity) {
+      newsl[index] = cart[index].product_id.quantity;
     }
     setsl([...newsl]);
   };
   const cong_sl = (index) => {
     let newsl = sl;
-    if (newsl[index] < Data1.cart.items[index].product_id.quantity)
-      newsl[index] += 1;
+    if (newsl[index] < cart[index].product_id.quantity) newsl[index] += 1;
     setsl([...newsl]);
   };
   const tru_sl = (index) => {
@@ -49,9 +58,14 @@ export default function Cart() {
     if (newsl[index] >= 2) newsl[index] -= 1;
     setsl([...newsl]);
   };
+  const xoaAll = () => {
+    let xoa = cart;
+    xoa.splice(0, xoa.length);
+    setcart([...cart]);
+    handleCloseXoaAll();
+  };
   useEffect(() => {
     let token = localStorage.getItem("accessToken");
-    // console.log(token);
     if (token) {
       try {
         const userID = jwt_decode(token)._id;
@@ -62,26 +76,27 @@ export default function Cart() {
           setAvatar(user.photoUrl);
           setToken(token);
         });
+        getCart().then((res) => {
+          console.log(res.data);
+          setcart(res.data.cart.items);
+          let mang = [];
+          let check = [];
+          let tong = [];
+          res.data.cart.items.map((item) => {
+            mang.push(item.quantity);
+            check.push(false);
+            tong.push(item.totalPrice);
+            return <div></div>;
+          });
+          setsl(mang);
+          setcheckBox(check);
+          setTong(tong);
+        });
       } catch (error) {
         setToken("");
         setAvatar("");
       }
     }
-    // getCart().then((res) => {
-    let mang = [];
-    let check = [];
-    let tong = [];
-    Data1.cart.items.map((item) => {
-      mang.push(item.quantity);
-      check.push(false);
-      tong.push(item.totalPrice);
-      return <div></div>;
-    });
-    setsl(mang);
-    setcheckBox(check);
-    setTong(tong);
-    console.log(mang);
-    // });
   }, [token]);
 
   const [, setShow_acc] = useState(false);
@@ -123,7 +138,6 @@ export default function Cart() {
     let newCheck = checkBox;
     newCheck[index] = !newCheck[index];
     setcheckBox([...newCheck]);
-    console.log(checkBox);
   };
   const changeAll = () => {
     let newCheck = checkBox;
@@ -151,6 +165,13 @@ export default function Cart() {
     }
     settien(tong);
   }, [checkBox, Tong]);
+
+  const xoa_item = (index) => {
+    let xoa = cart;
+    xoa.splice(index, 1);
+    setcart([...cart]);
+    handleCloseXoa();
+  };
 
   const map_cart = (item, index) => {
     let string_name = "";
@@ -180,7 +201,7 @@ export default function Cart() {
           </div>
         </div>
 
-        <div style={{ flex: "2" }}>
+        <div style={{ flex: "1.3" }}>
           <img className="img_cart" alt="" src={item.product_id.img} />
         </div>
 
@@ -206,7 +227,7 @@ export default function Cart() {
           )}
         </div>
 
-        <div style={{ flex: "2" }}>
+        <div style={{ flex: "2.5" }}>
           <button
             className="button_1"
             onClick={() => {
@@ -217,7 +238,6 @@ export default function Cart() {
                   : item.product_id.listedPrice * sl[index],
                 index
               );
-              console.log(Tong);
             }}
           >
             +
@@ -233,7 +253,6 @@ export default function Cart() {
                   : item.product_id.listedPrice * sl[index],
                 index
               );
-              console.log(Tong);
             }}
             value={sl[index]}
           ></input>
@@ -247,7 +266,6 @@ export default function Cart() {
                   : item.product_id.listedPrice * sl[index],
                 index
               );
-              console.log(Tong);
             }}
           >
             -
@@ -261,6 +279,36 @@ export default function Cart() {
           )}
           <div className="d">đ</div>
         </div>
+
+        <div>
+          <img
+            className="anh"
+            alt=""
+            src="/xoa-item.png"
+            onClick={() => {
+              handleShowXoa();
+            }}
+          />
+        </div>
+        <Modal show={showXoa} onHide={handleCloseXoa}>
+          <Modal.Header closeButton>
+            <Modal.Title>Bạn có muốn xóa sản phẩm này? </Modal.Title>
+          </Modal.Header>
+
+          <Modal.Footer>
+            <Button variant="secondary" onClick={handleCloseXoa}>
+              Hủy
+            </Button>
+            <Button
+              variant="primary"
+              onClick={() => {
+                xoa_item(index);
+              }}
+            >
+              Xóa
+            </Button>
+          </Modal.Footer>
+        </Modal>
       </div>
     );
   };
@@ -296,6 +344,10 @@ export default function Cart() {
     navigate("/product");
   };
 
+  const gotoHome = () => {
+    navigate("/");
+  };
+
   return (
     <div>
       <div className="windown layer1">
@@ -317,7 +369,7 @@ export default function Cart() {
                   />
                   <img className="layer" src="Layer.png" alt="" />
                 </div>
-                <div className="text_header1">Trang Chủ</div>
+                <div className="text_header1" onClick={gotoHome}>Trang Chủ</div>
                 <div className="text_header1" onClick={gotoProduct}>
                   Sản Phẩm
                 </div>
@@ -353,7 +405,9 @@ export default function Cart() {
                 >
                   <img className="shop" src="Shop.png" alt="" />
                 </OverlayTrigger>
-                <div className="donhang">999</div>
+                <div className="donhang">
+                  {props.soluong ? props.soluong : 0}
+                </div>
               </div>
               <div>
                 <OverlayTrigger
@@ -386,7 +440,7 @@ export default function Cart() {
           </div>
 
           <div className="ok2">
-            <div className="text_header text_header_first">Trang Chủ</div>
+            <div className="text_header text_header_first" onClick={gotoHome}>Trang Chủ</div>
             <div className="text_header" onClick={gotoProduct}>
               Sản Phẩm
             </div>
@@ -414,7 +468,7 @@ export default function Cart() {
               >
                 <img className="shop" src="Shop.png" alt="" />
               </OverlayTrigger>
-              <div className="donhang">100</div>
+              <div className="donhang">{props.soluong ? props.soluong : 0}</div>
             </div>
             <div>
               <OverlayTrigger
@@ -445,32 +499,50 @@ export default function Cart() {
             </div>
           </div>
         </div>
-        <div className="tieude">
-          <div style={{ flex: "1.2" }}>
-            Stt
-            <div>
-              <input
-                type="checkbox"
-                checked={checkBoxAll}
-                onChange={() => {
-                  changeAll();
-                }}
-              />
+        {cart.length ? (
+          <div>
+            <div className="tieude">
+              <div style={{ flex: "0.7" }}>
+                Stt
+                <div style={{ display: "flex" }}>
+                  <input
+                    type="checkbox"
+                    checked={checkBoxAll}
+                    onChange={() => {
+                      changeAll();
+                    }}
+                  />
+                  {checkBoxAll ? (
+                    <div>
+                      <img
+                        className="anhtd"
+                        alt=""
+                        onClick={handleShowXoaAll}
+                        src="/xoa-item.png"
+                      />
+                    </div>
+                  ) : null}
+                </div>
+              </div>
+              <div style={{ flex: "1" }}>Ảnh</div>
+              <div style={{ flex: "2" }}>Tên sản phẩm</div>
+              <div style={{ flex: "2.2" }}>Đơn giá</div>
+              <div style={{ flex: "2" }}>Số lượng</div>
+              <div className="mua">
+                Mua hàng
+                <div className="thanhTienTo">
+                  {phay(tien)}
+                  <div className="d">đ</div>
+                </div>
+              </div>
             </div>
+            <div className="cart">{cart.map(map_cart)}</div>
           </div>
-          <div style={{ flex: "1.2" }}>Ảnh</div>
-          <div style={{ flex: "2" }}>Tên sản phẩm</div>
-          <div style={{ flex: "2" }}>Đơn giá</div>
-          <div style={{ flex: "2" }}>Số lượng</div>
-          <div className="mua">
-            Mua hàng
-            <div className="thanhTienTo">
-              {tien}
-              <div className="d">đ</div>
-            </div>
+        ) : (
+          <div className="rong-to">
+            <img className="rong" alt="" src="/empty-cart.png" />
           </div>
-        </div>
-        <div className="cart">{Data1.cart.items.map(map_cart)}</div>
+        )}
 
         <div className="newslettler">
           <Form>
@@ -521,8 +593,8 @@ export default function Cart() {
 
         <div className="footer2">
           <div style={{ flex: "1", cursor: "pointer" }}>
-            <div className="menu">Trang Chủ</div>
-            <div className="menu">Sản Phẩm</div>
+            <div className="menu" onClick={gotoHome}>Trang Chủ</div>
+            <div className="menu" onClick={gotoProduct}>Sản Phẩm</div>
             <div className="menu">Tin Tức</div>
             <div className="menu us">
               <div>Hỏi đáp</div>
@@ -544,36 +616,38 @@ export default function Cart() {
           </div>
         </div>
       </div>
-      <div
-        className="hienTieuDe"
-        style={{ zIndex: scrollTop > 40 ? "2" : "0" }}
-      >
-        <div className="tieude_sau">
-          <div style={{ flex: "1.2" }}>
-            Stt
-            <div>
-              <input
-                type="checkbox"
-                checked={checkBoxAll}
-                onChange={() => {
-                  changeAll();
-                }}
-              />
+      {cart.length ? (
+        <div
+          className="hienTieuDe"
+          style={{ zIndex: scrollTop > 40 ? "2" : "0" }}
+        >
+          <div className="tieude_sau">
+            <div style={{ flex: "0.7" }}>
+              Stt
+              <div>
+                <input
+                  type="checkbox"
+                  checked={checkBoxAll}
+                  onChange={() => {
+                    changeAll();
+                  }}
+                />
+              </div>
             </div>
-          </div>
-          <div style={{ flex: "1.2" }}>Ảnh</div>
-          <div style={{ flex: "2" }}>Tên sản phẩm</div>
-          <div style={{ flex: "2" }}>Đơn giá</div>
-          <div style={{ flex: "2" }}>Số lượng</div>
-          <div className="mua">
-            Mua hàng
-            <div className="thanhTienTo">
-              {tien}
-              <div className="d">đ</div>
+            <div style={{ flex: "1" }}>Ảnh</div>
+            <div style={{ flex: "2" }}>Tên sản phẩm</div>
+            <div style={{ flex: "2.2" }}>Đơn giá</div>
+            <div style={{ flex: "2" }}>Số lượng</div>
+            <div className="mua">
+              Mua hàng
+              <div className="thanhTienTo">
+                {phay(tien)}
+                <div className="d">đ</div>
+              </div>
             </div>
           </div>
         </div>
-      </div>
+      ) : null}
       <div className="layer3" style={{ zIndex: scrollTop > 40 ? "2" : "0" }}>
         <div className="on_top1">
           <Link activeClass="active" to="header_top">
@@ -589,6 +663,25 @@ export default function Cart() {
           </Link>
         </div>
       </div>
+      <Modal show={showXoaAll} onHide={handleCloseXoaAll}>
+        <Modal.Header closeButton>
+          <Modal.Title>Bạn có muốn xóa tất cả sản phẩm? </Modal.Title>
+        </Modal.Header>
+
+        <Modal.Footer>
+          <Button variant="secondary" onClick={handleCloseXoaAll}>
+            Hủy
+          </Button>
+          <Button
+            variant="primary"
+            onClick={() => {
+              xoaAll();
+            }}
+          >
+            Xóa
+          </Button>
+        </Modal.Footer>
+      </Modal>
     </div>
   );
 }

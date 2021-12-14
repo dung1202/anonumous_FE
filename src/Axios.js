@@ -12,9 +12,18 @@ instance.interceptors.request.use((req) => {
   return req;
 });
 
-export const getslider = () => instance.get("/slider");
 export const Login = (body) => instance.post("/login", body);
 export const signUp = (body) => instance.post("/register", body);
+export const checkToken = () => instance.post("/auth/checktoken");
+
 export const getUserById = (id) => instance.get(`/user/${id}`);
-export const getProduct = () => instance.get("/product")
-export const getCart = () => instance.get("/cart/auth")
+
+export const getProduct = () => instance.get("/product");
+export const getProductById = (id) => instance.get("/product/" + id);
+
+export const getNews = (number) => {
+  return instance.get("/news?page=" + number);
+};
+
+export const getCart = () => instance.get("/cart/auth");
+export const addCart = (body) => instance.post("/cart/auth/additem", body);

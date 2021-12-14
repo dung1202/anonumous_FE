@@ -1,9 +1,7 @@
 import React, { useState, useEffect } from "react";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, Link } from "react-router-dom";
 import "./Homecss.css";
-import jwt_decode from "jwt-decode";
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faEye } from "@fortawesome/free-solid-svg-icons";
+import ReactHtmlParser from "react-html-parser";
 import {
   Carousel,
   OverlayTrigger,
@@ -16,9 +14,13 @@ import {
   Button,
 } from "react-bootstrap";
 import "bootstrap/dist/css/bootstrap.min.css";
-import { Link } from "react-scroll";
-import { getslider, getUserById, Login } from "./Axios";
-export default function Home() {
+import { getProduct, getUserById, Login, getNews, checkToken } from "./Axios";
+import jwt_decode from "jwt-decode";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { faEye } from "@fortawesome/free-solid-svg-icons";
+import * as Scroll from "react-scroll";
+export default function Home(props) {
+  console.log(props.soluong);
   const navigate = useNavigate();
   const [array, setarray] = useState([]);
   const [err, seterr] = useState("");
@@ -41,7 +43,6 @@ export default function Home() {
     "Nov",
     "Dec",
   ]);
-  const [array_vote, setarray_vote] = useState([]);
   const [sold, setsold] = useState([]);
   const [giam, setgiam] = useState([]);
   const [token, setToken] = useState("");
@@ -49,16 +50,17 @@ export default function Home() {
 
   useEffect(() => {
     let token = localStorage.getItem("accessToken");
-    console.log(token);
     if (token) {
       try {
         const userID = jwt_decode(token)._id;
-        console.log(userID);
-        getUserById(userID).then((res) => {
-          const user = res.data;
-          console.log(user);
-          setAvatar(user.photoUrl);
-          setToken(token);
+        checkToken().then((res) => {
+          if (res.data.message === "Token is valid") {
+            getUserById(userID).then((res) => {
+              const user = res.data;
+              setAvatar(user.photoUrl);
+              setToken(token);
+            });
+          }
         });
       } catch (error) {
         setToken("");
@@ -67,170 +69,78 @@ export default function Home() {
     }
   }, [token]);
 
-  const [news] = useState([
-    {
-      title: "tên news",
-      avatar: "kem.jpg",
-      img: "anh3.png",
-      creator: "Anonymous",
-      createdAt: Date.now(),
-      hastack: ["#cloudcomputing", "#aws", " #certification", "#programming"],
-      content:
-        "Lorem ipsum dolor sit amet consectetur adipisicing elit. Accusamus in voluptate illum pariatur dicta sequi saepe veniam. Soluta optio obcaecati nulla minus natus incidunt, dolor aspernatur eligendi velit quia rerum!",
-    },
-    {
-      title: "Lorem ipsum dolor sit amet consectetur",
-      avatar: "kem.jpg",
-      img: "anh3.png",
-      creator: "Anonymous",
-      createdAt: Date.now(),
-      hastack: ["#cloudcomputing", "#aws", " #certification", "#programming"],
-      content:
-        "Lorem ipsum dolor sit amet consectetur adipisicing elit. Accusamus in voluptate illum pariatur dicta sequi saepe veniam. Soluta optio obcaecati nulla minus natus incidunt, dolor aspernatur eligendi velit quia rerum!",
-    },
-    {
-      title:
-        "Accusamus in voluptate illum pariatur dicta sequi saepe veniam. Soluta optio obcaecati nulla minus natus incidunt, dolor aspernatur eligendi velit quia rerum!",
-      avatar: "kem.jpg",
-      img: "anh3.png",
-      creator: "Anonymous",
-      createdAt: Date.now(),
-      hastack: ["#cloudcomputing", "#aws", " #certification", "#programming"],
-      content:
-        "Lorem ipsum dolor sit amet consectetur adipisicing elit. Accusamus in voluptate illum pariatur dicta sequi saepe veniam. Soluta optio obcaecati nulla minus natus incidunt, dolor aspernatur eligendi velit quia rerum!",
-    },
-  ]);
+  const [news, setnews] = useState([]);
 
-  const [Product] = useState([
-    {
-      name: "kem",
-      listedPrice: 9000,
-      discountPrice: 7000,
-      img: "kem.jpg",
-      sold: 1234,
-      vote: [
-        {
-          number: 5,
-        },
-        {
-          number: 5,
-        },
-      ],
-    },
-    {
-      name: "kem",
-      listedPrice: 9000,
-      discountPrice: 7000,
-      img: "kem.jpg",
-      sold: 1234,
-      vote: [
-        {
-          number: 5,
-        },
-        {
-          number: 4,
-        },
-      ],
-    },
-    {
-      name: "kem",
-      listedPrice: 9000,
-      discountPrice: 7000,
-      img: "kem.jpg",
-      sold: 1234,
-      vote: [
-        {
-          number: 5,
-        },
-        {
-          number: 3,
-        },
-      ],
-    },
-    {
-      name: "kem",
-      listedPrice: 9000,
-      discountPrice: 7000,
-      img: "kem.jpg",
-      sold: 0,
-      vote: [
-        {
-          number: 5,
-        },
-        {
-          number: 2,
-        },
-      ],
-    },
-    {
-      name: "Accusamus in voluptate",
-      listedPrice: 90000000,
-      discountPrice: 7000,
-      img: "kem.jpg",
-      sold: 12734,
-      vote: [
-        {
-          number: 5,
-        },
-        {
-          number: 1,
-        },
-      ],
-    },
-    {
-      name: "Accusamus in voluptate illum pariatur",
-      listedPrice: 9000,
-      discountPrice: 7000,
-      img: "kem.jpg",
-      sold: 123,
-      vote: [
-        {
-          number: 5,
-        },
-        {
-          number: 0,
-        },
-      ],
-    },
-  ]);
-
+  const [Product_is_hot, setProduct_is_hot] = useState([]);
+  const [Product_uu_dai, setProduct_uu_dai] = useState([]);
   useEffect(() => {
-    getslider().then((res) => {
-      setarray(res.data.listphotos);
+    getNews(1).then((res) => {
+      let mang = [];
+      for (let i = 0; i < res.data.data.length; i++) {
+        if (i <= 4) {
+          mang.push(res.data.data[i]);
+        } else {
+          break;
+        }
+      }
+      console.log(res.data.data);
+      setnews(mang);
     });
-    const number = [];
-    const mang = [];
-    const gia = [];
-    Product.map((item) => {
-      let tong = 0;
-      let q = "";
-      let ok = 0;
-      let giamgia = 0;
-      item.vote.map((V) => {
-        tong = tong + V.number;
+    getProduct().then((res) => {
+      const mang = [];
+      const gia = [];
+      // console.log(res.data);
+      res.data.map((item) => {
+        let q = "";
+        let ok = 0;
+        let giamgia = 0;
+
+        if (item.sold >= 1000) {
+          ok = item.sold / 1000;
+          ok = ok.toFixed(1);
+          q = `${ok}k`;
+        } else {
+          q = `${item.sold}`;
+        }
+        mang.push(q);
+
+        giamgia = 100 - (item.discountPrice / item.listedPrice) * 100;
+        giamgia = giamgia.toFixed(0);
+        if (giamgia === 100 || giamgia > 99.9) giamgia = 99;
+        gia.push(giamgia);
         return <div></div>;
       });
-      number.push(tong / item.vote.length);
+      setsold(mang);
+      setgiam(gia);
+      let d1 = 0;
+      let d2 = 0;
+      let d3 = 0;
+      let mangis = [];
+      let manguu = [];
+      let mangA = [];
+      for (let i = 0; i < res.data.length; i++) {
+        if (res.data[i].is_hot && d1 <= 4) {
+          mangis.push(res.data[i]);
+          d1++;
+        }
+        if (res.data[i].discountPrice && d2 <= 4) {
+          manguu.push(res.data[i]);
+          d2++;
+        }
+        if (res.data[i].in_slider && d3 <= 4) {
+          mangA.push(res.data[i]);
 
-      if (item.sold >= 1000) {
-        ok = item.sold / 1000;
-        ok = ok.toFixed(1);
-        q = `${ok}k`;
-      } else {
-        q = `${item.sold}`;
+          d3++;
+        }
+        if (d1 === 5 && d2 === 5 && d3 === 5) {
+          setProduct_is_hot(mangis);
+          setProduct_uu_dai(manguu);
+          setarray(mangA);
+          break;
+        }
       }
-      mang.push(q);
-
-      giamgia = 100 - (item.discountPrice / item.listedPrice) * 100;
-      giamgia = giamgia.toFixed(0);
-      if (giamgia === 100 || giamgia > 99.9) giamgia = 99;
-      gia.push(giamgia);
-      return <div></div>;
     });
-    setsold(mang);
-    setarray_vote(number);
-    setgiam(gia);
-  }, [Product]);
+  }, []);
 
   const [show_acc, setShow_acc] = useState(false);
 
@@ -243,63 +153,63 @@ export default function Home() {
   const ok = (item) => {
     return (
       <Carousel.Item>
-        <img className="d-block w-100" src={item} alt="" />
+        <Link to={"/detail-product/" + item._id}>
+          <img className="d-block w-100" src={item.img} alt="" />
+        </Link>
       </Carousel.Item>
     );
   };
 
   const pro = (item, index) => {
-    if (index <= 4) {
-      let string_name = "";
-      let d = 0;
-      for (let i = 0; i < item.name.length; i++) {
-        if (d <= 3) {
-          if (item.name[i] === " ") d++;
-          if (d < 4) string_name += item.name[i];
-        } else {
-          string_name += "...";
-          break;
-        }
+    let string_name = "";
+    let d = 0;
+    for (let i = 0; i < item.name.length; i++) {
+      if (d <= 5) {
+        if (item.name[i] === " ") d++;
+        if (d < 6) string_name += item.name[i];
+      } else {
+        string_name += "...";
+        break;
       }
-      return (
+    }
+    return (
+      <Link to={"/detail-product/" + item._id}>
         <div className="hover1">
           <img className="img_pro" src={item.img} alt="" />
-
           <div style={{ padding: "1vw 1vw 0vw 1vw" }}>
             <div className="name_pro">
               {string_name.charAt(0).toUpperCase() + string_name.slice(1)}
             </div>
             <div className="sl">
-              <div>{sao(array_vote[index])}</div>
+              <div>{sao(item.vote)}</div>
               <div>
                 {sold[index] === "0" ? "" : <div>Đã bán {sold[index]}</div>}
               </div>
             </div>
           </div>
-
           <div className="listedPrice">
             {phay(item.listedPrice)}
             <div className="d">đ</div>
           </div>
         </div>
-      );
-    }
+      </Link>
+    );
   };
 
   const duct = (item, index) => {
-    if (index <= 4) {
-      let string_name = "";
-      let d = 0;
-      for (let i = 0; i < item.name.length; i++) {
-        if (d <= 3) {
-          if (item.name[i] === " ") d++;
-          if (d < 4) string_name += item.name[i];
-        } else {
-          string_name += "...";
-          break;
-        }
+    let string_name = "";
+    let d = 0;
+    for (let i = 0; i < item.name.length; i++) {
+      if (d <= 5) {
+        if (item.name[i] === " ") d++;
+        if (d < 6) string_name += item.name[i];
+      } else {
+        string_name += "...";
+        break;
       }
-      return (
+    }
+    return (
+      <Link to={"/detail-product/" + item._id}>
         <div className="hover1">
           <img className="img_pro" src={item.img} alt="" />
           <div style={{ padding: "1vw 1vw 0vw 1vw" }}>
@@ -307,23 +217,32 @@ export default function Home() {
               {string_name.charAt(0).toUpperCase() + string_name.slice(1)}
             </div>
             <div className="sl">
-              <div>{sao(array_vote[index])}</div>
+              <div>{sao(item.vote)}</div>
               <div>
                 {sold[index] === "0" ? "" : <div>Đã bán {sold[index]}</div>}
               </div>
             </div>
           </div>
 
-          <div className="discountPrice">
-            <div style={{ display: "flex" }}>
-              {phay(item.discountPrice)}
+          <div
+            className={
+              item.discountPrice > 0 ? "listedPrice list2" : "listedPrice"
+            }
+            style={{ color: item.discountPrice > 0 ? "red" : "black" }}
+          >
+            <div className="flex">
+              {phay(
+                item.discountPrice > 0 ? item.discountPrice : item.listedPrice
+              )}
               <div className="d">đ</div>
             </div>
-            <div className="giam">-{giam[index]}%</div>
+            {item.discountPrice > 0 ? (
+              <div className="giamgia giam">-{giam[index]}%</div>
+            ) : null}
           </div>
         </div>
-      );
-    }
+      </Link>
+    );
   };
 
   const phay = (x) => {
@@ -336,25 +255,25 @@ export default function Home() {
   const sao = (item) => {
     // console.log(item)
     let anh = "";
-    if (item === 0) anh = "saorong.png";
-    if (item > 0 && item < 1) anh = "saoxin.png";
-    if (item >= 1) anh = "saodac.png";
+    if (item === 0) anh = "/saorong.png";
+    if (item > 0 && item < 1) anh = "/saoxin.png";
+    if (item >= 1) anh = "/saodac.png";
     let anh1 = "";
-    if (item < 2) anh1 = "saorong.png";
-    if (item > 1 && item < 2) anh1 = "saoxin.png";
-    if (item >= 2) anh1 = "saodac.png";
+    if (item < 2) anh1 = "/saorong.png";
+    if (item > 1 && item < 2) anh1 = "/saoxin.png";
+    if (item >= 2) anh1 = "/saodac.png";
     let anh2 = "";
-    if (item < 3) anh2 = "saorong.png";
-    if (item > 2 && item < 3) anh2 = "saoxin.png";
-    if (item >= 3) anh2 = "saodac.png";
+    if (item < 3) anh2 = "/saorong.png";
+    if (item > 2 && item < 3) anh2 = "/saoxin.png";
+    if (item >= 3) anh2 = "/saodac.png";
     let anh3 = "";
-    if (item < 4) anh3 = "saorong.png";
-    if (item > 3 && item < 4) anh3 = "saoxin.png";
-    if (item >= 4) anh3 = "saodac.png";
+    if (item < 4) anh3 = "/saorong.png";
+    if (item > 3 && item < 4) anh3 = "/saoxin.png";
+    if (item >= 4) anh3 = "/saodac.png";
     let anh4 = "";
-    if (item < 5) anh4 = "saorong.png";
-    if (item > 4 && item < 5) anh4 = "saoxin.png";
-    if (item >= 5) anh4 = "saodac.png";
+    if (item < 5) anh4 = "/saorong.png";
+    if (item > 4 && item < 5) anh4 = "/saoxin.png";
+    if (item >= 5) anh4 = "/saodac.png";
     return (
       <div style={{ display: "flex" }}>
         <img src={anh} className="sao" alt=""></img>
@@ -371,24 +290,16 @@ export default function Home() {
   }
 
   const map_news = (item, index) => {
+    // getUserById(item.creator_id).then((res) => {
+    //   item.avater = res.data.avatar;
+    // });
     const date = new Date(item.createdAt);
     const day = validateNiceNumber(date.getDate());
     const month = validateNiceNumber(date.getMonth());
     const ok = month_3[month];
-    let string_content = "";
-    let d = 0;
-    for (let i = 0; i < item.content.length; i++) {
-      if (d <= 20) {
-        if (item.content[i] === " ") d++;
-        if (d < 21) string_content += item.content[i];
-      } else {
-        string_content += "...";
-        break;
-      }
-    }
 
     let string_name = "";
-    d = 0;
+    let d = 0;
     for (let i = 0; i < item.title.length; i++) {
       if (d <= 5) {
         if (item.title[i] === " ") d++;
@@ -404,6 +315,9 @@ export default function Home() {
           <div>
             <div style={{ display: "flex" }}>
               <div style={{ marginRight: "10px" }}>
+                {/* {item.avatar ? (
+                  
+                ) : null} */}
                 <img src={item.avatar} className="avatar_news" alt="" />
               </div>
               <div style={{ marginRight: "5px" }}>
@@ -421,14 +335,13 @@ export default function Home() {
                   {string_name.charAt(0).toUpperCase() + string_name.slice(1)}
                 </div>
                 <div className="cont">
-                  {string_content.charAt(0).toUpperCase() +
-                    string_content.slice(1)}
+                  {/* {ReactHtmlParser(item.content)} */}
                 </div>
-                <div className="hastack">{item.hastack.map(map_hastack)}</div>
+                {/* <div className="hastack">{item.hastack.map(map_hastack)}</div> */}
               </div>
             </div>
           </div>
-          <img className="img_news" src={item.img} alt="" />
+          {/* <img className="img_news" src={item.img} alt="" /> */}
         </div>
       </div>
     );
@@ -455,13 +368,20 @@ export default function Home() {
   const gotoProduct = () => {
     navigate("/product");
   };
-
+  const gotoCart = () => {
+    if (Avatar) navigate("/cart");
+    else {
+      setShow_acc(true);
+    }
+  };
   const submit = () => {
     const body = {
       username,
       password,
     };
-    if (
+    if (username.length === 0 || password === 0) {
+      seterr("Phải nhập đủ tên đăng nhập và mật khẩu");
+    } else if (
       username.length < 8 ||
       username.length > 30 ||
       password.length > 30 ||
@@ -474,6 +394,7 @@ export default function Home() {
           seterr("Tên đăng nhập hoặc mật khẩu sai");
         } else if (res.data.message === "Login successfully!") {
           setToken(res.data.accessToken);
+          props.them();
           localStorage.setItem("accessToken", res.data.accessToken);
           setShow_acc(false);
           seterr("");
@@ -489,7 +410,12 @@ export default function Home() {
       <div className="windown layer1">
         <div className="header" id="header_top">
           <div className="ok1">
-            <img src="menu.png" className="menu1" onClick={handleShow} alt="" />
+            <img
+              src="/menu.png"
+              className="menu1"
+              onClick={handleShow}
+              alt=""
+            />
 
             <Offcanvas show={show} onHide={handleClose}>
               <Offcanvas.Header closeButton>
@@ -503,7 +429,7 @@ export default function Home() {
                     type="text"
                     placeholder="Search"
                   />
-                  <img className="layer" src="Layer.png" alt="" />
+                  <img className="layer" src="/Layer.png" alt="" />
                 </div>
                 <div className="text_header1">Trang Chủ</div>
                 <div className="text_header1" onClick={gotoProduct}>
@@ -522,26 +448,28 @@ export default function Home() {
               <div>
                 <img
                   className="logo"
-                  src="./logo-removebg-preview (1).png"
+                  src="/logo-removebg-preview (1).png"
                   alt=""
                 />
               </div>
               <div style={{ width: "80px", opacity: "0.8" }}>
-                <img className="logo-chu" src="./logo-chu.png" alt="" />
+                <img className="logo-chu" src="/logo-chu.png" alt="" />
               </div>
             </div>
           </div>
           <div>
             <div className="ok1">
-              <div style={{ display: "flex" }}>
+              <div style={{ display: "flex" }} onClick={gotoCart}>
                 <OverlayTrigger
                   key="bottom"
                   placement="bottom"
                   overlay={<Tooltip id="tooltip-bottom">Giỏ hàng</Tooltip>}
                 >
-                  <img className="shop" src="Shop.png" alt="" />
+                  <img className="shop" src="/Shop.png" alt="" />
                 </OverlayTrigger>
-                <div className="donhang">999</div>
+                <div className="donhang">
+                  {props.soluong ? props.soluong : 0}
+                </div>
               </div>
               <div>
                 <OverlayTrigger
@@ -564,7 +492,7 @@ export default function Home() {
                     <img
                       className="shop shop1"
                       onClick={handle_accShow}
-                      src="acc.png"
+                      src="/acc.png"
                       alt=""
                     />
                   )}
@@ -573,13 +501,12 @@ export default function Home() {
             </div>
           </div>
           <div className="ok2">
-            <div className="text_header text_header_first">Trang Chủ</div>
+            <div className="text_header text_header_first">Trang chủ</div>
             <div className="text_header" onClick={gotoProduct}>
-              Sản Phẩm
+              Sản phẩm
             </div>
-            <div className="text_header">Tin Tức</div>
+            <div className="text_header">Tin tức</div>
             <div className="text_header">Hỏi đáp</div>
-            {/* <div className="Us">Us</div> */}
           </div>
           <div className="img_last">
             <div>
@@ -591,17 +518,17 @@ export default function Home() {
               />
             </div>
             <div>
-              <img className="layer" src="Layer.png" alt="" />
+              <img className="layer" src="/Layer.png" alt="" />
             </div>
-            <div style={{ display: "flex" }}>
+            <div style={{ display: "flex" }} onClick={gotoCart}>
               <OverlayTrigger
                 key="bottom"
                 placement="bottom"
                 overlay={<Tooltip id="tooltip-bottom">Giỏ hàng</Tooltip>}
               >
-                <img className="shop" src="Shop.png" alt="" />
+                <img className="shop" src="/Shop.png" alt="" />
               </OverlayTrigger>
-              <div className="donhang">100</div>
+              <div className="donhang">{props.soluong ? props.soluong : 0}</div>
             </div>
             <div>
               <OverlayTrigger
@@ -624,7 +551,7 @@ export default function Home() {
                   <img
                     className="shop shop1"
                     onClick={handle_accShow}
-                    src="acc.png"
+                    src="/acc.png"
                     alt=""
                   />
                 )}
@@ -646,7 +573,7 @@ export default function Home() {
           </div>
         </div>
 
-        <div className="product1">{Product.map(pro)}</div>
+        <div className="product1">{Product_is_hot.map(pro)}</div>
 
         <div className="chu_gt" id="uu_dai">
           <div className="list">
@@ -657,7 +584,7 @@ export default function Home() {
           </div>
         </div>
 
-        <div className="product1">{Product.map(duct)}</div>
+        <div className="product1">{Product_uu_dai.map(duct)}</div>
 
         <div className="chu_gt" id="top_news">
           <div className="list">
@@ -665,7 +592,6 @@ export default function Home() {
           </div>
           <div className="bonus">Xem thêm -></div>
         </div>
-
         <div className="news-moom">{news.map(map_news)}</div>
         <div className="newslettler">
           <Form>
@@ -716,54 +642,56 @@ export default function Home() {
 
         <div className="footer2">
           <div style={{ flex: "1", cursor: "pointer" }}>
-            <div className="menu">Trang Chủ</div>
-            <div className="menu">Sản Phẩm</div>
-            <div className="menu">Tin Tức</div>
+            <div className="menu">Trang chủ</div>
+            <div className="menu" onClick={gotoProduct}>
+              Sản phẩm
+            </div>
+            <div className="menu">Tin tức</div>
             <div className="menu us">
               <div>Hỏi đáp</div>
               {/* <div style={{ marginLeft: "2px" }}>us</div> */}
             </div>
           </div>
           <div className="footer_flex">
-            <img src="tt1.png" className="img_footer" alt="" />
+            <img src="/tt1.png" className="img_footer" alt="" />
             <div>
-              <img src="tt2.png" className="img_footer_1" alt="" />
+              <img src="/tt2.png" className="img_footer_1" alt="" />
             </div>
           </div>
           <div className="footer_flex"></div>
           <div className="footer_flex">
-            <img src="app1.png" className="img_footer app" alt="" />
+            <img src="/app1.png" className="img_footer app" alt="" />
             <div>
-              <img src="app2.png" className="img_footer app" alt="" />
+              <img src="/app2.png" className="img_footer app" alt="" />
             </div>
           </div>
         </div>
       </div>
       <div className="layer2" style={{ zIndex: scrollTop > 40 ? "2" : "0" }}>
         <div className="on_top">
-          <Link activeClass="active" to="header_top">
+          <Scroll.Link activeClass="active" to="header_top">
             <div className="img_left">
               <OverlayTrigger
                 key="right"
                 placement="right"
-                overlay={<Tooltip id="tooltip-right">To the top</Tooltip>}
+                overlay={<Tooltip id="tooltip-right">Lên đầu trang</Tooltip>}
               >
-                <img src="onTop.png" alt="" />
+                <img src="/onTop.png" alt="" />
               </OverlayTrigger>
             </div>
-          </Link>
-          <Link activeClass="active" to="sp_hot">
+          </Scroll.Link>
+          <Scroll.Link activeClass="active" to="sp_hot">
             <div className="img_left">
               <OverlayTrigger
                 key="right"
                 placement="right"
                 overlay={<Tooltip id="tooltip-right">Sản phẩm nổi bật</Tooltip>}
               >
-                <img src="pie.png" alt="" />
+                <img src="/pie.png" alt="" />
               </OverlayTrigger>
             </div>
-          </Link>
-          <Link activeClass="active" to="uu_dai">
+          </Scroll.Link>
+          <Scroll.Link activeClass="active" to="uu_dai">
             <div className="img_left">
               <OverlayTrigger
                 key="right"
@@ -772,21 +700,21 @@ export default function Home() {
                   <Tooltip id="tooltip-right">Ưu đãi dành cho bạn</Tooltip>
                 }
               >
-                <img src="fire.png" alt="" />
+                <img src="/fire.png" alt="" />
               </OverlayTrigger>
             </div>
-          </Link>
-          <Link activeClass="active" to="top_news">
+          </Scroll.Link>
+          <Scroll.Link activeClass="active" to="top_news">
             <div className="img_left">
               <OverlayTrigger
                 key="right"
                 placement="right"
                 overlay={<Tooltip id="tooltip-right">Tin Tức</Tooltip>}
               >
-                <img src="newspaper.png" alt="" />
+                <img src="/newspaper.png" alt="" />
               </OverlayTrigger>
             </div>
-          </Link>
+          </Scroll.Link>
         </div>
       </div>
       <Modal show={show_acc} onHide={handle_accClose}>
@@ -807,6 +735,11 @@ export default function Home() {
           <div className="text_login">Mật khẩu: </div>
           <label className="signup-password">
             <input
+              onKeyUp={(e) => {
+                if (e.keyCode === 13) {
+                  submit();
+                }
+              }}
               className="login"
               type={passwordShown ? "text" : "password"}
               onChange={(e) => {
@@ -821,7 +754,7 @@ export default function Home() {
             />
           </label>
           <div className="check_loi">{err}</div>
-          <div className="signup-redirect" >
+          <div className="signup-redirect">
             Bạn chưa có tài khoản?
             <button id="redirect-signin" onClick={gotoRegister}>
               Đăng Ký

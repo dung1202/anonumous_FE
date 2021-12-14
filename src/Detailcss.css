@@ -23,6 +23,7 @@
   font-size: 0.8rem;
   width: 140px;
   height: 40px;
+  /* color: black; */
 }
 
 .Us {
@@ -71,14 +72,6 @@
 /* .hover:hover {
   box-shadow: 10px 5px 10px black;
 } */
-
-.hover {
-  border-radius: 10px;
-  cursor: pointer;
-  background-color: #ffffff;
-  margin: 10px;
-  margin-top: 20px !important;
-}
 
 .map_hastack {
   color: blue;
@@ -162,6 +155,7 @@
   background-color: white;
   border-radius: 10px;
   margin-right: 20px;
+  cursor: pointer;
 }
 
 .d {
@@ -313,14 +307,6 @@
   color: yellow;
 }
 
-.product {
-  display: flex;
-  flex-wrap: wrap;
-  padding-left: 4vw;
-  padding-right: 4vw;
-  justify-content: space-around;
-}
-
 .news-moom {
   margin-left: 5vw;
   margin-right: 5vw;
@@ -456,14 +442,26 @@
 
 .detail_sp {
   display: flex;
+}
+
+.rong {
   margin: 2vw 5vw 0px 5vw;
   background-color: white;
   border-radius: 5px;
   padding: 10px;
+  position: relative;
+}
+.tb {
+  position: absolute;
+  margin-top: -52%;
+  margin-left: 80%;
+  background-color: gray;
+  padding: 10px 20px 10px 20px;
+  border-radius: 10px;
+  color: white;
 }
 
 .img_slider .car {
-  /* position: relative; */
   height: 80vh;
   width: 30vw;
 }
@@ -473,18 +471,6 @@
 
 .img_slider {
   margin-right: 2vw;
-}
-
-@media only screen and (max-width: 1280px) and (min-width: 875px) {
-  .text_header {
-    font-size: 1rem;
-  }
-  .Us {
-    font-size: 1rem;
-  }
-  .on_top {
-    margin-top: 79vh;
-  }
 }
 .button_1 {
   outline: none;
@@ -506,6 +492,15 @@
 }
 .button_1:first-child {
   border-radius: 5px 0px 0px 5px;
+}
+
+@media only screen and (max-width: 1280px) and (min-width: 875px) {
+  .text_header {
+    font-size: 0.8rem;
+  }
+  .on_top {
+    margin-top: 79vh;
+  }
 }
 
 @media only screen and (max-width: 874px) and (min-width: 780px) {
@@ -789,10 +784,7 @@
   .bonus {
     font-size: 1rem;
   }
-  .hover {
-    margin-top: 0px;
-    /* width: 40vw; */
-  }
+
   .img_pro {
     width: 35vw;
     height: 35vw;
@@ -819,5 +811,11 @@
     height: 18px;
     font-size: 0.6rem;
     margin-top: 0.2vw;
+  }
+}
+
+@media only screen and (max-width: 420px) and (min-width: 0px) {
+  .menu_sp {
+    display: none;
   }
 }

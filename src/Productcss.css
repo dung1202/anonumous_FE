@@ -13,7 +13,7 @@
   margin-left: 4vw;
 }
 
-.page-link:focus{
+.page-link:focus {
   background-color: #e9ecef;
   box-shadow: none;
 }
@@ -23,6 +23,11 @@
   font-size: 0.8rem;
   width: 140px;
   height: 40px;
+  /* color: black; */
+}
+a {
+  text-decoration: none;
+  color: black;
 }
 
 .Us {
@@ -76,8 +81,7 @@
   border-radius: 10px;
   cursor: pointer;
   background-color: #ffffff;
-  margin: 10px;
-  margin-top: 20px !important;
+  margin: 20px 10px 10px 0px;
 }
 
 .map_hastack {
@@ -118,7 +122,7 @@
   height: 16.79px;
 }
 
-.img_pro {
+.img_pro1 {
   border-top-left-radius: 10px;
   border-top-right-radius: 10px;
   width: 173px;
@@ -129,8 +133,13 @@
   display: flex;
   padding-bottom: 0.5vw;
   padding-left: 1vw;
+  padding-right: 1vw;
   font-size: 1.1rem;
   font-weight: 600;
+}
+
+.list2{
+  justify-content: space-between;
 }
 
 .d {
@@ -146,16 +155,6 @@
   font-size: 1.1rem;
   font-weight: 600;
   justify-content: space-between;
-}
-
-.giam {
-  border: 1px solid red;
-  border-radius: 10px;
-  width: 40px;
-  text-align: center;
-  height: 23px;
-  font-size: 0.75rem;
-  margin-top: 0.2vw;
 }
 
 .sao {
@@ -288,7 +287,7 @@
   flex-wrap: wrap;
   padding-left: 4vw;
   padding-right: 4vw;
-  justify-content: space-around;
+  justify-content: space-between;
 }
 
 .news-moom {
@@ -396,7 +395,7 @@
   width: 66vw;
 } */
 
-.pro_slide{
+.pro_slide {
   margin-left: 2vw;
   flex: 1;
 }
@@ -417,16 +416,19 @@
   padding-left: 1vw;
   padding-right: 1vw;
 }
-.danhmuc{
+.danhmuc {
   cursor: pointer;
+}
+.giamgia {
+  align-items: flex-end;
+}
+.flex{
+  display: flex;
 }
 
 @media only screen and (max-width: 1280px) and (min-width: 875px) {
   .text_header {
-    font-size: 1rem;
-  }
-  .Us {
-    font-size: 1rem;
+    font-size: 0.8rem;
   }
   .on_top {
     margin-top: 79vh;
@@ -717,7 +719,7 @@
     font-size: 1rem;
   }
   .hover {
-    margin-top: 0px;
+    margin-top: 20px;
     /* width: 40vw; */
   }
   .img_pro {
@@ -734,10 +736,27 @@
   .news {
     margin-bottom: 10px;
   }
-  .giam {
-    width: 35px;
-    height: 18px;
-    font-size: 0.6rem;
-    margin-top: 0.2vw;
+  .hover{
+    margin-left: 0px;
+    margin-right: 0px;
+  }
+  .img_pro1{
+    width: 147px;
+    height: 147px;
+  }
+}
+
+@media only screen and (max-width: 600px) and (min-width: 0px) {
+  .menu_sp {
+    display: none;
+  }
+  
+}
+
+@media only screen and (max-width: 1030px) and (min-width: 0px) {
+ 
+  .product{
+    padding-left: 0px;
+    padding-right: 0px;
   }
 }
