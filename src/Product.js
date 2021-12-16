@@ -310,13 +310,11 @@ export default function Product(props) {
   };
 
   const trc = () => {
-    let o = currentPage - 1;
-    setcurrentPage(o);
+    load(currentPage - 1);
     window.scrollTo(0, 0);
   };
   const sau = () => {
-    let o = currentPage + 1;
-    setcurrentPage(o);
+    load(currentPage + 1);
     window.scrollTo(0, 0);
   };
   return (
