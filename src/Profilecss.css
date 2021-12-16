@@ -1,0 +1,31 @@
+.container_profile {
+  margin: 2vh 5vw 0vh 5vw;
+  background-color: white;
+  display: flex;
+  border-radius: 10px;
+  padding-bottom: 1vh;
+}
+
+.anh_profile {
+  width: 20vw;
+}
+
+.name_profile {
+  text-align: center;
+  font-weight: 600;
+}
+
+.dinhdanh{
+    display: flex;
+    flex: 1;
+}
+
+.ten_tieude{
+    font-weight: 600;
+}
+
+.noidung_tieude{
+    margin-left: 10px;
+    text-align: center;
+    
+}

@@ -294,7 +294,7 @@ export default function Home(props) {
     //   item.avater = res.data.avatar;
     // });
     const date = new Date(item.createdAt);
-    const day = validateNiceNumber(date.getDate());
+    const day = validateNiceNumber(date.getDate() + 1);
     const month = validateNiceNumber(date.getMonth());
     const ok = month_3[month];
 

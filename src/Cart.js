@@ -95,7 +95,10 @@ export default function Cart(props) {
       } catch (error) {
         setToken("");
         setAvatar("");
+        
       }
+    }else{
+      gotoHome();
     }
   }, [token]);
 
@@ -369,7 +372,9 @@ export default function Cart(props) {
                   />
                   <img className="layer" src="Layer.png" alt="" />
                 </div>
-                <div className="text_header1" onClick={gotoHome}>Trang Chủ</div>
+                <div className="text_header1" onClick={gotoHome}>
+                  Trang Chủ
+                </div>
                 <div className="text_header1" onClick={gotoProduct}>
                   Sản Phẩm
                 </div>
@@ -440,7 +445,9 @@ export default function Cart(props) {
           </div>
 
           <div className="ok2">
-            <div className="text_header text_header_first" onClick={gotoHome}>Trang Chủ</div>
+            <div className="text_header text_header_first" onClick={gotoHome}>
+              Trang Chủ
+            </div>
             <div className="text_header" onClick={gotoProduct}>
               Sản Phẩm
             </div>
@@ -593,8 +600,12 @@ export default function Cart(props) {
 
         <div className="footer2">
           <div style={{ flex: "1", cursor: "pointer" }}>
-            <div className="menu" onClick={gotoHome}>Trang Chủ</div>
-            <div className="menu" onClick={gotoProduct}>Sản Phẩm</div>
+            <div className="menu" onClick={gotoHome}>
+              Trang Chủ
+            </div>
+            <div className="menu" onClick={gotoProduct}>
+              Sản Phẩm
+            </div>
             <div className="menu">Tin Tức</div>
             <div className="menu us">
               <div>Hỏi đáp</div>

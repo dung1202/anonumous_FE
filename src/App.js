@@ -3,16 +3,19 @@ import Home from "./Home";
 import Product from "./Product";
 import Register from "./Register";
 import Cart from "./Cart";
-import { BrowserRouter, Routes, Route } from "react-router-dom";
+import Proflie from "./Profile";
 import DetailProduct from "./DetailProduct";
+import Edituser from "./Edituser";
+import { BrowserRouter, Routes, Route } from "react-router-dom";
 import { getCart, checkToken } from "./Axios";
 function App() {
   // tiendung
   // tiendung12345
   const [cart, setcart] = useState(0);
+
   useEffect(() => {
-    let token = localStorage.getItem("accessToken");
-    if (token) {
+    let Token = localStorage.getItem("accessToken");
+    if (Token) {
       try {
         checkToken().then((res) => {
           if (res.data.message === "Token is valid") {
@@ -25,6 +28,10 @@ function App() {
       } catch (error) {}
     }
   }, []);
+
+  const logout = () => {
+    setcart(0);
+  };
 
   const cartAdd = () => {
     getCart().then((res) => {
@@ -46,6 +53,14 @@ function App() {
         />
         <Route path="/register" element={<Register />} />
         <Route path="/cart" element={<Cart soluong={cart} />} />
+        <Route
+          path="/profile"
+          element={<Proflie soluong={cart} dangxuat={logout} />}
+        />
+        <Route
+          path="/edit"
+          element={<Edituser soluong={cart} />}
+        />
       </Routes>
     </BrowserRouter>
   );
