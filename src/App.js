@@ -8,6 +8,9 @@ import DetailProduct from "./DetailProduct";
 import Edituser from "./Edituser";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 import { getCart, checkToken } from "./Axios";
+// import NewsForUser from "./newsforUser/user_news";
+import News from "./News"
+
 function App() {
   // tiendung
   // tiendung12345
@@ -60,6 +63,10 @@ function App() {
         <Route
           path="/edit"
           element={<Edituser soluong={cart} />}
+        />
+        <Route
+          path="/news"
+          element={<News soluong={cart} />}
         />
       </Routes>
     </BrowserRouter>

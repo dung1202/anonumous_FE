@@ -24,6 +24,9 @@ export const getProductById = (id) => instance.get("/product/" + id);
 export const getNews = (number) => {
   return instance.get("/news?page=" + number);
 };
+export const getNewsById = (id) => {
+  return instance.get(`/news/${id}`);
+};
 
 export const getCart = () => instance.get("/cart/auth");
 export const addCart = (body) => instance.post("/cart/auth/additem", body);
