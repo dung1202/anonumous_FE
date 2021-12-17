@@ -29,20 +29,6 @@ export default function Home(props) {
   const [passwordShown, setPasswordShown] = useState(false);
   const togglePasswordVisibility = () =>
     setPasswordShown(!passwordShown ? true : false);
-  const [month_3] = useState([
-    "Jan",
-    "Feb",
-    "Mar",
-    "Apr",
-    "May",
-    "Jun",
-    "Jul",
-    "Aug",
-    "Sep",
-    "Oct",
-    "Nov",
-    "Dec",
-  ]);
   const [sold, setsold] = useState([]);
   const [giam, setgiam] = useState([]);
   const [token, setToken] = useState("");
@@ -294,21 +280,21 @@ export default function Home(props) {
     //   item.avater = res.data.avatar;
     // });
     const date = new Date(item.createdAt);
-    const day = validateNiceNumber(date.getDate() + 1);
-    const month = validateNiceNumber(date.getMonth());
-    const ok = month_3[month];
+    const day = validateNiceNumber(date.getDate());
+    const ok = validateNiceNumber(date.getMonth() + 1);
+    const nam = date.getFullYear();
 
-    let string_name = "";
-    let d = 0;
-    for (let i = 0; i < item.title.length; i++) {
-      if (d <= 5) {
-        if (item.title[i] === " ") d++;
-        if (d < 11) string_name += item.title[i];
-      } else {
-        string_name += "...";
-        break;
-      }
-    }
+    // let string_name = "";
+    // let d = 0;
+    // for (let i = 0; i < item.title.length; i++) {
+    //   if (d <= 5) {
+    //     if (item.title[i] === " ") d++;
+    //     if (d < 11) string_name += item.title[i];
+    //   } else {
+    //     string_name += "...";
+    //     break;
+    //   }
+    // }
     return (
       <div className="news">
         <div style={{ display: "flex", justifyContent: "space-between" }}>
@@ -325,14 +311,15 @@ export default function Home(props) {
                   {item.creator}
                 </div>
                 <div className="user_news">
-                  {ok} {day}
+                  {day}/{ok}/{nam}
                 </div>
               </div>
             </div>
             <div style={{ display: "flex", justifyContent: "space-between" }}>
               <div>
                 <div className="content">
-                  {string_name.charAt(0).toUpperCase() + string_name.slice(1)}
+                  {/* {string_name.charAt(0).toUpperCase() + string_name.slice(1)} */}
+                  {item.title.charAt(0).toUpperCase() + item.title.slice(1)}
                 </div>
                 <div className="cont">
                   {/* {ReactHtmlParser(item.content)} */}

@@ -115,17 +115,17 @@ export default function News(props) {
     const ok = validateNiceNumber(date.getMonth() + 1);
     const nam = date.getFullYear();
 
-    let string_name = "";
-    let d = 0;
-    for (let i = 0; i < item.title.length; i++) {
-      if (d <= 5) {
-        if (item.title[i] === " ") d++;
-        if (d < 11) string_name += item.title[i];
-      } else {
-        string_name += "...";
-        break;
-      }
-    }
+    // let string_name = "";
+    // let d = 0;
+    // for (let i = 0; i < item.title.length; i++) {
+    //   if (d <= 5) {
+    //     if (item.title[i] === " ") d++;
+    //     if (d < 11) string_name += item.title[i];
+    //   } else {
+    //     string_name += "...";
+    //     break;
+    //   }
+    // }
     return (
       <div className="news">
         <div style={{ display: "flex", justifyContent: "space-between" }}>
@@ -149,7 +149,8 @@ export default function News(props) {
             <div style={{ display: "flex", justifyContent: "space-between" }}>
               <div>
                 <div className="content">
-                  {string_name.charAt(0).toUpperCase() + string_name.slice(1)}
+                  {/* {string_name.charAt(0).toUpperCase() + string_name.slice(1)} */}
+                  {item.title.charAt(0).toUpperCase() + item.title.slice(1)}
                 </div>
                 <div className="cont">
                   {/* {ReactHtmlParser(item.content)} */}
