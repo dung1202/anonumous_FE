@@ -29,20 +29,7 @@ export default function Home(props) {
   const [passwordShown, setPasswordShown] = useState(false);
   const togglePasswordVisibility = () =>
     setPasswordShown(!passwordShown ? true : false);
-  const [month_3] = useState([
-    "Jan",
-    "Feb",
-    "Mar",
-    "Apr",
-    "May",
-    "Jun",
-    "Jul",
-    "Aug",
-    "Sep",
-    "Oct",
-    "Nov",
-    "Dec",
-  ]);
+  
   const [sold, setsold] = useState([]);
   const [giam, setgiam] = useState([]);
   const [token, setToken] = useState("");
@@ -295,8 +282,8 @@ export default function Home(props) {
     // });
     const date = new Date(item.createdAt);
     const day = validateNiceNumber(date.getDate());
-    const month = validateNiceNumber(date.getMonth() + 1);
-    const ok = month_3[month];
+    const ok = validateNiceNumber(date.getMonth() + 1);
+    const nam = date.getFullYear();
 
     let string_name = "";
     let d = 0;
@@ -325,7 +312,7 @@ export default function Home(props) {
                   {item.creator}
                 </div>
                 <div className="user_news">
-                  {ok} {day}
+                  {day}/{ok}/{nam}
                 </div>
               </div>
             </div>
