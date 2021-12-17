@@ -95,10 +95,7 @@ export default function Cart(props) {
       } catch (error) {
         setToken("");
         setAvatar("");
-        
       }
-    }else{
-      gotoHome();
     }
   }, [token]);
 
@@ -353,346 +350,363 @@ export default function Cart(props) {
 
   return (
     <div>
-      <div className="windown layer1">
-        <div className="header" id="header_top">
-          <div className="ok1">
-            <img src="menu.png" className="menu1" onClick={handleShow} alt="" />
+      {token ? (
+        <div>
+          <div className="windown layer1">
+            <div className="header" id="header_top">
+              <div className="ok1">
+                <img
+                  src="menu.png"
+                  className="menu1"
+                  onClick={handleShow}
+                  alt=""
+                />
 
-            <Offcanvas show={show} onHide={handleClose}>
-              <Offcanvas.Header closeButton>
-                <Offcanvas.Title>Menu</Offcanvas.Title>
-              </Offcanvas.Header>
-              <Offcanvas.Body>
-                <div style={{ display: "flex", marginBottom: "20px" }}>
+                <Offcanvas show={show} onHide={handleClose}>
+                  <Offcanvas.Header closeButton>
+                    <Offcanvas.Title>Menu</Offcanvas.Title>
+                  </Offcanvas.Header>
+                  <Offcanvas.Body>
+                    <div style={{ display: "flex", marginBottom: "20px" }}>
+                      <input
+                        style={{ marginTop: "17px" }}
+                        className="input"
+                        type="text"
+                        placeholder="Search"
+                      />
+                      <img className="layer" src="Layer.png" alt="" />
+                    </div>
+                    <div className="text_header1" onClick={gotoHome}>
+                      Trang Chủ
+                    </div>
+                    <div className="text_header1" onClick={gotoProduct}>
+                      Sản Phẩm
+                    </div>
+                    <div className="text_header1">Tin Tức</div>
+                    <div style={{ display: "flex" }}>
+                      <div className="text_header1">Hỏi đáp</div>
+                      {/* <div className="text_header1 Us1">Us</div> */}
+                    </div>
+                  </Offcanvas.Body>
+                </Offcanvas>
+              </div>
+              <div>
+                <div className="ok" style={{ display: "flex", flex: "1" }}>
+                  <div>
+                    <img
+                      className="logo"
+                      src="./logo-removebg-preview (1).png"
+                      alt=""
+                    />
+                  </div>
+                  <div style={{ width: "80px", opacity: "0.8" }}>
+                    <img className="logo-chu" src="./logo-chu.png" alt="" />
+                  </div>
+                </div>
+              </div>
+              <div>
+                <div className="ok1">
+                  <div style={{ display: "flex" }}>
+                    <OverlayTrigger
+                      key="bottom"
+                      placement="bottom"
+                      overlay={<Tooltip id="tooltip-bottom">Giỏ hàng</Tooltip>}
+                    >
+                      <img className="shop" src="Shop.png" alt="" />
+                    </OverlayTrigger>
+                    <div className="donhang">
+                      {props.soluong ? props.soluong : 0}
+                    </div>
+                  </div>
+                  <div>
+                    <OverlayTrigger
+                      key="bottom"
+                      placement="bottom"
+                      overlay={
+                        <Tooltip id="tooltip-bottom">
+                          {Avatar ? "Profile" : "Sign In"}
+                        </Tooltip>
+                      }
+                    >
+                      {Avatar ? (
+                        <img
+                          className="shop shop1"
+                          // onClick={handle_accShow}
+                          src={Avatar}
+                          alt=""
+                        />
+                      ) : (
+                        <img
+                          className="shop shop1"
+                          onClick={handle_accShow}
+                          src="acc.png"
+                          alt=""
+                        />
+                      )}
+                    </OverlayTrigger>
+                  </div>
+                </div>
+              </div>
+
+              <div className="ok2">
+                <div
+                  className="text_header text_header_first"
+                  onClick={gotoHome}
+                >
+                  Trang Chủ
+                </div>
+                <div className="text_header" onClick={gotoProduct}>
+                  Sản Phẩm
+                </div>
+                <div className="text_header">Tin Tức</div>
+                <div className="text_header">Hỏi đáp</div>
+                {/* <div className="Us">Us</div> */}
+              </div>
+              <div className="img_last">
+                <div>
                   <input
                     style={{ marginTop: "17px" }}
                     className="input"
                     type="text"
                     placeholder="Search"
                   />
+                </div>
+                <div>
                   <img className="layer" src="Layer.png" alt="" />
                 </div>
-                <div className="text_header1" onClick={gotoHome}>
-                  Trang Chủ
-                </div>
-                <div className="text_header1" onClick={gotoProduct}>
-                  Sản Phẩm
-                </div>
-                <div className="text_header1">Tin Tức</div>
                 <div style={{ display: "flex" }}>
-                  <div className="text_header1">Hỏi đáp</div>
-                  {/* <div className="text_header1 Us1">Us</div> */}
+                  <OverlayTrigger
+                    key="bottom"
+                    placement="bottom"
+                    overlay={<Tooltip id="tooltip-bottom">Giỏ hàng</Tooltip>}
+                  >
+                    <img className="shop" src="Shop.png" alt="" />
+                  </OverlayTrigger>
+                  <div className="donhang">
+                    {props.soluong ? props.soluong : 0}
+                  </div>
                 </div>
-              </Offcanvas.Body>
-            </Offcanvas>
-          </div>
-          <div>
-            <div className="ok" style={{ display: "flex", flex: "1" }}>
-              <div>
-                <img
-                  className="logo"
-                  src="./logo-removebg-preview (1).png"
-                  alt=""
-                />
-              </div>
-              <div style={{ width: "80px", opacity: "0.8" }}>
-                <img className="logo-chu" src="./logo-chu.png" alt="" />
-              </div>
-            </div>
-          </div>
-          <div>
-            <div className="ok1">
-              <div style={{ display: "flex" }}>
-                <OverlayTrigger
-                  key="bottom"
-                  placement="bottom"
-                  overlay={<Tooltip id="tooltip-bottom">Giỏ hàng</Tooltip>}
-                >
-                  <img className="shop" src="Shop.png" alt="" />
-                </OverlayTrigger>
-                <div className="donhang">
-                  {props.soluong ? props.soluong : 0}
-                </div>
-              </div>
-              <div>
-                <OverlayTrigger
-                  key="bottom"
-                  placement="bottom"
-                  overlay={
-                    <Tooltip id="tooltip-bottom">
-                      {Avatar ? "Profile" : "Sign In"}
-                    </Tooltip>
-                  }
-                >
-                  {Avatar ? (
-                    <img
-                      className="shop shop1"
-                      // onClick={handle_accShow}
-                      src={Avatar}
-                      alt=""
-                    />
-                  ) : (
-                    <img
-                      className="shop shop1"
-                      onClick={handle_accShow}
-                      src="acc.png"
-                      alt=""
-                    />
-                  )}
-                </OverlayTrigger>
-              </div>
-            </div>
-          </div>
-
-          <div className="ok2">
-            <div className="text_header text_header_first" onClick={gotoHome}>
-              Trang Chủ
-            </div>
-            <div className="text_header" onClick={gotoProduct}>
-              Sản Phẩm
-            </div>
-            <div className="text_header">Tin Tức</div>
-            <div className="text_header">Hỏi đáp</div>
-            {/* <div className="Us">Us</div> */}
-          </div>
-          <div className="img_last">
-            <div>
-              <input
-                style={{ marginTop: "17px" }}
-                className="input"
-                type="text"
-                placeholder="Search"
-              />
-            </div>
-            <div>
-              <img className="layer" src="Layer.png" alt="" />
-            </div>
-            <div style={{ display: "flex" }}>
-              <OverlayTrigger
-                key="bottom"
-                placement="bottom"
-                overlay={<Tooltip id="tooltip-bottom">Giỏ hàng</Tooltip>}
-              >
-                <img className="shop" src="Shop.png" alt="" />
-              </OverlayTrigger>
-              <div className="donhang">{props.soluong ? props.soluong : 0}</div>
-            </div>
-            <div>
-              <OverlayTrigger
-                key="bottom"
-                placement="bottom"
-                overlay={
-                  <Tooltip id="tooltip-bottom">
-                    {Avatar ? "Profile" : "Sign In"}
-                  </Tooltip>
-                }
-              >
-                {Avatar ? (
-                  <img
-                    className="shop shop1"
-                    // onClick={handle_accShow}
-                    src={Avatar}
-                    alt=""
-                  />
-                ) : (
-                  <img
-                    className="shop shop1"
-                    onClick={handle_accShow}
-                    src="acc.png"
-                    alt=""
-                  />
-                )}
-              </OverlayTrigger>
-            </div>
-          </div>
-        </div>
-        {cart.length ? (
-          <div>
-            <div className="tieude">
-              <div style={{ flex: "0.7" }}>
-                Stt
-                <div style={{ display: "flex" }}>
-                  <input
-                    type="checkbox"
-                    checked={checkBoxAll}
-                    onChange={() => {
-                      changeAll();
-                    }}
-                  />
-                  {checkBoxAll ? (
-                    <div>
+                <div>
+                  <OverlayTrigger
+                    key="bottom"
+                    placement="bottom"
+                    overlay={
+                      <Tooltip id="tooltip-bottom">
+                        {Avatar ? "Profile" : "Sign In"}
+                      </Tooltip>
+                    }
+                  >
+                    {Avatar ? (
                       <img
-                        className="anhtd"
+                        className="shop shop1"
+                        // onClick={handle_accShow}
+                        src={Avatar}
                         alt=""
-                        onClick={handleShowXoaAll}
-                        src="/xoa-item.png"
+                      />
+                    ) : (
+                      <img
+                        className="shop shop1"
+                        onClick={handle_accShow}
+                        src="acc.png"
+                        alt=""
+                      />
+                    )}
+                  </OverlayTrigger>
+                </div>
+              </div>
+            </div>
+            {cart.length ? (
+              <div>
+                <div className="tieude">
+                  <div style={{ flex: "0.7" }}>
+                    Stt
+                    <div style={{ display: "flex" }}>
+                      <input
+                        type="checkbox"
+                        checked={checkBoxAll}
+                        onChange={() => {
+                          changeAll();
+                        }}
+                      />
+                      {checkBoxAll ? (
+                        <div>
+                          <img
+                            className="anhtd"
+                            alt=""
+                            onClick={handleShowXoaAll}
+                            src="/xoa-item.png"
+                          />
+                        </div>
+                      ) : null}
+                    </div>
+                  </div>
+                  <div style={{ flex: "1" }}>Ảnh</div>
+                  <div style={{ flex: "2" }}>Tên sản phẩm</div>
+                  <div style={{ flex: "2.2" }}>Đơn giá</div>
+                  <div style={{ flex: "2" }}>Số lượng</div>
+                  <div className="mua">
+                    Mua hàng
+                    <div className="thanhTienTo">
+                      {phay(tien)}
+                      <div className="d">đ</div>
+                    </div>
+                  </div>
+                </div>
+                <div className="cart">{cart.map(map_cart)}</div>
+              </div>
+            ) : (
+              <div className="rong-to">
+                <img className="rong" alt="" src="/empty-cart.png" />
+              </div>
+            )}
+
+            <div className="newslettler">
+              <Form>
+                <Form.Group
+                  as={Row}
+                  className="mb-3"
+                  controlId="formHorizontalEmail"
+                >
+                  <Form.Label style={{ color: "black" }} column sm={10}>
+                    <div style={{ fontSize: "1.3rem" }}>Cập nhật tin tức</div>
+                    <div style={{ fontSize: "0.7rem" }}>
+                      Đăng ký để nhận các ưu đãi khuyến mại mới nhất từ Voucher
+                      Hunter
+                    </div>
+                  </Form.Label>
+                  <Col sm={9}>
+                    <div style={{ display: "flex" }}>
+                      <Form.Control
+                        style={{ width: "45vw" }}
+                        type="email"
+                        placeholder="Email"
+                      />
+                      <input
+                        style={{
+                          width: "90px",
+                          textAlign: "center",
+                          backgroundColor: "rgb(251, 38, 38)",
+                          borderColor: "rgb(251, 38, 38)",
+                          color: "#ffffff",
+                          outline: "none",
+                          cursor: "pointer",
+                          borderRadius: "0px 10px 10px 0px",
+                        }}
+                        value="ĐĂNG KÝ"
+                        readOnly={true}
                       />
                     </div>
-                  ) : null}
+                  </Col>
+                </Form.Group>
+              </Form>
+            </div>
+            <div className="footer1">
+              <div className="footer_flex">Menu</div>
+              <div className="footer_flex">Thanh Toán</div>
+              <div className="footer_flex">Đối tác liên kết</div>
+              <div className="footer_flex">Mobile app</div>
+            </div>
+
+            <div className="footer2">
+              <div style={{ flex: "1", cursor: "pointer" }}>
+                <div className="menu" onClick={gotoHome}>
+                  Trang Chủ
+                </div>
+                <div className="menu" onClick={gotoProduct}>
+                  Sản Phẩm
+                </div>
+                <div className="menu">Tin Tức</div>
+                <div className="menu us">
+                  <div>Hỏi đáp</div>
+                  {/* <div style={{ marginLeft: "2px" }}>us</div> */}
                 </div>
               </div>
-              <div style={{ flex: "1" }}>Ảnh</div>
-              <div style={{ flex: "2" }}>Tên sản phẩm</div>
-              <div style={{ flex: "2.2" }}>Đơn giá</div>
-              <div style={{ flex: "2" }}>Số lượng</div>
-              <div className="mua">
-                Mua hàng
-                <div className="thanhTienTo">
-                  {phay(tien)}
-                  <div className="d">đ</div>
+              <div className="footer_flex">
+                <img src="tt1.png" className="img_footer" alt="" />
+                <div>
+                  <img src="tt2.png" className="img_footer_1" alt="" />
+                </div>
+              </div>
+              <div className="footer_flex"></div>
+              <div className="footer_flex">
+                <img src="app1.png" className="img_footer app" alt="" />
+                <div>
+                  <img src="app2.png" className="img_footer app" alt="" />
                 </div>
               </div>
             </div>
-            <div className="cart">{cart.map(map_cart)}</div>
           </div>
-        ) : (
-          <div className="rong-to">
-            <img className="rong" alt="" src="/empty-cart.png" />
-          </div>
-        )}
-
-        <div className="newslettler">
-          <Form>
-            <Form.Group
-              as={Row}
-              className="mb-3"
-              controlId="formHorizontalEmail"
+          {cart.length ? (
+            <div
+              className="hienTieuDe"
+              style={{ zIndex: scrollTop > 40 ? "2" : "0" }}
             >
-              <Form.Label style={{ color: "black" }} column sm={10}>
-                <div style={{ fontSize: "1.3rem" }}>Cập nhật tin tức</div>
-                <div style={{ fontSize: "0.7rem" }}>
-                  Đăng ký để nhận các ưu đãi khuyến mại mới nhất từ Voucher
-                  Hunter
+              <div className="tieude_sau">
+                <div style={{ flex: "0.7" }}>
+                  Stt
+                  <div>
+                    <input
+                      type="checkbox"
+                      checked={checkBoxAll}
+                      onChange={() => {
+                        changeAll();
+                      }}
+                    />
+                  </div>
                 </div>
-              </Form.Label>
-              <Col sm={9}>
-                <div style={{ display: "flex" }}>
-                  <Form.Control
-                    style={{ width: "45vw" }}
-                    type="email"
-                    placeholder="Email"
-                  />
-                  <input
-                    style={{
-                      width: "90px",
-                      textAlign: "center",
-                      backgroundColor: "rgb(251, 38, 38)",
-                      borderColor: "rgb(251, 38, 38)",
-                      color: "#ffffff",
-                      outline: "none",
-                      cursor: "pointer",
-                      borderRadius: "0px 10px 10px 0px",
-                    }}
-                    value="ĐĂNG KÝ"
-                    readOnly={true}
-                  />
+                <div style={{ flex: "1" }}>Ảnh</div>
+                <div style={{ flex: "2" }}>Tên sản phẩm</div>
+                <div style={{ flex: "2.2" }}>Đơn giá</div>
+                <div style={{ flex: "2" }}>Số lượng</div>
+                <div className="mua">
+                  Mua hàng
+                  <div className="thanhTienTo">
+                    {phay(tien)}
+                    <div className="d">đ</div>
+                  </div>
                 </div>
-              </Col>
-            </Form.Group>
-          </Form>
-        </div>
-        <div className="footer1">
-          <div className="footer_flex">Menu</div>
-          <div className="footer_flex">Thanh Toán</div>
-          <div className="footer_flex">Đối tác liên kết</div>
-          <div className="footer_flex">Mobile app</div>
-        </div>
+              </div>
+            </div>
+          ) : null}
+          <div
+            className="layer3"
+            style={{ zIndex: scrollTop > 40 ? "2" : "0" }}
+          >
+            <div className="on_top1">
+              <Link activeClass="active" to="header_top">
+                <div className="img_left">
+                  <OverlayTrigger
+                    key="right"
+                    placement="right"
+                    overlay={<Tooltip id="tooltip-right">To the top</Tooltip>}
+                  >
+                    <img src="onTop.png" alt="" />
+                  </OverlayTrigger>
+                </div>
+              </Link>
+            </div>
+          </div>
+          <Modal show={showXoaAll} onHide={handleCloseXoaAll}>
+            <Modal.Header closeButton>
+              <Modal.Title>Bạn có muốn xóa tất cả sản phẩm? </Modal.Title>
+            </Modal.Header>
 
-        <div className="footer2">
-          <div style={{ flex: "1", cursor: "pointer" }}>
-            <div className="menu" onClick={gotoHome}>
-              Trang Chủ
-            </div>
-            <div className="menu" onClick={gotoProduct}>
-              Sản Phẩm
-            </div>
-            <div className="menu">Tin Tức</div>
-            <div className="menu us">
-              <div>Hỏi đáp</div>
-              {/* <div style={{ marginLeft: "2px" }}>us</div> */}
-            </div>
-          </div>
-          <div className="footer_flex">
-            <img src="tt1.png" className="img_footer" alt="" />
-            <div>
-              <img src="tt2.png" className="img_footer_1" alt="" />
-            </div>
-          </div>
-          <div className="footer_flex"></div>
-          <div className="footer_flex">
-            <img src="app1.png" className="img_footer app" alt="" />
-            <div>
-              <img src="app2.png" className="img_footer app" alt="" />
-            </div>
-          </div>
-        </div>
-      </div>
-      {cart.length ? (
-        <div
-          className="hienTieuDe"
-          style={{ zIndex: scrollTop > 40 ? "2" : "0" }}
-        >
-          <div className="tieude_sau">
-            <div style={{ flex: "0.7" }}>
-              Stt
-              <div>
-                <input
-                  type="checkbox"
-                  checked={checkBoxAll}
-                  onChange={() => {
-                    changeAll();
-                  }}
-                />
-              </div>
-            </div>
-            <div style={{ flex: "1" }}>Ảnh</div>
-            <div style={{ flex: "2" }}>Tên sản phẩm</div>
-            <div style={{ flex: "2.2" }}>Đơn giá</div>
-            <div style={{ flex: "2" }}>Số lượng</div>
-            <div className="mua">
-              Mua hàng
-              <div className="thanhTienTo">
-                {phay(tien)}
-                <div className="d">đ</div>
-              </div>
-            </div>
-          </div>
+            <Modal.Footer>
+              <Button variant="secondary" onClick={handleCloseXoaAll}>
+                Hủy
+              </Button>
+              <Button
+                variant="primary"
+                onClick={() => {
+                  xoaAll();
+                }}
+              >
+                Xóa
+              </Button>
+            </Modal.Footer>
+          </Modal>
         </div>
       ) : null}
-      <div className="layer3" style={{ zIndex: scrollTop > 40 ? "2" : "0" }}>
-        <div className="on_top1">
-          <Link activeClass="active" to="header_top">
-            <div className="img_left">
-              <OverlayTrigger
-                key="right"
-                placement="right"
-                overlay={<Tooltip id="tooltip-right">To the top</Tooltip>}
-              >
-                <img src="onTop.png" alt="" />
-              </OverlayTrigger>
-            </div>
-          </Link>
-        </div>
-      </div>
-      <Modal show={showXoaAll} onHide={handleCloseXoaAll}>
-        <Modal.Header closeButton>
-          <Modal.Title>Bạn có muốn xóa tất cả sản phẩm? </Modal.Title>
-        </Modal.Header>
-
-        <Modal.Footer>
-          <Button variant="secondary" onClick={handleCloseXoaAll}>
-            Hủy
-          </Button>
-          <Button
-            variant="primary"
-            onClick={() => {
-              xoaAll();
-            }}
-          >
-            Xóa
-          </Button>
-        </Modal.Footer>
-      </Modal>
     </div>
   );
 }
