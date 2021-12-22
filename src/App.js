@@ -6,12 +6,14 @@ import Cart from "./Cart";
 import Proflie from "./Profile";
 import DetailProduct from "./DetailProduct";
 import Edituser from "./Edituser";
+import CheckOut from "./CheckOut";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 import { getCart, checkToken } from "./Axios";
 function App() {
   // tiendung
   // tiendung12345
   const [cart, setcart] = useState(0);
+  const [checkOut, setcheckOut] = useState("");
 
   useEffect(() => {
     let Token = localStorage.getItem("accessToken");
@@ -20,7 +22,6 @@ function App() {
         checkToken().then((res) => {
           if (res.data.message === "Token is valid") {
             getCart().then((res) => {
-              console.log(res.data.cart.items.length);
               setcart(res.data.cart.items.length);
             });
           }
@@ -39,6 +40,11 @@ function App() {
     });
   };
 
+  const check = (add) => {
+    setcheckOut(add);
+    console.log(add);
+  };
+
   return (
     <BrowserRouter>
       <Routes>
@@ -52,14 +58,15 @@ function App() {
           element={<DetailProduct soluong={cart} them={cartAdd} />}
         />
         <Route path="/register" element={<Register />} />
-        <Route path="/cart" element={<Cart soluong={cart} />} />
+        <Route path="/cart" element={<Cart soluong={cart} them={cartAdd} out={check} />} />
         <Route
           path="/profile"
           element={<Proflie soluong={cart} dangxuat={logout} />}
         />
+        <Route path="/edit" element={<Edituser soluong={cart} />} />
         <Route
-          path="/edit"
-          element={<Edituser soluong={cart} />}
+          path="/checkout"
+          element={<CheckOut soluong={cart} them={cartAdd} muaDo={checkOut} />}
         />
       </Routes>
     </BrowserRouter>

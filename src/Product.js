@@ -258,6 +258,10 @@ export default function Product(props) {
   const gotoHome = () => {
     navigate("/");
   };
+
+  const gotoProfile=()=>{
+    navigate("/profile")
+  }
   const [array_product] = useState(() => {
     const dai = Math.ceil(Data.length / 12);
     const mang = [];
@@ -295,7 +299,6 @@ export default function Product(props) {
       cuoi = 5;
     }
     setlist(array_product.slice(dau, cuoi));
-    console.log(list);
     window.scrollTo(10, 0);
   };
   const wow = (item, index) => {
@@ -403,7 +406,7 @@ export default function Product(props) {
                   {Avatar ? (
                     <img
                       className="shop shop1"
-                      // onClick={handle_accShow}
+                      onClick={gotoProfile}
                       src={Avatar}
                       alt=""
                     />
@@ -462,7 +465,7 @@ export default function Product(props) {
                 {Avatar ? (
                   <img
                     className="shop shop1"
-                    // onClick={handle_accShow}
+                    onClick={gotoProfile}
                     src={Avatar}
                     alt=""
                   />

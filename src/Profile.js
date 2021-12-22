@@ -9,6 +9,8 @@ import {
   Form,
   Row,
   Col,
+  Modal,
+  Button,
 } from "react-bootstrap";
 import "bootstrap/dist/css/bootstrap.min.css";
 import { Link } from "react-scroll";
@@ -20,11 +22,19 @@ export default function Proflie(props) {
   const [Avatar, setAvatar] = useState("");
   const [username, setusername] = useState("");
   const [email, setemail] = useState("");
-  const [address, setaddress] = useState("");
+  const [address, setAddress] = useState("");
   const [phone, setphone] = useState("");
   const [gender, setgender] = useState("");
-  const [dob, setdob] = useState();
+  const [dob, setdob] = useState("");
 
+  const gotoCart = () => {
+    navigate("/cart");
+  };
+
+  const [showXoaAll, setShowXoaAll] = useState(false);
+
+  const handleCloseXoaAll = () => setShowXoaAll(false);
+  const handleShowXoaAll = () => setShowXoaAll(true);
   useEffect(() => {
     let token = localStorage.getItem("accessToken");
     if (token) {
@@ -36,21 +46,23 @@ export default function Proflie(props) {
         setemail(user.email);
         setphone(user.phone);
         setgender(user.gender);
+        setdob(user.dob);
         const Address =
           user.address.detail +
-          ", " +
+          " " +
           user.address.ward +
-          ", " +
+          " " +
           user.address.district +
-          ", " +
+          " " +
           user.address.city;
-        setaddress(user.address.city ? Address : "");
-        setdob(user.dob);
+        setAddress(Address);
         setToken(token);
       });
     }
   }, [token]);
-
+  const gotoEdit = () => {
+    navigate("/edit");
+  };
   function validateNiceNumber(Number) {
     return Number < 10 ? "0" + Number : Number;
     //                     true             false
@@ -90,7 +102,7 @@ export default function Proflie(props) {
 
   const date = new Date(dob);
   const day = validateNiceNumber(date.getDate());
-  const month = validateNiceNumber(date.getMonth());
+  const month = validateNiceNumber(date.getMonth() + 1);
   const year = date.getFullYear();
   return (
     <div>
@@ -149,7 +161,7 @@ export default function Proflie(props) {
               </div>
               <div>
                 <div className="ok1">
-                  <div style={{ display: "flex" }}>
+                  <div style={{ display: "flex" }} onClick={gotoCart}>
                     <OverlayTrigger
                       key="bottom"
                       placement="bottom"
@@ -208,7 +220,7 @@ export default function Proflie(props) {
                 <div>
                   <img className="layer" src="Layer.png" alt="" />
                 </div>
-                <div style={{ display: "flex" }}>
+                <div style={{ display: "flex" }} onClick={gotoCart}>
                   <OverlayTrigger
                     key="bottom"
                     placement="bottom"
@@ -257,7 +269,7 @@ export default function Proflie(props) {
                   >
                     <img
                       className="shop shop1"
-                      // onClick={handle_accShow}
+                      onClick={gotoEdit}
                       src="/edit.png"
                       alt=""
                     />
@@ -269,7 +281,7 @@ export default function Proflie(props) {
                   >
                     <img
                       className="shop shop1"
-                      onClick={logout}
+                      onClick={handleShowXoaAll}
                       src="/signout.png"
                       alt=""
                     />
@@ -397,6 +409,25 @@ export default function Proflie(props) {
               </Link>
             </div>
           </div>
+          <Modal show={showXoaAll} onHide={handleCloseXoaAll}>
+            <Modal.Header closeButton>
+              <Modal.Title>Bạn có muốn đăng xuất không? </Modal.Title>
+            </Modal.Header>
+
+            <Modal.Footer>
+              <Button variant="secondary" onClick={handleCloseXoaAll}>
+                Hủy
+              </Button>
+              <Button
+                variant="primary"
+                onClick={() => {
+                  logout();
+                }}
+              >
+                Đăng xuất
+              </Button>
+            </Modal.Footer>
+          </Modal>
         </div>
       ) : null}
     </div>

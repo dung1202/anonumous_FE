@@ -11,6 +11,29 @@
   border-radius: 10px;
 }
 
+.sptt{
+  width: 100%;
+  align-items: center;
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 20px;
+}
+
+.thanhTienTT {
+  display: flex;
+  color: red;
+  font-weight: 600;
+  font-size: 1rem;
+}
+
+.thanhTienToTT {
+  display: flex;
+  color: blue;
+  font-weight: 600;
+  font-size: 1.25rem;
+  justify-content: center;
+}
+
 .soluong {
   font-size: 1.25rem;
   flex: 0.5;

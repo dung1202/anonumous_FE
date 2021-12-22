@@ -1,7 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { useNavigate, Link } from "react-router-dom";
 import "./Homecss.css";
-// import ReactHtmlParser from "react-html-parser";
 import {
   Carousel,
   OverlayTrigger,
@@ -20,7 +19,6 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faEye } from "@fortawesome/free-solid-svg-icons";
 import * as Scroll from "react-scroll";
 export default function Home(props) {
-  console.log(props.soluong);
   const navigate = useNavigate();
   const [array, setarray] = useState([]);
   const [err, seterr] = useState("");
@@ -29,7 +27,7 @@ export default function Home(props) {
   const [passwordShown, setPasswordShown] = useState(false);
   const togglePasswordVisibility = () =>
     setPasswordShown(!passwordShown ? true : false);
-  
+
   const [sold, setsold] = useState([]);
   const [giam, setgiam] = useState([]);
   const [token, setToken] = useState("");
@@ -70,13 +68,11 @@ export default function Home(props) {
           break;
         }
       }
-      console.log(res.data.data);
       setnews(mang);
     });
     getProduct().then((res) => {
       const mang = [];
       const gia = [];
-      // console.log(res.data);
       res.data.map((item) => {
         let q = "";
         let ok = 0;
@@ -240,7 +236,6 @@ export default function Home(props) {
   };
 
   const sao = (item) => {
-    // console.log(item)
     let anh = "";
     if (item === 0) anh = "/saorong.png";
     if (item > 0 && item < 1) anh = "/saoxin.png";
@@ -275,7 +270,9 @@ export default function Home(props) {
     return Number < 10 ? "0" + Number : Number;
     //                     true             false
   }
-
+  const gotoProfile = () => {
+    navigate("/profile");
+  };
   const map_news = (item, index) => {
     // getUserById(item.creator_id).then((res) => {
     //   item.avater = res.data.avatar;
@@ -471,7 +468,7 @@ export default function Home(props) {
                   {Avatar ? (
                     <img
                       className="shop shop1"
-                      // onClick={handle_accShow}
+                      onClick={gotoProfile}
                       src={Avatar}
                       alt=""
                     />
@@ -530,7 +527,7 @@ export default function Home(props) {
                 {Avatar ? (
                   <img
                     className="shop shop1"
-                    // onClick={handle_accShow}
+                    onClick={gotoProfile}
                     src={Avatar}
                     alt=""
                   />

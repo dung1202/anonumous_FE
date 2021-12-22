@@ -17,6 +17,7 @@ export const signUp = (body) => instance.post("/register", body);
 export const checkToken = () => instance.post("/auth/checktoken");
 
 export const getUserById = (id) => instance.get(`/user/${id}`);
+export const updateUser = (body) => instance.put(`/user`, body);
 
 export const getProduct = () => instance.get("/product");
 export const getProductById = (id) => instance.get("/product/" + id);
@@ -27,3 +28,7 @@ export const getNews = (number) => {
 
 export const getCart = () => instance.get("/cart/auth");
 export const addCart = (body) => instance.post("/cart/auth/additem", body);
+export const updateItemCart = (body) => instance.put("/cart/auth/changeqty", body);
+export const deleteItemCart = (body) => instance.delete("/cart/auth/removeitem", body);
+
+export const createInvoice  = (body) => instance.post("/invoice/auth/create", body);

@@ -453,12 +453,17 @@
 }
 .tb {
   position: absolute;
-  margin-top: -52%;
   margin-left: 80%;
   background-color: gray;
   padding: 10px 20px 10px 20px;
   border-radius: 10px;
   color: white;
+}
+
+input[type=number]::-webkit-inner-spin-button, 
+input[type=number]::-webkit-outer-spin-button { 
+  -webkit-appearance: none; 
+  margin: 0; 
 }
 
 .img_slider .car {

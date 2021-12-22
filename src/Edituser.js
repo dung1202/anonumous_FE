@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
-import "./Profilecss.css";
+import "./user.css";
 import jwt_decode from "jwt-decode";
 import {
   OverlayTrigger,
@@ -10,51 +10,75 @@ import {
   Row,
   Col,
 } from "react-bootstrap";
+import {
+  CalendarToday,
+  LocationSearching,
+  MailOutline,
+  PermIdentity,
+  PhoneAndroid,
+  Publish,
+} from "@material-ui/icons";
 import "bootstrap/dist/css/bootstrap.min.css";
 import { Link } from "react-scroll";
-import { getUserById } from "./Axios";
+import { getUserById, updateUser } from "./Axios";
 
 export default function Edituser(props) {
   const navigate = useNavigate();
+  const [file, setFile] = useState([]);
   const [token, setToken] = useState("");
   const [Avatar, setAvatar] = useState("");
-  const [username, setusername] = useState("");
-  const [email, setemail] = useState("");
-  const [address, setaddress] = useState("");
-  const [phone, setphone] = useState("");
+  const [phone, setPhone] = useState("");
   const [gender, setgender] = useState("");
-  const [dob, setdob] = useState();
-
+  const [dob, setdob] = useState("");
+  const [id, setid] = useState("");
+  const [city, setcity] = useState("");
+  const [district, setdistrict] = useState("");
+  const [ward, setward] = useState("");
+  const [detail, setdetail] = useState("");
+  const [ten, setten] = useState("");
+  const [gmail, setgmail] = useState("");
+  const [sinhNhat, setsinhNhat] = useState("");
+  const [dienThoai, setdienThoai] = useState("");
+  const [diaChi, setdiaChi] = useState("");
+  const gotoCart = () => {
+    navigate("/cart");
+  };
   useEffect(() => {
     let token = localStorage.getItem("accessToken");
     if (token) {
       const userID = jwt_decode(token)._id;
+      setid(userID);
       getUserById(userID).then((res) => {
         const user = res.data;
         setAvatar(user.photoUrl);
-        setusername(user.username);
-        setemail(user.email);
-        setphone(user.phone);
+        setPhone(user.phone);
         setgender(user.gender);
         const Address =
           user.address.detail +
-          ", " +
+          " " +
           user.address.ward +
-          ", " +
+          " " +
           user.address.district +
-          ", " +
+          " " +
           user.address.city;
-        setaddress(user.address.city ? Address : "");
+        setcity(user.address.city);
+        setdistrict(user.address.district);
+        setward(user.address.ward);
+        setdetail(user.address.detail);
         setdob(user.dob);
         setToken(token);
+        setten(user.username);
+        setgmail(user.email);
+        setsinhNhat(user.dob);
+        setdienThoai(user.phone);
+        setdiaChi(Address);
       });
     }
   }, [token]);
 
-  function validateNiceNumber(Number) {
-    return Number < 10 ? "0" + Number : Number;
-    //                     true             false
-  }
+  const changeFile = (e) => {
+    setFile(e.target.files[0]);
+  };
 
   const [show, setShow] = useState(false);
 
@@ -78,20 +102,45 @@ export default function Edituser(props) {
     navigate("/");
   };
 
-  const logout = () => {
-    localStorage.setItem("accessToken", "");
-    props.dangxuat();
-    navigate("/");
+  const gotoProfile = () => {
+    navigate("/profile");
   };
 
-  const edit = () => {
-    navigate("/");
+  const updatedata = (e) => {
+    e.preventDefault();
+    let body = {
+      id,
+      phone,
+      address: {
+        city,
+        detail,
+        ward,
+        district,
+      },
+      dob,
+      gender,
+    };
+    updateUser(body).then((res) => {
+      navigate("/profile")
+    });
   };
+  function validateNiceNumber(Number) {
+    return Number < 10 ? "0" + Number : Number;
+    //                     true             false
+  }
 
-  const date = new Date(dob);
+  const date = new Date(sinhNhat);
   const day = validateNiceNumber(date.getDate());
-  const month = validateNiceNumber(date.getMonth());
+  const month = validateNiceNumber(date.getMonth() + 1);
   const year = date.getFullYear();
+  const ngay = (item) => {
+    const a = new Date(item);
+    const b = validateNiceNumber(a.getDate());
+    const c = validateNiceNumber(a.getMonth() + 1);
+    const d = a.getFullYear();
+    const ok = `${d}-${c}-${b}`;
+    return ok;
+  };
   return (
     <div>
       {token ? (
@@ -149,7 +198,7 @@ export default function Edituser(props) {
               </div>
               <div>
                 <div className="ok1">
-                  <div style={{ display: "flex" }}>
+                  <div style={{ display: "flex" }} onClick={gotoCart}>
                     <OverlayTrigger
                       key="bottom"
                       placement="bottom"
@@ -173,7 +222,7 @@ export default function Edituser(props) {
                     >
                       <img
                         className="shop shop1"
-                        // onClick={handle_accShow}
+                        onClick={gotoProfile}
                         src={Avatar}
                         alt=""
                       />
@@ -208,7 +257,7 @@ export default function Edituser(props) {
                 <div>
                   <img className="layer" src="Layer.png" alt="" />
                 </div>
-                <div style={{ display: "flex" }}>
+                <div style={{ display: "flex" }} onClick={gotoCart}>
                   <OverlayTrigger
                     key="bottom"
                     placement="bottom"
@@ -232,7 +281,7 @@ export default function Edituser(props) {
                   >
                     <img
                       className="shop shop1"
-                      // onClick={handle_accShow}
+                      onClick={gotoProfile}
                       src={Avatar}
                       alt=""
                     />
@@ -241,63 +290,139 @@ export default function Edituser(props) {
               </div>
             </div>
 
-            <div className="container_profile">
-              <div style={{ width: "20vw" }}>
-                <img alt="" src={Avatar} className="anh_profile" />
-                <div className="name_profile">{username}</div>
+            <div className="user">
+              <div className="userTitleContainer">
+                <h1 className="userTitle">Chỉnh sửa thông tin người dùng</h1>
               </div>
-
-              <div style={{ margin: "2vh 2vw 0px 2vw", width: "100%" }}>
-                <div style={{ display: "flex", justifyContent: "right" }}>
-                  <OverlayTrigger
-                    key="bottom"
-                    onClick={edit}
-                    placement="bottom"
-                    overlay={<Tooltip id="tooltip-bottom">Sửa</Tooltip>}
-                  >
-                    <img
-                      className="shop shop1"
-                      // onClick={handle_accShow}
-                      src="/edit.png"
-                      alt=""
-                    />
-                  </OverlayTrigger>
-                  <OverlayTrigger
-                    key="bottom"
-                    placement="bottom"
-                    overlay={<Tooltip id="tooltip-bottom">Đăng xuất</Tooltip>}
-                  >
-                    <img
-                      className="shop shop1"
-                      onClick={logout}
-                      src="/signout.png"
-                      alt=""
-                    />
-                  </OverlayTrigger>
-                </div>
-                <div style={{ display: "flex" }}>
-                  <div className="dinhdanh">
-                    <div className="ten_tieude">Ngày sinh:</div>
-                    <div className="noidung_tieude">{`${day}/${month}/${year}`}</div>
+              <div className="userContainer">
+                <div className="userShow">
+                  <div className="userShowTop">
+                    <img src={Avatar} alt="" className="userShowImg" />
+                    <div className="userShowTopTitle">
+                      <span className="userShowUsername">{ten}</span>
+                    </div>
                   </div>
-                  <div className="dinhdanh">
-                    <div className="ten_tieude">Giới tính:</div>
-                    <div className="noidung_tieude">{gender}</div>
+                  <div className="userShowBottom">
+                    <span className="userShowTitle">Thông tin người dùng</span>
+                    <div className="userShowInfo">
+                      <PermIdentity className="userShowIcon" />
+                      <span className="userShowInfoTitle">{ten}</span>
+                    </div>
+                    <div className="userShowInfo">
+                      <CalendarToday className="userShowIcon" />
+                      <span className="userShowInfoTitle">{`${day}/${month}/${year}`}</span>
+                    </div>
+                    <span className="userShowTitle">Thông tin liên hệ</span>
+                    <div className="userShowInfo">
+                      <PhoneAndroid className="userShowIcon" />
+                      <span className="userShowInfoTitle">{dienThoai}</span>
+                    </div>
+                    <div className="userShowInfo">
+                      <MailOutline className="userShowIcon" />
+                      <span className="userShowInfoTitle">{gmail}</span>
+                    </div>
+                    <div className="userShowInfo">
+                      <LocationSearching className="userShowIcon" />
+                      <span className="userShowInfoTitle">{diaChi}</span>
+                    </div>
                   </div>
                 </div>
-                <div style={{ display: "flex" }}>
-                  <div className="dinhdanh">
-                    <div className="ten_tieude">Email:</div>
-                    <div className="noidung_tieude">{email}</div>
-                  </div>
-                  <div className="dinhdanh">
-                    <div className="ten_tieude">Số điện thoại:</div>
-                    <div className="noidung_tieude">{phone}</div>
-                  </div>
-                </div>
-                <div className="dinhdanh">
-                  <div className="ten_tieude">Địa chỉ:</div>
-                  <div className="noidung_tieude">{address}</div>
+                <div className="userUpdate">
+                  <span className="userUpdateTitle">Thông tin chỉnh sửa</span>
+                  <form className="userUpdateForm">
+                    <div className="userUpdateLeft">
+                      <div className="userUpdateItem">
+                        <label>Giới tính</label>
+                        <input
+                          type="text"
+                          value={gender}
+                          onChange={(e) => setPhone(e.target.value)}
+                          placeholder="+1 123 456 67"
+                          className="userUpdateInput"
+                        />
+                      </div>
+                      <div className="userUpdateItem">
+                        <label>Số điện thoại</label>
+                        <input
+                          type="text"
+                          value={phone}
+                          onChange={(e) => setPhone(e.target.value)}
+                          placeholder="+1 123 456 67"
+                          className="userUpdateInput"
+                        />
+                      </div>
+                      <div className="userUpdateItem">
+                        <label>Thành phố/Tỉnh</label>
+                        <input
+                          type="text"
+                          value={city}
+                          onChange={(e) => setcity(e.target.value)}
+                          placeholder="Thành phố/Tỉnh"
+                          className="userUpdateInput"
+                        />
+                      </div>
+                      <div className="userUpdateItem">
+                        <label>Quận/Huyện</label>
+                        <input
+                          type="text"
+                          value={district}
+                          onChange={(e) => setdistrict(e.target.value)}
+                          placeholder="Quận/Huyện"
+                          className="userUpdateInput"
+                        />
+                      </div>
+                      <div className="userUpdateItem">
+                        <label>Phường/Xã</label>
+                        <input
+                          type="text"
+                          value={ward}
+                          onChange={(e) => setward(e.target.value)}
+                          placeholder="Phường/Xã"
+                          className="userUpdateInput"
+                        />
+                      </div>
+                      <div className="userUpdateItem">
+                        <label>Số nhà</label>
+                        <input
+                          type="text"
+                          value={detail}
+                          onChange={(e) => setdetail(e.target.value)}
+                          placeholder="Số nhà"
+                          className="userUpdateInput"
+                        />
+                      </div>
+                      <div className="userUpdateItem">
+                        <label>Sinh nhật</label>
+                        <input
+                          type="date"
+                          value={ngay(dob)}
+                          onChange={(e) => {
+                            setdob(new Date(e.target.value));
+                          }}
+                          placeholder="Số nhà"
+                          className="userUpdateInput"
+                        />
+                      </div>
+                    </div>
+                    <div className="userUpdateRight">
+                      <div className="userUpdateUpload">
+                        <img className="userShowImg1" src={Avatar} />
+                        <label htmlFor="file">
+                          <Publish className="userUpdateIcon" />
+                        </label>
+                        <input
+                          id="file"
+                          onChange={changeFile}
+                          accept="image/png, image/jpeg"
+                          type="file"
+                          style={{ display: "none" }}
+                        />
+                      </div>
+                      <button className="userUpdateButton" onClick={updatedata}>
+                        Cập nhật
+                      </button>
+                    </div>
+                  </form>
                 </div>
               </div>
             </div>

@@ -1,10 +1,11 @@
 import React, { useEffect, useState } from "react";
-import { useNavigate, useParams } from "react-router-dom";
+import { useNavigate, useParams, Link } from "react-router-dom";
 import "./Detailcss.css";
 import "bootstrap/dist/css/bootstrap.min.css";
 import jwt_decode from "jwt-decode";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faEye } from "@fortawesome/free-solid-svg-icons";
+import renderHTML from "react-render-html";
 import {
   Carousel,
   OverlayTrigger,
@@ -90,6 +91,7 @@ export default function DetailProduct(props) {
     else {
       const obj = {
         product_id: id,
+        quantity: Input_sl,
       };
       addCart(obj).then((res) => {
         props.them();
@@ -128,11 +130,15 @@ export default function DetailProduct(props) {
   const gotoHome = () => {
     navigate("/");
   };
+
+  const gotoProfile = () => {
+    navigate("/profile");
+  };
   const input = (e) => {
-    if (!Number(e.target.value)) {
-      setInput_sl(Input_sl);
-    } else if (Number(e.target.value) < sp.quantity) {
-      setInput_sl(Number(e.target.value));
+    if (Number(e.target.value) < sp.quantity) {
+      if (Number(e.target.value) === 0) {
+        setInput_sl(1);
+      } else setInput_sl(Number(e.target.value));
     } else if (Number(e.target.value) >= sp.quantity) {
       setInput_sl(Number(sp.quantity));
     }
@@ -144,7 +150,6 @@ export default function DetailProduct(props) {
       let a = res.data;
       a.name = a.name.charAt(0).toUpperCase() + a.name.slice(1);
       setsp(a);
-      console.log(res.data);
       setarray(res.data.listphotos);
       if (res.data.discountPrice > 0) {
         let giamgia =
@@ -159,7 +164,6 @@ export default function DetailProduct(props) {
     getProduct().then((res) => {
       const mang = [];
       const gia = [];
-      console.log(res.data);
       let d1 = 0;
 
       let mangis = [];
@@ -209,7 +213,6 @@ export default function DetailProduct(props) {
   };
 
   const sao = (item) => {
-    // console.log(item)
     let anh = "";
     if (item === 0) anh = "/saorong.png";
     if (item > 0 && item < 1) anh = "/saoxin.png";
@@ -242,7 +245,6 @@ export default function DetailProduct(props) {
   };
 
   const sao1 = (item) => {
-    // console.log(item)
     let anh = "";
     if (item === 0) anh = "/saorong.png";
     if (item > 0 && item < 1) anh = "/saoxin.png";
@@ -290,6 +292,7 @@ export default function DetailProduct(props) {
 
   const oksa = (id) => {
     setid(id);
+    setaddDone(false);
     window.scrollTo(10, 0);
   };
   const pro = (item, index) => {
@@ -304,44 +307,47 @@ export default function DetailProduct(props) {
         break;
       }
     }
-    return (
-      <div
-        className="hover1"
-        onClick={() => {
-          oksa(item._id);
-        }}
-      >
-        <img alt="" className="img_pro" src={item.img} />
 
-        <div style={{ padding: "1vw 1vw 0vw 1vw" }}>
-          <div className="name_pro">
-            {string_name.charAt(0).toUpperCase() + string_name.slice(1)}
-          </div>
-          <div className="sl">
-            <div>{sao1(item.vote)}</div>
-            <div>
-              {sold[index] === "0" ? "" : <div>Đã bán {sold[index]}</div>}
+    return (
+      <Link to={"/detail-product/" + item._id}>
+        <div
+          className="hover1"
+          onClick={() => {
+            oksa(item._id);
+          }}
+        >
+          <img alt="" className="img_pro" src={item.img} />
+
+          <div style={{ padding: "1vw 1vw 0vw 1vw" }}>
+            <div className="name_pro">
+              {string_name.charAt(0).toUpperCase() + string_name.slice(1)}
+            </div>
+            <div className="sl">
+              <div>{sao1(item.vote)}</div>
+              <div>
+                {sold[index] === "0" ? "" : <div>Đã bán {sold[index]}</div>}
+              </div>
             </div>
           </div>
-        </div>
 
-        <div
-          className={
-            item.discountPrice > 0 ? "listedPrice list2" : "listedPrice"
-          }
-          style={{ color: item.discountPrice > 0 ? "red" : "black" }}
-        >
-          <div className="flex">
-            {phay(
-              item.discountPrice > 0 ? item.discountPrice : item.listedPrice
-            )}
-            <div className="d">đ</div>
+          <div
+            className={
+              item.discountPrice > 0 ? "listedPrice list2" : "listedPrice"
+            }
+            style={{ color: item.discountPrice > 0 ? "red" : "black" }}
+          >
+            <div className="flex">
+              {phay(
+                item.discountPrice > 0 ? item.discountPrice : item.listedPrice
+              )}
+              <div className="d">đ</div>
+            </div>
+            {item.discountPrice > 0 ? (
+              <div className="giamgia giam">-{giam[index]}%</div>
+            ) : null}
           </div>
-          {item.discountPrice > 0 ? (
-            <div className="giamgia giam">-{giam[index]}%</div>
-          ) : null}
         </div>
-      </div>
+      </Link>
     );
   };
 
@@ -434,7 +440,7 @@ export default function DetailProduct(props) {
                   {Avatar ? (
                     <img
                       className="shop shop1"
-                      // onClick={handle_accShow}
+                      onClick={gotoProfile}
                       src={Avatar}
                       alt=""
                     />
@@ -495,7 +501,7 @@ export default function DetailProduct(props) {
                 {Avatar ? (
                   <img
                     className="shop shop1"
-                    // onClick={handle_accShow}
+                    onClick={gotoProfile}
                     src={Avatar}
                     alt=""
                   />
@@ -513,6 +519,9 @@ export default function DetailProduct(props) {
         </div>
         {sp ? (
           <div className="rong">
+            {addDone ? (
+              <div className="tb">"Bạn đã thêm thành công"</div>
+            ) : null}
             <div className="detail_sp">
               <div className="img_slider">
                 <Carousel className="car">{array.map(ok)}</Carousel>
@@ -575,7 +584,7 @@ export default function DetailProduct(props) {
                     </button>
                     <input
                       className="input_sl"
-                      type="text"
+                      type="number"
                       onChange={input}
                       value={Input_sl}
                     ></input>
@@ -606,10 +615,7 @@ export default function DetailProduct(props) {
               </div>
             </div>
             <div style={{ marginTop: "5vh", fontWeight: "600" }}>Mô tả: </div>
-            <div>{sp.description}</div>
-            {addDone ? (
-              <div className="tb">"Bạn đã thêm thành công"</div>
-            ) : null}
+            <div>{renderHTML(sp.description)}</div>
           </div>
         ) : null}
         <div className="chu_gt" id="sp_hot">

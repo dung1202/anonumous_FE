@@ -9,23 +9,13 @@ import {
   Form,
   Row,
   Col,
-  Modal,
-  Button,
   Tabs,
   Tab,
 } from "react-bootstrap";
 import "bootstrap/dist/css/bootstrap.min.css";
 import * as Scroll from "react-scroll";
-import {
-  getUserById,
-  getCart,
-  updateItemCart,
-  deleteItemCart,
-  createInvoice,
-} from "./Axios";
-// import { Data } from "./Data";
-export default function Cart(props) {
-  // const [Data1, setData1] = useState(Data);
+import { getUserById, createInvoice } from "./Axios";
+export default function CheckOut(props) {
   const navigate = useNavigate();
   const [token, setToken] = useState("");
   const [Avatar, setAvatar] = useState("");
@@ -34,48 +24,19 @@ export default function Cart(props) {
   const [checkBoxAll, setcheckBoxAll] = useState(false);
   const [Tong, setTong] = useState([]);
   const [tien, settien] = useState(0);
-  const [showXoa, setShowXoa] = useState(false);
   const [checkOut, setCheckOut] = useState(false);
   const [phone, setPhone] = useState("");
   const [address, setAddress] = useState("");
   const [muatc, setmuatc] = useState(false);
-  const [xoaIndex, setxoaIndex] = useState("");
-  const [xoaId, setxoaId] = useState("");
-
-  const handleCloseXoa = () => setShowXoa(false);
-  const handleShowXoa = () => setShowXoa(true);
-
-  const [showMua, setShowMua] = useState(false);
-  const handleCloseMua = () => setShowMua(false);
-  const handleShowMua = () => setShowMua(true);
   const [cart, setcart] = useState([]);
 
-  const input_sl = (e, index) => {
-    let newsl = sl;
-    if (Number(e.target.value) < cart[index].product_id.quantity) {
-      if (Number(e.target.value) === 0) {
-        newsl[index] = 1;
-      } else newsl[index] = Number(e.target.value);
-    } else if (Number(e.target.value) >= cart[index].product_id.quantity) {
-      newsl[index] = cart[index].product_id.quantity;
-    }
-    setsl([...newsl]);
-  };
-  const cong_sl = (index) => {
-    let newsl = sl;
-    if (newsl[index] < cart[index].product_id.quantity) newsl[index] += 1;
-    setsl([...newsl]);
-  };
-  const tru_sl = (index) => {
-    let newsl = sl;
-    if (newsl[index] >= 2) newsl[index] -= 1;
-    setsl([...newsl]);
-  };
   useEffect(() => {
+      console.log(props.muaDo);
     let token = localStorage.getItem("accessToken");
     if (token) {
       try {
         const userID = jwt_decode(token)._id;
+        setcart(props.mua)
         getUserById(userID).then((res) => {
           const user = res.data;
           setAvatar(user.photoUrl);
@@ -91,258 +52,23 @@ export default function Cart(props) {
           setAddress(Address);
           setToken(token);
         });
-        getCart().then((res) => {
-          setcart(res.data.cart.items);
-          console.log(res.data);
-          let mang = [];
-          let check = [];
-          let tong = [];
-          res.data.cart.items.map((item) => {
-            mang.push(item.quantity);
-            check.push(false);
-            tong.push(
-              item.product_id.discountPrice
-                ? item.product_id.discountPrice * item.quantity
-                : item.product_id.listedPrice * item.quantity
-            );
-            return <div></div>;
-          });
-          setsl(mang);
-          setcheckBox(check);
-          setTong(tong);
-        });
+        let tong = 0;
+        for (let i = 0; i < cart.length; i++) {
+          let k = cart.product_id.discountPrice
+            ? cart.product_id.discountPrice * cart.quantity
+            : cart.product_id.listedPrice * cart.quantity;
+          tong += k;
+        }
+        settien(tong);
       } catch (error) {
         setToken("");
         setAvatar("");
       }
     }
-  }, [token]);
+  }, []);
 
   const [, setShow_acc] = useState(false);
   const handle_accShow = () => setShow_acc(true);
-
-  const sao = (item) => {
-    let anh = "";
-    if (item === 0) anh = "saorong.png";
-    if (item > 0 && item < 1) anh = "saoxin.png";
-    if (item >= 1) anh = "saodac.png";
-    let anh1 = "";
-    if (item < 2) anh1 = "saorong.png";
-    if (item > 1 && item < 2) anh1 = "saoxin.png";
-    if (item >= 2) anh1 = "saodac.png";
-    let anh2 = "";
-    if (item < 3) anh2 = "saorong.png";
-    if (item > 2 && item < 3) anh2 = "saoxin.png";
-    if (item >= 3) anh2 = "saodac.png";
-    let anh3 = "";
-    if (item < 4) anh3 = "saorong.png";
-    if (item > 3 && item < 4) anh3 = "saoxin.png";
-    if (item >= 4) anh3 = "saodac.png";
-    let anh4 = "";
-    if (item < 5) anh4 = "saorong.png";
-    if (item > 4 && item < 5) anh4 = "saoxin.png";
-    if (item >= 5) anh4 = "saodac.png";
-    return (
-      <div style={{ display: "flex" }}>
-        <img src={anh} className="sao1" alt=""></img>
-        <img src={anh1} className="sao1" alt=""></img>
-        <img src={anh2} className="sao1" alt=""></img>
-        <img src={anh3} className="sao1" alt=""></img>
-        <img src={anh4} className="sao1" alt=""></img>
-      </div>
-    );
-  };
-
-  const change = (index) => {
-    let newCheck = checkBox;
-    newCheck[index] = !newCheck[index];
-    setcheckBox([...newCheck]);
-  };
-  const changeAll = () => {
-    let newCheck = checkBox;
-    setcheckBoxAll(!checkBoxAll);
-    for (let i = 0; i < newCheck.length; i++) {
-      newCheck[i] = !checkBoxAll;
-    }
-    setcheckBox([...newCheck]);
-  };
-
-  useEffect(() => {
-    let d = 0;
-    let tong = 0;
-    for (let i = 0; i < checkBox.length; i++) {
-      if (checkBox[i] === true) {
-        d++;
-        tong += Tong[i];
-      }
-    }
-    if (d === checkBox.length) {
-      setcheckBoxAll(true);
-    } else {
-      setcheckBoxAll(false);
-    }
-    setCheckOut(tong > 0 ? true : false);
-    settien(tong);
-  }, [checkBox, Tong]);
-
-  const xoa_item = () => {
-    console.log(xoaIndex, xoaId);
-    // let xoa = cart;
-    // xoa.splice(xoaIndex, 1);
-    // setcart([...cart]);
-    const body = {
-      id: xoaId,
-    };
-    deleteItemCart(body).then((res) => {
-      console.log(res.data);
-    });
-    props.them();
-    handleCloseXoa();
-  };
-
-  const updateSL = (id, sl) => {
-    const body = {
-      id: id,
-      quantity: sl,
-    };
-    updateItemCart(body).then((res) => {});
-  };
-
-  const map_cart = (item, index) => {
-    let string_name = "";
-    let d = 0;
-    for (let i = 0; i < item.product_id.name.length; i++) {
-      if (d <= 5) {
-        if (item.product_id.name[i] === " ") d++;
-        if (d < 11) string_name += item.product_id.name[i];
-      } else {
-        string_name += "...";
-        break;
-      }
-    }
-
-    return (
-      <div className="sp">
-        <div className="soluong">
-          {index + 1}.
-          <div>
-            <input
-              type="checkbox"
-              checked={checkBox[index]}
-              onChange={() => {
-                change(index);
-              }}
-            />
-          </div>
-        </div>
-
-        <div style={{ flex: "1.3" }}>
-          <Link to={"/detail-product/" + item.product_id._id}>
-            <img className="img_cart" alt="" src={item.product_id.img} />
-          </Link>
-        </div>
-
-        <div style={{ flex: "2" }}>
-          <div className="ten_cart">
-            <Link to={"/detail-product/" + item.product_id._id}>
-              {string_name.charAt(0).toUpperCase() + string_name.slice(1)}
-            </Link>
-          </div>
-          <div>{sao(item.product_id.vote)}</div>
-        </div>
-        <div style={{ flex: "2" }}>
-          {item.product_id.discountPrice > 0 ? (
-            <div className="discount">
-              <div style={{ display: "flex" }}>
-                {phay(item.product_id.discountPrice)}
-                <div className="d">đ</div>
-              </div>
-            </div>
-          ) : (
-            <div className="discount">
-              {phay(item.product_id.listedPrice)}
-              <div className="d">đ</div>
-            </div>
-          )}
-        </div>
-
-        <div style={{ flex: "2.5" }}>
-          <button
-            className="button_1"
-            onClick={() => {
-              cong_sl(index);
-              tinh_tien(
-                item.product_id.discountPrice > 0
-                  ? item.product_id.discountPrice * sl[index]
-                  : item.product_id.listedPrice * sl[index],
-                index
-              );
-              updateSL(item._id, sl[index]);
-            }}
-          >
-            +
-          </button>
-          <input
-            className="input_sl"
-            type="number"
-            onChange={(e) => {
-              input_sl(e, index);
-              tinh_tien(
-                item.product_id.discountPrice > 0
-                  ? item.product_id.discountPrice * sl[index]
-                  : item.product_id.listedPrice * sl[index],
-                index
-              );
-              updateSL(item._id, sl[index]);
-            }}
-            value={sl[index]}
-          ></input>
-          <button
-            className="button_1"
-            onClick={() => {
-              tru_sl(index);
-              tinh_tien(
-                item.product_id.discountPrice > 0
-                  ? item.product_id.discountPrice * sl[index]
-                  : item.product_id.listedPrice * sl[index],
-                index
-              );
-              updateSL(item._id, sl[index]);
-            }}
-          >
-            -
-          </button>
-        </div>
-        <div className="thanhTien">
-          {phay(
-            item.product_id.discountPrice > 0
-              ? item.product_id.discountPrice * sl[index]
-              : item.product_id.listedPrice * sl[index]
-          )}
-          <div className="d">đ</div>
-        </div>
-
-        <div>
-          <img
-            className="anh"
-            alt=""
-            src="/xoa-item.png"
-            onClick={() => {
-              setxoaId(item._id);
-              setxoaIndex(index);
-              handleShowXoa();
-            }}
-          />
-        </div>
-      </div>
-    );
-  };
-
-  const tinh_tien = (x, index) => {
-    let t = Tong;
-    t[index] = x;
-    setTong([...t]);
-  };
 
   const phay = (x) => {
     x = x.toString();
@@ -377,18 +103,45 @@ export default function Cart(props) {
     navigate("/profile");
   };
 
-  const mua = () => {
-    let doMua = [];
-    for (let i = 0; i < cart.length; i++) {
-      if (checkBox[i] === true) {
-        doMua.push(cart[i]);
+  const thanhtoan = (item, index) => {
+    let string_name = "";
+    let d = 0;
+    for (let i = 0; i < item.product_id.name.length; i++) {
+      if (d <= 5) {
+        if (item.product_id.name[i] === " ") d++;
+        if (d < 11) string_name += item.product_id.name[i];
+      } else {
+        string_name += "...";
+        break;
       }
     }
-    if (doMua.length === 0) handleShowMua();
-    else {
-      props.out(doMua);
-      navigate("/checkout");
-    }
+    return (
+      <div className="sptt">
+        <div className="ten_cart">
+          {string_name.charAt(0).toUpperCase() + string_name.slice(1)}
+        </div>
+        <div className="thanhTienTT">
+          {phay(
+            item.product_id.discountPrice > 0
+              ? item.product_id.discountPrice * item.quantity
+              : item.product_id.listedPrice * item.quantity
+          )}
+          <div className="d">đ</div>
+        </div>
+      </div>
+    );
+  };
+  const mua = (tt) => {
+    let body = {
+      note: "ASDAWD",
+      deliveryAddress: address,
+      paymentMethod: tt,
+      items: cart,
+    };
+    createInvoice(body).then((res) => {
+      // console.log(res.data);
+      setmuatc(true);
+    });
   };
   return (
     <div>
@@ -557,40 +310,71 @@ export default function Cart(props) {
                 </div>
               </div>
             </div>
-            {cart.length ? (
-              <div>
-                <div className="tieude">
-                  <div style={{ flex: "0.7" }}>
-                    Stt
-                    <div style={{ display: "flex" }}>
-                      <input
-                        type="checkbox"
-                        checked={checkBoxAll}
-                        onChange={() => {
-                          changeAll();
-                        }}
-                      />
-                    </div>
-                  </div>
-                  <div style={{ flex: "1" }}>Ảnh</div>
-                  <div style={{ flex: "2" }}>Tên sản phẩm</div>
-                  <div style={{ flex: "2.2" }}>Đơn giá</div>
-                  <div style={{ flex: "2" }}>Số lượng</div>
-                  <div className="mua" onClick={mua}>
-                    Mua hàng
-                    <div className="thanhTienTo">
-                      {phay(tien)}
-                      <div className="d">đ</div>
-                    </div>
-                  </div>
+
+            <div>
+              {/* <div>{cart.map(thanhtoan)}</div> */}
+              <hr></hr>
+              <div className="sptt">
+                <div>Tổng</div>
+                <div className="thanhTienToTT">
+                  {phay(tien)}
+                  <div className="d">đ</div>
                 </div>
-                <div className="cart">{cart.map(map_cart)}</div>
               </div>
-            ) : (
-              <div className="rong-to">
-                <img className="rong" alt="" src="/empty-cart.png" />
+
+              <div style={{ display: "flex", justifyContent: "space-between" }}>
+                <div>SĐT: </div>
+                <input
+                  style={{
+                    outline: "none",
+                    border: "0px",
+                    borderBottom: "1px solid red",
+                  }}
+                  value={phone}
+                  placeholder="Số điện thoại"
+                  onChange={(e) => {
+                    setPhone(e.target.value);
+                  }}
+                />
               </div>
-            )}
+              <div
+                style={{
+                  display: "flex",
+                  justifyContent: "space-between",
+                  marginTop: "10px",
+                  marginBottom: "10px",
+                }}
+              >
+                <div>Địa chỉ: </div>
+                <input
+                  style={{
+                    outline: "none",
+                    border: "0px",
+                    borderBottom: "1px solid red",
+                  }}
+                  value={address}
+                  placeholder="Địa chỉ"
+                  onChange={(e) => {
+                    setAddress(e.target.value);
+                  }}
+                />
+              </div>
+              <Tabs
+                defaultActiveKey="cod"
+                id="uncontrolled-tab-example"
+                className="mb-3"
+              >
+                <Tab eventKey="cod" title="Tiền mặt">
+                  <div onClick={() => mua("COD")}>Mua hàng</div>
+                </Tab>
+                <Tab eventKey="paylay" title="Paylay">
+                  <div onClick={() => mua("PAYPAL")}>Mua hàng</div>
+                </Tab>
+                <Tab eventKey="stripe" title="Stripe">
+                  <div onClick={() => mua("STRIPE")}>Mua hàng</div>
+                </Tab>
+              </Tabs>
+            </div>
 
             <div className="newslettler">
               <Form>
@@ -668,38 +452,7 @@ export default function Cart(props) {
               </div>
             </div>
           </div>
-          {cart.length ? (
-            <div
-              className="hienTieuDe"
-              style={{ zIndex: scrollTop > 40 ? "2" : "0" }}
-            >
-              <div className="tieude_sau">
-                <div style={{ flex: "0.7" }}>
-                  Stt
-                  <div>
-                    <input
-                      type="checkbox"
-                      checked={checkBoxAll}
-                      onChange={() => {
-                        changeAll();
-                      }}
-                    />
-                  </div>
-                </div>
-                <div style={{ flex: "1" }}>Ảnh</div>
-                <div style={{ flex: "2" }}>Tên sản phẩm</div>
-                <div style={{ flex: "2.2" }}>Đơn giá</div>
-                <div style={{ flex: "2" }}>Số lượng</div>
-                <div className="mua" onClick={mua}>
-                  Mua hàng
-                  <div className="thanhTienTo">
-                    {phay(tien)}
-                    <div className="d">đ</div>
-                  </div>
-                </div>
-              </div>
-            </div>
-          ) : null}
+
           <div
             className="layer3"
             style={{ zIndex: scrollTop > 40 ? "2" : "0" }}
@@ -720,32 +473,6 @@ export default function Cart(props) {
           </div>
         </div>
       ) : null}
-      <Modal show={showMua} onHide={handleCloseMua}>
-        <Modal.Header closeButton>
-          <Modal.Title>Bạn chưa chọn sản phẩm muốn mua</Modal.Title>
-        </Modal.Header>
-
-        <Modal.Footer>
-          <Button variant="primary" onClick={handleCloseMua}>
-            OK
-          </Button>
-        </Modal.Footer>
-      </Modal>
-
-      <Modal show={showXoa} onHide={handleCloseXoa}>
-        <Modal.Header closeButton>
-          <Modal.Title>Bạn có muốn xóa sản phẩm này? </Modal.Title>
-        </Modal.Header>
-
-        <Modal.Footer>
-          <Button variant="secondary" onClick={handleCloseXoa}>
-            Hủy
-          </Button>
-          <Button variant="primary" onClick={xoa_item}>
-            Xóa
-          </Button>
-        </Modal.Footer>
-      </Modal>
     </div>
   );
 }
