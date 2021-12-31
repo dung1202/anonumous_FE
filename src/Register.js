@@ -4,7 +4,7 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faEye } from "@fortawesome/free-solid-svg-icons";
 import { signUp } from "./Axios";
 import "./Register.css";
-
+import { Helmet } from "react-helmet";
 export default function Register() {
   let history = useNavigate();
 
@@ -73,6 +73,9 @@ export default function Register() {
 
   return (
     <div className="signup-container">
+      <Helmet>
+        <title>Đăng ký</title>
+      </Helmet>
       <form
         className="signup-form flexColumn"
         onSubmit={handleSubmit}

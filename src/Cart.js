@@ -2,6 +2,7 @@ import React, { useState, useEffect } from "react";
 import { useNavigate, Link } from "react-router-dom";
 import "./Cartcss.css";
 import jwt_decode from "jwt-decode";
+import { Helmet } from "react-helmet";
 import {
   OverlayTrigger,
   Tooltip,
@@ -11,18 +12,10 @@ import {
   Col,
   Modal,
   Button,
-  Tabs,
-  Tab,
 } from "react-bootstrap";
 import "bootstrap/dist/css/bootstrap.min.css";
 import * as Scroll from "react-scroll";
-import {
-  getUserById,
-  getCart,
-  updateItemCart,
-  deleteItemCart,
-  createInvoice,
-} from "./Axios";
+import { getUserById, getCart, updateItemCart } from "./Axios";
 // import { Data } from "./Data";
 export default function Cart(props) {
   // const [Data1, setData1] = useState(Data);
@@ -30,24 +23,14 @@ export default function Cart(props) {
   const [token, setToken] = useState("");
   const [Avatar, setAvatar] = useState("");
   const [sl, setsl] = useState([]);
-  const [checkBox, setcheckBox] = useState([]);
-  const [checkBoxAll, setcheckBoxAll] = useState(false);
   const [Tong, setTong] = useState([]);
   const [tien, settien] = useState(0);
   const [showXoa, setShowXoa] = useState(false);
-  const [checkOut, setCheckOut] = useState(false);
-  const [phone, setPhone] = useState("");
-  const [address, setAddress] = useState("");
-  const [muatc, setmuatc] = useState(false);
   const [xoaIndex, setxoaIndex] = useState("");
   const [xoaId, setxoaId] = useState("");
 
   const handleCloseXoa = () => setShowXoa(false);
   const handleShowXoa = () => setShowXoa(true);
-
-  const [showMua, setShowMua] = useState(false);
-  const handleCloseMua = () => setShowMua(false);
-  const handleShowMua = () => setShowMua(true);
   const [cart, setcart] = useState([]);
 
   const input_sl = (e, index) => {
@@ -72,34 +55,20 @@ export default function Cart(props) {
     setsl([...newsl]);
   };
   useEffect(() => {
-    let token = localStorage.getItem("accessToken");
-    if (token) {
+    let Token = localStorage.getItem("accessToken");
+    if (Token) {
       try {
-        const userID = jwt_decode(token)._id;
+        const userID = jwt_decode(Token)._id;
         getUserById(userID).then((res) => {
-          const user = res.data;
-          setAvatar(user.photoUrl);
-          const Address =
-            user.address.detail +
-            " " +
-            user.address.ward +
-            " " +
-            user.address.district +
-            " " +
-            user.address.city;
-          setPhone(user.phone);
-          setAddress(Address);
-          setToken(token);
+          setToken(Token);
+          setAvatar(res.data.photoUrl);
         });
         getCart().then((res) => {
           setcart(res.data.cart.items);
-          console.log(res.data);
           let mang = [];
-          let check = [];
           let tong = [];
           res.data.cart.items.map((item) => {
             mang.push(item.quantity);
-            check.push(false);
             tong.push(
               item.product_id.discountPrice
                 ? item.product_id.discountPrice * item.quantity
@@ -108,7 +77,6 @@ export default function Cart(props) {
             return <div></div>;
           });
           setsl(mang);
-          setcheckBox(check);
           setTong(tong);
         });
       } catch (error) {
@@ -153,52 +121,52 @@ export default function Cart(props) {
     );
   };
 
-  const change = (index) => {
-    let newCheck = checkBox;
-    newCheck[index] = !newCheck[index];
-    setcheckBox([...newCheck]);
-  };
-  const changeAll = () => {
-    let newCheck = checkBox;
-    setcheckBoxAll(!checkBoxAll);
-    for (let i = 0; i < newCheck.length; i++) {
-      newCheck[i] = !checkBoxAll;
-    }
-    setcheckBox([...newCheck]);
-  };
-
   useEffect(() => {
-    let d = 0;
     let tong = 0;
-    for (let i = 0; i < checkBox.length; i++) {
-      if (checkBox[i] === true) {
-        d++;
-        tong += Tong[i];
-      }
+    for (let i = 0; i < Tong.length; i++) {
+      tong += Tong[i];
     }
-    if (d === checkBox.length) {
-      setcheckBoxAll(true);
-    } else {
-      setcheckBoxAll(false);
-    }
-    setCheckOut(tong > 0 ? true : false);
     settien(tong);
-  }, [checkBox, Tong]);
+  }, [Tong]);
 
-  const xoa_item = () => {
-    console.log(xoaIndex, xoaId);
-    // let xoa = cart;
-    // xoa.splice(xoaIndex, 1);
-    // setcart([...cart]);
-    const body = {
-      id: xoaId,
-    };
-    deleteItemCart(body).then((res) => {
-      console.log(res.data);
-    });
-    props.them();
-    handleCloseXoa();
-  };
+  const xoa_item = React.useCallback(
+    async (xoaId) => {
+      console.log(xoaId);
+      const controller = new AbortController();
+      const signal = controller.signal;
+      await fetch("https://voucherhunter.herokuapp.com/cart/auth/removeitem", {
+        signal: signal,
+        method: "DELETE",
+        headers: {
+          Accept: "application/json",
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
+        },
+        body: JSON.stringify({ id: xoaId }),
+      })
+        .then((response) => response.json())
+        .then((json) => {
+          // setItemCart([...itemCart,json.cart.items])
+          setcart(json.cart.items);
+          // dispatch(removeFromCart(json.cart.items))
+          // setLoading(false);
+          props.them();
+          handleCloseXoa();
+        })
+        .catch((err) => {
+          if (err.name === "AbortError") {
+            console.log("Success Abort");
+          } else {
+            console.error(err);
+          }
+        });
+      // return () => {
+      //   // cancel the request before component unmounts
+      //   controller.abort();
+      // };
+    },
+    [xoaId]
+  );
 
   const updateSL = (id, sl) => {
     const body = {
@@ -223,18 +191,7 @@ export default function Cart(props) {
 
     return (
       <div className="sp">
-        <div className="soluong">
-          {index + 1}.
-          <div>
-            <input
-              type="checkbox"
-              checked={checkBox[index]}
-              onChange={() => {
-                change(index);
-              }}
-            />
-          </div>
-        </div>
+        <div className="soluong">{index + 1}.</div>
 
         <div style={{ flex: "1.3" }}>
           <Link to={"/detail-product/" + item.product_id._id}>
@@ -270,7 +227,7 @@ export default function Cart(props) {
           <button
             className="button_1"
             onClick={() => {
-              cong_sl(index);
+              tru_sl(index);
               tinh_tien(
                 item.product_id.discountPrice > 0
                   ? item.product_id.discountPrice * sl[index]
@@ -280,7 +237,7 @@ export default function Cart(props) {
               updateSL(item._id, sl[index]);
             }}
           >
-            +
+            -
           </button>
           <input
             className="input_sl"
@@ -300,7 +257,7 @@ export default function Cart(props) {
           <button
             className="button_1"
             onClick={() => {
-              tru_sl(index);
+              cong_sl(index);
               tinh_tien(
                 item.product_id.discountPrice > 0
                   ? item.product_id.discountPrice * sl[index]
@@ -310,7 +267,7 @@ export default function Cart(props) {
               updateSL(item._id, sl[index]);
             }}
           >
-            -
+            +
           </button>
         </div>
         <div className="thanhTien">
@@ -380,18 +337,17 @@ export default function Cart(props) {
   const mua = () => {
     let doMua = [];
     for (let i = 0; i < cart.length; i++) {
-      if (checkBox[i] === true) {
-        doMua.push(cart[i]);
-      }
+      doMua.push(cart[i]);
     }
-    if (doMua.length === 0) handleShowMua();
-    else {
-      props.out(doMua);
-      navigate("/checkout");
-    }
+    doMua.push(tien);
+    props.out(doMua);
+    navigate("/checkout");
   };
   return (
     <div>
+      <Helmet>
+        <title>Giỏ hàng</title>
+      </Helmet>
       {token ? (
         <div>
           <div className="windown layer1">
@@ -560,18 +516,7 @@ export default function Cart(props) {
             {cart.length ? (
               <div>
                 <div className="tieude">
-                  <div style={{ flex: "0.7" }}>
-                    Stt
-                    <div style={{ display: "flex" }}>
-                      <input
-                        type="checkbox"
-                        checked={checkBoxAll}
-                        onChange={() => {
-                          changeAll();
-                        }}
-                      />
-                    </div>
-                  </div>
+                  <div style={{ flex: "0.7" }}>Stt</div>
                   <div style={{ flex: "1" }}>Ảnh</div>
                   <div style={{ flex: "2" }}>Tên sản phẩm</div>
                   <div style={{ flex: "2.2" }}>Đơn giá</div>
@@ -592,46 +537,6 @@ export default function Cart(props) {
               </div>
             )}
 
-            <div className="newslettler">
-              <Form>
-                <Form.Group
-                  as={Row}
-                  className="mb-3"
-                  controlId="formHorizontalEmail"
-                >
-                  <Form.Label style={{ color: "black" }} column sm={10}>
-                    <div style={{ fontSize: "1.3rem" }}>Cập nhật tin tức</div>
-                    <div style={{ fontSize: "0.7rem" }}>
-                      Đăng ký để nhận các ưu đãi khuyến mại mới nhất từ Voucher
-                      Hunter
-                    </div>
-                  </Form.Label>
-                  <Col sm={9}>
-                    <div style={{ display: "flex" }}>
-                      <Form.Control
-                        style={{ width: "45vw" }}
-                        type="email"
-                        placeholder="Email"
-                      />
-                      <input
-                        style={{
-                          width: "90px",
-                          textAlign: "center",
-                          backgroundColor: "rgb(251, 38, 38)",
-                          borderColor: "rgb(251, 38, 38)",
-                          color: "#ffffff",
-                          outline: "none",
-                          cursor: "pointer",
-                          borderRadius: "0px 10px 10px 0px",
-                        }}
-                        value="ĐĂNG KÝ"
-                        readOnly={true}
-                      />
-                    </div>
-                  </Col>
-                </Form.Group>
-              </Form>
-            </div>
             <div className="footer1">
               <div className="footer_flex">Menu</div>
               <div className="footer_flex">Thanh Toán</div>
@@ -674,18 +579,7 @@ export default function Cart(props) {
               style={{ zIndex: scrollTop > 40 ? "2" : "0" }}
             >
               <div className="tieude_sau">
-                <div style={{ flex: "0.7" }}>
-                  Stt
-                  <div>
-                    <input
-                      type="checkbox"
-                      checked={checkBoxAll}
-                      onChange={() => {
-                        changeAll();
-                      }}
-                    />
-                  </div>
-                </div>
+                <div style={{ flex: "0.7" }}>Stt</div>
                 <div style={{ flex: "1" }}>Ảnh</div>
                 <div style={{ flex: "2" }}>Tên sản phẩm</div>
                 <div style={{ flex: "2.2" }}>Đơn giá</div>
@@ -720,17 +614,6 @@ export default function Cart(props) {
           </div>
         </div>
       ) : null}
-      <Modal show={showMua} onHide={handleCloseMua}>
-        <Modal.Header closeButton>
-          <Modal.Title>Bạn chưa chọn sản phẩm muốn mua</Modal.Title>
-        </Modal.Header>
-
-        <Modal.Footer>
-          <Button variant="primary" onClick={handleCloseMua}>
-            OK
-          </Button>
-        </Modal.Footer>
-      </Modal>
 
       <Modal show={showXoa} onHide={handleCloseXoa}>
         <Modal.Header closeButton>
@@ -741,7 +624,7 @@ export default function Cart(props) {
           <Button variant="secondary" onClick={handleCloseXoa}>
             Hủy
           </Button>
-          <Button variant="primary" onClick={xoa_item}>
+          <Button variant="primary" onClick={() => xoa_item(xoaId)}>
             Xóa
           </Button>
         </Modal.Footer>

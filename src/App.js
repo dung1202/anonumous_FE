@@ -13,7 +13,7 @@ function App() {
   // tiendung
   // tiendung12345
   const [cart, setcart] = useState(0);
-  const [checkOut, setcheckOut] = useState("");
+  const [checkOut, setcheckOut] = useState([]);
 
   useEffect(() => {
     let Token = localStorage.getItem("accessToken");

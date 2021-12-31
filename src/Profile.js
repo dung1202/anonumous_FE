@@ -2,13 +2,11 @@ import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import "./Profilecss.css";
 import jwt_decode from "jwt-decode";
+import { Helmet } from "react-helmet";
 import {
   OverlayTrigger,
   Tooltip,
   Offcanvas,
-  Form,
-  Row,
-  Col,
   Modal,
   Button,
 } from "react-bootstrap";
@@ -26,6 +24,7 @@ export default function Proflie(props) {
   const [phone, setphone] = useState("");
   const [gender, setgender] = useState("");
   const [dob, setdob] = useState("");
+  const [Invoice, setInvoice] = useState([]);
 
   const gotoCart = () => {
     navigate("/cart");
@@ -36,9 +35,9 @@ export default function Proflie(props) {
   const handleCloseXoaAll = () => setShowXoaAll(false);
   const handleShowXoaAll = () => setShowXoaAll(true);
   useEffect(() => {
-    let token = localStorage.getItem("accessToken");
-    if (token) {
-      const userID = jwt_decode(token)._id;
+    let Token = localStorage.getItem("accessToken");
+    if (Token) {
+      const userID = jwt_decode(Token)._id;
       getUserById(userID).then((res) => {
         const user = res.data;
         setAvatar(user.photoUrl);
@@ -56,13 +55,44 @@ export default function Proflie(props) {
           " " +
           user.address.city;
         setAddress(Address);
-        setToken(token);
+        setToken(Token);
       });
     }
+    // getInvoice().then((res)=>{
+    //   console.log(res.data);
+    // })
+    fetchApi();
   }, [token]);
+
+  const fetchApi = React.useCallback(() => {
+    // setLoading(true);
+    fetch("https://voucherhunter.herokuapp.com/auth/invoice", {
+      method: "GET",
+      headers: {
+        Accept: "application/json",
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${localStorage.getItem("accessToken")}`,
+      },
+    })
+      .then((response) => response.json())
+      .then((json) => {
+        console.log(json.data);
+        setInvoice(json.data);
+      });
+  }, []);
+
+  const numberFormat = new Intl.NumberFormat(
+    "vi-VN",
+    {
+      style: "currency",
+      currency: "VND",
+    } || undefined
+  );
+
   const gotoEdit = () => {
     navigate("/edit");
   };
+
   function validateNiceNumber(Number) {
     return Number < 10 ? "0" + Number : Number;
     //                     true             false
@@ -100,12 +130,77 @@ export default function Proflie(props) {
     navigate("/");
   };
 
+  const hienInvoice = (item) => {
+    let status = "";
+    if (item.status === "pending") status = "Đang xử lý";
+    const ngaDate = new Date(item.createdAt);
+    const ngay = validateNiceNumber(ngaDate.getDate());
+    const thang = validateNiceNumber(ngaDate.getMonth() + 1);
+    const nam = ngaDate.getFullYear();
+    return (
+      <div className="invoice_to">
+        <div style={{ display: "flex" }}>
+          <img alt="" src="" className="anh_invoice" />
+          <div>
+            <div className="display">
+              <div>Trạng thái:</div>
+              <div
+                style={{
+                  marginLeft: "10px",
+                  fontWeight: "600",
+                  color: "orange",
+                }}
+              >
+                {status}
+              </div>
+            </div>
+
+            <div className="display">
+              <div>Tên các sản phẩm:</div>
+              <div style={{ marginLeft: "10px", fontWeight: "600" }}>
+                {/* {item.products.length} */}
+              </div>
+            </div>
+
+            <div className="display">
+              <div>Số lượng sản phẩm:</div>
+              <div style={{ marginLeft: "10px", fontWeight: "600" }}>
+                {item.products.length}
+              </div>
+            </div>
+
+            <div className="display">
+              <div>Số tiền thanh toán:</div>
+              <div
+                style={{ marginLeft: "10px", fontWeight: "600", color: "red" }}
+              >
+                {numberFormat.format(
+                  item.totalDiscountPrice
+                    ? item.totalDiscountPrice
+                    : item.totalListPrice
+                )}
+              </div>
+            </div>
+            <div className="display">
+              <div>Ghi chú:</div>
+              <div style={{ marginLeft: "10px" }}>{item.note}</div>
+            </div>
+          </div>
+        </div>
+        <div style={{ marginLeft: "10px" }}>{`${ngay}/${thang}/${nam}`}</div>
+      </div>
+    );
+  };
+
   const date = new Date(dob);
   const day = validateNiceNumber(date.getDate());
   const month = validateNiceNumber(date.getMonth() + 1);
   const year = date.getFullYear();
   return (
     <div>
+      <Helmet>
+        <title>Thông tin</title>
+      </Helmet>
       {token ? (
         <div>
           <div className="windown layer1">
@@ -311,49 +406,31 @@ export default function Proflie(props) {
                   <div className="ten_tieude">Địa chỉ:</div>
                   <div className="noidung_tieude">{address}</div>
                 </div>
+                <div
+                  className="dinhdanh"
+                  style={{
+                    justifyContent: "center",
+                    marginTop: "10px",
+                    fontSize: "1.25rem",
+                  }}
+                >
+                  <div className="ten_tieude">Tổng số tiền bạn đã chi:</div>
+                  <div className="noidung_tieude">
+                    {numberFormat.format(
+                      Invoice.map(
+                        (item) => item.totalDiscountPrice
+                      ).reduceRight((a, b) => a + b, 0)
+                    )}
+                  </div>
+                </div>
+                <div className="dinhdanh">
+                  <div className="noidung_tieude">
+                    {Invoice.map(hienInvoice)}
+                  </div>
+                </div>
               </div>
             </div>
 
-            <div className="newslettler">
-              <Form>
-                <Form.Group
-                  as={Row}
-                  className="mb-3"
-                  controlId="formHorizontalEmail"
-                >
-                  <Form.Label style={{ color: "black" }} column sm={10}>
-                    <div style={{ fontSize: "1.3rem" }}>Cập nhật tin tức</div>
-                    <div style={{ fontSize: "0.7rem" }}>
-                      Đăng ký để nhận các ưu đãi khuyến mại mới nhất từ Voucher
-                      Hunter
-                    </div>
-                  </Form.Label>
-                  <Col sm={9}>
-                    <div style={{ display: "flex" }}>
-                      <Form.Control
-                        style={{ width: "45vw" }}
-                        type="email"
-                        placeholder="Email"
-                      />
-                      <input
-                        style={{
-                          width: "90px",
-                          textAlign: "center",
-                          backgroundColor: "rgb(251, 38, 38)",
-                          borderColor: "rgb(251, 38, 38)",
-                          color: "#ffffff",
-                          outline: "none",
-                          cursor: "pointer",
-                          borderRadius: "0px 10px 10px 0px",
-                        }}
-                        value="ĐĂNG KÝ"
-                        readOnly={true}
-                      />
-                    </div>
-                  </Col>
-                </Form.Group>
-              </Form>
-            </div>
             <div className="footer1">
               <div className="footer_flex">Menu</div>
               <div className="footer_flex">Thanh Toán</div>

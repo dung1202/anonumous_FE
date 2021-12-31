@@ -1,14 +1,12 @@
 import React, { useState, useEffect } from "react";
 import { useNavigate, Link } from "react-router-dom";
 import "./Homecss.css";
+import { Helmet } from "react-helmet";
 import {
   Carousel,
   OverlayTrigger,
   Tooltip,
   Offcanvas,
-  Form,
-  Row,
-  Col,
   Modal,
   Button,
 } from "react-bootstrap";
@@ -28,8 +26,6 @@ export default function Home(props) {
   const togglePasswordVisibility = () =>
     setPasswordShown(!passwordShown ? true : false);
 
-  const [sold, setsold] = useState([]);
-  const [giam, setgiam] = useState([]);
   const [token, setToken] = useState("");
   const [Avatar, setAvatar] = useState("");
 
@@ -73,28 +69,6 @@ export default function Home(props) {
     getProduct().then((res) => {
       const mang = [];
       const gia = [];
-      res.data.map((item) => {
-        let q = "";
-        let ok = 0;
-        let giamgia = 0;
-
-        if (item.sold >= 1000) {
-          ok = item.sold / 1000;
-          ok = ok.toFixed(1);
-          q = `${ok}k`;
-        } else {
-          q = `${item.sold}`;
-        }
-        mang.push(q);
-
-        giamgia = 100 - (item.discountPrice / item.listedPrice) * 100;
-        giamgia = giamgia.toFixed(0);
-        if (giamgia === 100 || giamgia > 99.9) giamgia = 99;
-        gia.push(giamgia);
-        return <div></div>;
-      });
-      setsold(mang);
-      setgiam(gia);
       let d1 = 0;
       let d2 = 0;
       let d3 = 0;
@@ -112,7 +86,6 @@ export default function Home(props) {
         }
         if (res.data[i].in_slider && d3 <= 4) {
           mangA.push(res.data[i]);
-
           d3++;
         }
         if (d1 === 5 && d2 === 5 && d3 === 5) {
@@ -155,6 +128,16 @@ export default function Home(props) {
         break;
       }
     }
+
+    let q = "";
+    if (item.sold >= 1000) {
+      ok = item.sold / 1000;
+      ok = ok.toFixed(1);
+      q = `${ok}k`;
+    } else {
+      q = `${item.sold}`;
+    }
+
     return (
       <Link to={"/detail-product/" + item._id}>
         <div className="hover1">
@@ -166,7 +149,7 @@ export default function Home(props) {
             <div className="sl">
               <div>{sao(item.vote)}</div>
               <div>
-                {sold[index] === "0" ? "" : <div>Đã bán {sold[index]}</div>}
+                {q === "0" ? "" : <div>Đã bán {q}</div>}
               </div>
             </div>
           </div>
@@ -191,6 +174,19 @@ export default function Home(props) {
         break;
       }
     }
+
+    let q = "";
+    if (item.sold >= 1000) {
+      ok = item.sold / 1000;
+      ok = ok.toFixed(1);
+      q = `${ok}k`;
+    } else {
+      q = `${item.sold}`;
+    }
+
+    let giamgia = 100 - (item.discountPrice / item.listedPrice) * 100;
+    giamgia = giamgia.toFixed(0);
+    if (giamgia === 100 || giamgia > 99.9) giamgia = 99;
     return (
       <Link to={"/detail-product/" + item._id}>
         <div className="hover1">
@@ -201,9 +197,7 @@ export default function Home(props) {
             </div>
             <div className="sl">
               <div>{sao(item.vote)}</div>
-              <div>
-                {sold[index] === "0" ? "" : <div>Đã bán {sold[index]}</div>}
-              </div>
+              <div>{q === "0" ? "" : <div>Đã bán {q}</div>}</div>
             </div>
           </div>
 
@@ -220,7 +214,7 @@ export default function Home(props) {
               <div className="d">đ</div>
             </div>
             {item.discountPrice > 0 ? (
-              <div className="giamgia giam">-{giam[index]}%</div>
+              <div className="giamgia giam">-{giamgia}%</div>
             ) : null}
           </div>
         </div>
@@ -391,6 +385,9 @@ export default function Home(props) {
   };
   return (
     <div>
+      <Helmet>
+        <title>Trang chủ</title>
+      </Helmet>
       <div className="windown layer1">
         <div className="header" id="header_top">
           <div className="ok1">
@@ -577,46 +574,7 @@ export default function Home(props) {
           <div className="bonus">Xem thêm -></div>
         </div>
         <div className="news-moom">{news.map(map_news)}</div>
-        <div className="newslettler">
-          <Form>
-            <Form.Group
-              as={Row}
-              className="mb-3"
-              controlId="formHorizontalEmail"
-            >
-              <Form.Label style={{ color: "black" }} column sm={10}>
-                <div style={{ fontSize: "1.3rem" }}>Cập nhật tin tức</div>
-                <div style={{ fontSize: "0.7rem" }}>
-                  Đăng ký để nhận các ưu đãi khuyến mại mới nhất từ Voucher
-                  Hunter
-                </div>
-              </Form.Label>
-              <Col sm={9}>
-                <div style={{ display: "flex" }}>
-                  <Form.Control
-                    style={{ width: "45vw" }}
-                    type="email"
-                    placeholder="Email"
-                  />
-                  <input
-                    style={{
-                      width: "90px",
-                      textAlign: "center",
-                      backgroundColor: "rgb(251, 38, 38)",
-                      borderColor: "rgb(251, 38, 38)",
-                      color: "#ffffff",
-                      outline: "none",
-                      cursor: "pointer",
-                      borderRadius: "0px 10px 10px 0px",
-                    }}
-                    value="ĐĂNG KÝ"
-                    readOnly={true}
-                  />
-                </div>
-              </Col>
-            </Form.Group>
-          </Form>
-        </div>
+        
         <div className="footer1">
           <div className="footer_flex">Menu</div>
           <div className="footer_flex">Thanh Toán</div>

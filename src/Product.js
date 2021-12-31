@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from "react";
 import "./Productcss.css";
+import { Helmet } from "react-helmet";
 import {
   Carousel,
   OverlayTrigger,
@@ -259,9 +260,9 @@ export default function Product(props) {
     navigate("/");
   };
 
-  const gotoProfile=()=>{
-    navigate("/profile")
-  }
+  const gotoProfile = () => {
+    navigate("/profile");
+  };
   const [array_product] = useState(() => {
     const dai = Math.ceil(Data.length / 12);
     const mang = [];
@@ -322,6 +323,9 @@ export default function Product(props) {
   };
   return (
     <div>
+      <Helmet>
+        <title>Sản phẩm</title>
+      </Helmet>
       <div className="windown layer1">
         <div className="header" id="header_top">
           <div className="ok1">
@@ -531,46 +535,6 @@ export default function Product(props) {
           </div>
         </div>
 
-        <div className="newslettler">
-          <Form>
-            <Form.Group
-              as={Row}
-              className="mb-3"
-              controlId="formHorizontalEmail"
-            >
-              <Form.Label style={{ color: "black" }} column sm={10}>
-                <div style={{ fontSize: "1.3rem" }}>Cập nhật tin tức</div>
-                <div style={{ fontSize: "0.7rem" }}>
-                  Đăng ký để nhận các ưu đãi khuyến mại mới nhất từ Voucher
-                  Hunter
-                </div>
-              </Form.Label>
-              <Col sm={9}>
-                <div style={{ display: "flex" }}>
-                  <Form.Control
-                    style={{ width: "45vw" }}
-                    type="email"
-                    placeholder="Email"
-                  />
-                  <input
-                    style={{
-                      width: "90px",
-                      textAlign: "center",
-                      backgroundColor: "rgb(251, 38, 38)",
-                      borderColor: "rgb(251, 38, 38)",
-                      color: "#ffffff",
-                      outline: "none",
-                      cursor: "pointer",
-                      borderRadius: "0px 10px 10px 0px",
-                    }}
-                    value="ĐĂNG KÝ"
-                    readOnly={true}
-                  />
-                </div>
-              </Col>
-            </Form.Group>
-          </Form>
-        </div>
         <div className="footer1">
           <div className="footer_flex">Menu</div>
           <div className="footer_flex">Thanh Toán</div>

@@ -1,42 +1,41 @@
 import React, { useState, useEffect } from "react";
-import { useNavigate, Link } from "react-router-dom";
-import "./Cartcss.css";
+import { useNavigate } from "react-router-dom";
+import "./CheckOut.css";
 import jwt_decode from "jwt-decode";
+import { Helmet } from "react-helmet";
 import {
   OverlayTrigger,
   Tooltip,
   Offcanvas,
-  Form,
-  Row,
-  Col,
   Tabs,
   Tab,
+  Modal,
+  Button,
 } from "react-bootstrap";
 import "bootstrap/dist/css/bootstrap.min.css";
 import * as Scroll from "react-scroll";
-import { getUserById, createInvoice } from "./Axios";
+import { getUserById, createInvoice, deleteCart } from "./Axios";
 export default function CheckOut(props) {
   const navigate = useNavigate();
   const [token, setToken] = useState("");
   const [Avatar, setAvatar] = useState("");
-  const [sl, setsl] = useState([]);
-  const [checkBox, setcheckBox] = useState([]);
-  const [checkBoxAll, setcheckBoxAll] = useState(false);
-  const [Tong, setTong] = useState([]);
-  const [tien, settien] = useState(0);
-  const [checkOut, setCheckOut] = useState(false);
   const [phone, setPhone] = useState("");
   const [address, setAddress] = useState("");
-  const [muatc, setmuatc] = useState(false);
   const [cart, setcart] = useState([]);
+  const [email, setemail] = useState("");
+  const [paylay, setpaylay] = useState("");
+  const [showMua, setShowMua] = useState(false);
+  const [note, setnote] = useState("");
+  const handleCloseMua = () => setShowMua(false);
+  const handleShowMua = () => setShowMua(true);
 
   useEffect(() => {
-      console.log(props.muaDo);
     let token = localStorage.getItem("accessToken");
     if (token) {
       try {
+        console.log(props.muaDo);
         const userID = jwt_decode(token)._id;
-        setcart(props.mua)
+        setcart(props.muaDo);
         getUserById(userID).then((res) => {
           const user = res.data;
           setAvatar(user.photoUrl);
@@ -50,16 +49,9 @@ export default function CheckOut(props) {
             user.address.city;
           setPhone(user.phone);
           setAddress(Address);
+          setemail(user.email);
           setToken(token);
         });
-        let tong = 0;
-        for (let i = 0; i < cart.length; i++) {
-          let k = cart.product_id.discountPrice
-            ? cart.product_id.discountPrice * cart.quantity
-            : cart.product_id.listedPrice * cart.quantity;
-          tong += k;
-        }
-        settien(tong);
       } catch (error) {
         setToken("");
         setAvatar("");
@@ -92,6 +84,9 @@ export default function CheckOut(props) {
   }, [scrollTop]);
 
   const gotoProduct = () => {
+    deleteCart().then((res) => {
+      props.them();
+    });
     navigate("/product");
   };
 
@@ -100,51 +95,71 @@ export default function CheckOut(props) {
   };
 
   const gotoProfile = () => {
+    deleteCart().then((res) => {
+      props.them();
+    });
     navigate("/profile");
+  };
+  const gotoCart = () => {
+    navigate("/cart");
   };
 
   const thanhtoan = (item, index) => {
-    let string_name = "";
-    let d = 0;
-    for (let i = 0; i < item.product_id.name.length; i++) {
-      if (d <= 5) {
-        if (item.product_id.name[i] === " ") d++;
-        if (d < 11) string_name += item.product_id.name[i];
-      } else {
-        string_name += "...";
-        break;
+    if (index < cart.length - 1) {
+      let string_name = "";
+      let d = 0;
+      for (let i = 0; i < item.product_id.name.length; i++) {
+        if (d <= 5) {
+          if (item.product_id.name[i] === " ") d++;
+          if (d < 11) string_name += item.product_id.name[i];
+        } else {
+          string_name += "...";
+          break;
+        }
       }
+      return (
+        <div className="sptt">
+          <div>
+            <img className="img_cart" alt="" src={item.product_id.img} />
+          </div>
+          <div className="ten_cart">
+            {string_name.charAt(0).toUpperCase() + string_name.slice(1)}
+          </div>
+          <div>x{item.quantity}</div>
+          <div className="thanhTienTT">
+            {phay(
+              item.product_id.discountPrice > 0
+                ? item.product_id.discountPrice * item.quantity
+                : item.product_id.listedPrice * item.quantity
+            )}
+            <div className="d">đ</div>
+          </div>
+        </div>
+      );
     }
-    return (
-      <div className="sptt">
-        <div className="ten_cart">
-          {string_name.charAt(0).toUpperCase() + string_name.slice(1)}
-        </div>
-        <div className="thanhTienTT">
-          {phay(
-            item.product_id.discountPrice > 0
-              ? item.product_id.discountPrice * item.quantity
-              : item.product_id.listedPrice * item.quantity
-          )}
-          <div className="d">đ</div>
-        </div>
-      </div>
-    );
   };
   const mua = (tt) => {
+    let o = cart;
+    o.pop();
     let body = {
-      note: "ASDAWD",
+      note,
       deliveryAddress: address,
       paymentMethod: tt,
-      items: cart,
+      items: o,
     };
-    createInvoice(body).then((res) => {
-      // console.log(res.data);
-      setmuatc(true);
-    });
+    createInvoice(body)
+      .then((res) => {
+        handleShowMua();
+      })
+      .catch((err) => {
+        console.log(err);
+      });
   };
   return (
     <div>
+      <Helmet>
+        <title>Hóa đơn</title>
+      </Helmet>
       {token ? (
         <div>
           <div className="windown layer1">
@@ -201,7 +216,7 @@ export default function CheckOut(props) {
               </div>
               <div>
                 <div className="ok1">
-                  <div style={{ display: "flex" }}>
+                  <div style={{ display: "flex" }} onClick={gotoCart}>
                     <OverlayTrigger
                       key="bottom"
                       placement="bottom"
@@ -269,7 +284,7 @@ export default function CheckOut(props) {
                 <div>
                   <img className="layer" src="Layer.png" alt="" />
                 </div>
-                <div style={{ display: "flex" }}>
+                <div style={{ display: "flex" }} onClick={gotoCart}>
                   <OverlayTrigger
                     key="bottom"
                     placement="bottom"
@@ -310,112 +325,150 @@ export default function CheckOut(props) {
                 </div>
               </div>
             </div>
+            {cart.length > 0 ? (
+              <div className="hoadon">
+                <div className="tenhd">Xác nhận mua hàng</div>
+                <div>{cart.map(thanhtoan)}</div>
+                <hr></hr>
+                <div className="sptt">
+                  <div>Tổng</div>
+                  <div className="thanhTienToTT">
+                    {phay(cart[cart.length - 1])}
+                    <div className="d">đ</div>
+                  </div>
+                </div>
+                <div
+                  style={{ display: "flex", justifyContent: "space-between" }}
+                >
+                  <div>Email: </div>
+                  <input
+                    style={{
+                      outline: "none",
+                      border: "0px",
+                      borderBottom: "1px solid red",
+                      marginBottom: "10px",
+                    }}
+                    value={email}
+                    placeholder="Email"
+                    readOnly={true}
+                  />
+                </div>
+                <div
+                  style={{ display: "flex", justifyContent: "space-between" }}
+                >
+                  <div>SĐT: </div>
+                  <input
+                    style={{
+                      outline: "none",
+                      border: "0px",
+                      borderBottom: "1px solid red",
+                    }}
+                    value={phone}
+                    placeholder="Số điện thoại"
+                    readOnly={true}
+                  />
+                </div>
+                <div
+                  style={{
+                    display: "flex",
+                    justifyContent: "space-between",
+                    marginTop: "10px",
+                    marginBottom: "10px",
+                  }}
+                >
+                  <div>Địa chỉ: </div>
+                  <input
+                    style={{
+                      outline: "none",
+                      border: "0px",
+                      borderBottom: "1px solid red",
+                    }}
+                    value={address}
+                    placeholder="Địa chỉ"
+                    readOnly={true}
+                  />
+                </div>
+                <div>Ghi chú:</div>
+                <textarea
+                  style={{
+                    outline: "none",
+                    // border: "0px",
+                    border: "1px solid black",
+                    width: "100%",
+                    resize: "none",
+                  }}
+                  value={note}
+                  placeholder="Ghi chú"
+                  // resize="none"
+                  onChange={(e) => setnote(e.target.value)}
+                />
 
-            <div>
-              {/* <div>{cart.map(thanhtoan)}</div> */}
-              <hr></hr>
-              <div className="sptt">
-                <div>Tổng</div>
-                <div className="thanhTienToTT">
-                  {phay(tien)}
-                  <div className="d">đ</div>
+                <Tabs
+                  defaultActiveKey="cod"
+                  id="uncontrolled-tab-example"
+                  className="mb-3"
+                >
+                  <Tab eventKey="cod" title="Tiền mặt">
+                    <div>
+                      <div onClick={() => mua("COD")} className="kingpin">
+                        Mua hàng
+                      </div>
+                    </div>
+                  </Tab>
+                  <Tab eventKey="paylay" title="Paylay">
+                    <div>
+                      <div
+                        style={{
+                          display: "flex",
+                          justifyContent: "space-between",
+                        }}
+                      >
+                        <div>Nhập số tài khoản</div>
+                        <input
+                          style={{
+                            outline: "none",
+                            border: "0px",
+                            borderBottom: "1px solid red",
+                          }}
+                          placeholder="Số tài khoản"
+                          value={paylay}
+                          onChange={(e) => setpaylay(e.target.value)}
+                        />
+                      </div>
+
+                      <div onClick={() => mua("PAYPAL")} className="kingpin">
+                        Mua hàng
+                      </div>
+                    </div>
+                  </Tab>
+                  <Tab eventKey="stripe" title="Stripe">
+                    <div>
+                      <div onClick={() => mua("STRIPE")} className="kingpin">
+                        Mua hàng
+                      </div>
+                    </div>
+                  </Tab>
+                </Tabs>
+              </div>
+            ) : (
+              <div
+                className="hoadon"
+                style={{ marginBottom: "200px", display: "flex" }}
+              >
+                <div>"Chúng tôi cần bạn xác nhận lại"</div>
+                <div
+                  onClick={gotoCart}
+                  style={{
+                    marginLeft: "10px",
+                    fontWeight: "600",
+                    cursor: "pointer",
+                  }}
+                >
+                  Đến giỏ hàng
                 </div>
               </div>
+            )}
 
-              <div style={{ display: "flex", justifyContent: "space-between" }}>
-                <div>SĐT: </div>
-                <input
-                  style={{
-                    outline: "none",
-                    border: "0px",
-                    borderBottom: "1px solid red",
-                  }}
-                  value={phone}
-                  placeholder="Số điện thoại"
-                  onChange={(e) => {
-                    setPhone(e.target.value);
-                  }}
-                />
-              </div>
-              <div
-                style={{
-                  display: "flex",
-                  justifyContent: "space-between",
-                  marginTop: "10px",
-                  marginBottom: "10px",
-                }}
-              >
-                <div>Địa chỉ: </div>
-                <input
-                  style={{
-                    outline: "none",
-                    border: "0px",
-                    borderBottom: "1px solid red",
-                  }}
-                  value={address}
-                  placeholder="Địa chỉ"
-                  onChange={(e) => {
-                    setAddress(e.target.value);
-                  }}
-                />
-              </div>
-              <Tabs
-                defaultActiveKey="cod"
-                id="uncontrolled-tab-example"
-                className="mb-3"
-              >
-                <Tab eventKey="cod" title="Tiền mặt">
-                  <div onClick={() => mua("COD")}>Mua hàng</div>
-                </Tab>
-                <Tab eventKey="paylay" title="Paylay">
-                  <div onClick={() => mua("PAYPAL")}>Mua hàng</div>
-                </Tab>
-                <Tab eventKey="stripe" title="Stripe">
-                  <div onClick={() => mua("STRIPE")}>Mua hàng</div>
-                </Tab>
-              </Tabs>
-            </div>
-
-            <div className="newslettler">
-              <Form>
-                <Form.Group
-                  as={Row}
-                  className="mb-3"
-                  controlId="formHorizontalEmail"
-                >
-                  <Form.Label style={{ color: "black" }} column sm={10}>
-                    <div style={{ fontSize: "1.3rem" }}>Cập nhật tin tức</div>
-                    <div style={{ fontSize: "0.7rem" }}>
-                      Đăng ký để nhận các ưu đãi khuyến mại mới nhất từ Voucher
-                      Hunter
-                    </div>
-                  </Form.Label>
-                  <Col sm={9}>
-                    <div style={{ display: "flex" }}>
-                      <Form.Control
-                        style={{ width: "45vw" }}
-                        type="email"
-                        placeholder="Email"
-                      />
-                      <input
-                        style={{
-                          width: "90px",
-                          textAlign: "center",
-                          backgroundColor: "rgb(251, 38, 38)",
-                          borderColor: "rgb(251, 38, 38)",
-                          color: "#ffffff",
-                          outline: "none",
-                          cursor: "pointer",
-                          borderRadius: "0px 10px 10px 0px",
-                        }}
-                        value="ĐĂNG KÝ"
-                        readOnly={true}
-                      />
-                    </div>
-                  </Col>
-                </Form.Group>
-              </Form>
-            </div>
             <div className="footer1">
               <div className="footer_flex">Menu</div>
               <div className="footer_flex">Thanh Toán</div>
@@ -471,6 +524,20 @@ export default function CheckOut(props) {
               </Scroll.Link>
             </div>
           </div>
+          <Modal show={showMua} onHide={handleCloseMua}>
+            <Modal.Header closeButton>
+              <Modal.Title>Cảm ơn bạn đã mua hàng</Modal.Title>
+            </Modal.Header>
+
+            <Modal.Footer>
+              <Button variant="primary" onClick={gotoProduct}>
+                Tiếp tục mua hàng
+              </Button>
+              <Button variant="primary" onClick={gotoProfile}>
+                Xem hóa đơn
+              </Button>
+            </Modal.Footer>
+          </Modal>
         </div>
       ) : null}
     </div>

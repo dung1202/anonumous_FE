@@ -6,6 +6,7 @@ import jwt_decode from "jwt-decode";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faEye } from "@fortawesome/free-solid-svg-icons";
 import renderHTML from "react-render-html";
+import { Helmet } from "react-helmet";
 import {
   Carousel,
   OverlayTrigger,
@@ -25,6 +26,8 @@ import {
   getProductById,
   addCart,
   checkToken,
+  updateItemCart,
+  getCart,
 } from "./Axios";
 export default function DetailProduct(props) {
   const navigate = useNavigate();
@@ -89,28 +92,57 @@ export default function DetailProduct(props) {
   const addPro = () => {
     if (!Avatar) setShow_acc(true);
     else {
-      const obj = {
-        product_id: id,
-        quantity: Input_sl,
-      };
-      addCart(obj).then((res) => {
-        props.them();
-        setaddDone(true);
+      getCart().then(async (res) => {
+        let bien = [];
+        bien = res.data.cart.items;
+        console.log(bien);
+        let ktr = 0;
+        let sltrc = 0;
+        let k = 0;
+        for (let i = 0; i < bien.length; i++) {
+          if (id != bien[i].product_id._id) {
+            ktr++;
+          } else {
+            sltrc = bien[i].quantity;
+            k = i;
+          }
+        }
+        console.log(ktr, sltrc);
+        if (ktr === bien.length) {
+          const obj = {
+            product_id: id,
+            quantity: Input_sl,
+          };
+          addCart(obj).then((res) => {
+            props.them();
+            setaddDone(true);
+          });
+        } else {
+          const body = {
+            id: bien[k]._id,
+            quantity: Number(sltrc + Input_sl),
+          };
+          console.log(body);
+          updateItemCart(body).then((res) => {
+            console.log("fkdfdjs");
+            setaddDone(true);
+          });
+        }
       });
     }
   };
 
   useEffect(() => {
-    let token = localStorage.getItem("accessToken");
-    if (token) {
+    let Token = localStorage.getItem("accessToken");
+    if (Token) {
       try {
-        const userID = jwt_decode(token)._id;
+        const userID = jwt_decode(Token)._id;
         checkToken().then((res) => {
           if (res.data.message === "Token is valid") {
             getUserById(userID).then((res) => {
               const user = res.data;
               setAvatar(user.photoUrl);
-              setToken(token);
+              setToken(Token);
             });
           }
         });
@@ -145,7 +177,6 @@ export default function DetailProduct(props) {
   };
 
   useEffect(() => {
-    // setid(params.id);
     getProductById(id).then((res) => {
       let a = res.data;
       a.name = a.name.charAt(0).toUpperCase() + a.name.slice(1);
@@ -295,6 +326,7 @@ export default function DetailProduct(props) {
     setaddDone(false);
     window.scrollTo(10, 0);
   };
+
   const pro = (item, index) => {
     let string_name = "";
     let d = 0;
@@ -360,6 +392,9 @@ export default function DetailProduct(props) {
   }, [scrollTop]);
   return (
     <div>
+      <Helmet>
+        <title>{sp.name}</title>
+      </Helmet>
       <div className="windown layer1">
         <div className="header" id="header_top">
           <div className="ok1">
@@ -577,10 +612,10 @@ export default function DetailProduct(props) {
                     <button
                       className="button_1"
                       onClick={() => {
-                        if (Input_sl < sp.quantity) setInput_sl(Input_sl + 1);
+                        if (Input_sl > 1) setInput_sl(Input_sl - 1);
                       }}
                     >
-                      +
+                      -
                     </button>
                     <input
                       className="input_sl"
@@ -591,10 +626,10 @@ export default function DetailProduct(props) {
                     <button
                       className="button_1"
                       onClick={() => {
-                        if (Input_sl > 1) setInput_sl(Input_sl - 1);
+                        if (Input_sl < sp.quantity) setInput_sl(Input_sl + 1);
                       }}
                     >
-                      -
+                      +
                     </button>
                   </div>
                 </div>
@@ -629,46 +664,6 @@ export default function DetailProduct(props) {
 
         <div className="product1">{Product_is_hot.map(pro)}</div>
 
-        <div className="newslettler">
-          <Form>
-            <Form.Group
-              as={Row}
-              className="mb-3"
-              controlId="formHorizontalEmail"
-            >
-              <Form.Label style={{ color: "black" }} column sm={10}>
-                <div style={{ fontSize: "1.3rem" }}>Cập nhật tin tức</div>
-                <div style={{ fontSize: "0.7rem" }}>
-                  Đăng ký để nhận các ưu đãi khuyến mại mới nhất từ Voucher
-                  Hunter
-                </div>
-              </Form.Label>
-              <Col sm={9}>
-                <div style={{ display: "flex" }}>
-                  <Form.Control
-                    style={{ width: "45vw" }}
-                    type="email"
-                    placeholder="Email"
-                  />
-                  <input
-                    style={{
-                      width: "90px",
-                      textAlign: "center",
-                      backgroundColor: "rgb(251, 38, 38)",
-                      borderColor: "rgb(251, 38, 38)",
-                      color: "#ffffff",
-                      outline: "none",
-                      cursor: "pointer",
-                      borderRadius: "0px 10px 10px 0px",
-                    }}
-                    value="ĐĂNG KÝ"
-                    readOnly={true}
-                  />
-                </div>
-              </Col>
-            </Form.Group>
-          </Form>
-        </div>
         <div className="footer1">
           <div className="footer_flex">Menu</div>
           <div className="footer_flex">Thanh Toán</div>

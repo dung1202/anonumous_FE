@@ -1,5 +1,5 @@
 .container_profile {
-  margin: 2vh 5vw 0vh 5vw;
+  margin: 2vh 5vw 11vh 5vw;
   background-color: white;
   display: flex;
   border-radius: 10px;
@@ -8,6 +8,9 @@
 
 .anh_profile {
   width: 20vw;
+  height: 40vh;
+  margin: 10px 0px 5px 10px;
+  border-radius: 10px;
 }
 
 .name_profile {
@@ -15,17 +18,42 @@
   font-weight: 600;
 }
 
-.dinhdanh{
-    display: flex;
-    flex: 1;
+.dinhdanh {
+  display: flex;
+  flex: 1;
 }
 
-.ten_tieude{
-    font-weight: 600;
+.dinhdanh1 {
+  flex-direction: column;
 }
 
-.noidung_tieude{
-    margin-left: 10px;
-    text-align: center;
-    
+.ten_tieude {
+  font-weight: 600;
+}
+
+.noidung_tieude {
+  margin-left: 10px;
+  text-align: center;
+}
+
+.invoice_to {
+  background-color: rgba(233, 188, 190, 0.3);
+  border-radius: 10px;
+  width: 65vw;
+  margin-top: 15px;
+  margin-bottom: 15px;
+  display: flex;
+  padding: 10px;
+  justify-content: space-between;
+}
+
+.anh_invoice{
+  width: 100px;
+  height: 100px;
+
+}
+
+.display{
+  display: flex;
+  margin-left: 10px;
 }

@@ -2,13 +2,17 @@ import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import "./user.css";
 import jwt_decode from "jwt-decode";
+import { storage } from "./uploadFireBase";
+import { ref, getDownloadURL, uploadBytesResumable } from "firebase/storage";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { faEye } from "@fortawesome/free-solid-svg-icons";
+import { Helmet } from "react-helmet";
 import {
   OverlayTrigger,
   Tooltip,
   Offcanvas,
-  Form,
-  Row,
-  Col,
+  Modal,
+  Button,
 } from "react-bootstrap";
 import {
   CalendarToday,
@@ -20,11 +24,14 @@ import {
 } from "@material-ui/icons";
 import "bootstrap/dist/css/bootstrap.min.css";
 import { Link } from "react-scroll";
-import { getUserById, updateUser } from "./Axios";
+import { getUserById, updateUser, changePwd } from "./Axios";
 
 export default function Edituser(props) {
+  const [oldPassword, setoldPassword] = useState("");
+  const [newPassword, setnewPassword] = useState("");
+  const [newPasswordRepeat, setnewPasswordRepeat] = useState("");
   const navigate = useNavigate();
-  const [file, setFile] = useState([]);
+  const [ttsp_moi, setttsp_moi] = useState("");
   const [token, setToken] = useState("");
   const [Avatar, setAvatar] = useState("");
   const [phone, setPhone] = useState("");
@@ -40,6 +47,22 @@ export default function Edituser(props) {
   const [sinhNhat, setsinhNhat] = useState("");
   const [dienThoai, setdienThoai] = useState("");
   const [diaChi, setdiaChi] = useState("");
+  const [anh, setanh] = useState("");
+  const [passwordShown1, setPasswordShown1] = useState(false);
+  const togglePasswordVisibility1 = () =>
+    setPasswordShown1(!passwordShown1 ? true : false);
+  const [passwordShown2, setPasswordShown2] = useState(false);
+  const togglePasswordVisibility2 = () =>
+    setPasswordShown2(!passwordShown2 ? true : false);
+  const [passwordShown3, setPasswordShown3] = useState(false);
+  const togglePasswordVisibility3 = () =>
+    setPasswordShown3(!passwordShown3 ? true : false);
+  const [err, seterr] = useState("");
+
+  const [showPass, setShowPass] = useState(false);
+
+  const handleClosePass = () => setShowPass(false);
+  const handleShowPass = () => setShowPass(true);
   const gotoCart = () => {
     navigate("/cart");
   };
@@ -72,13 +95,11 @@ export default function Edituser(props) {
         setsinhNhat(user.dob);
         setdienThoai(user.phone);
         setdiaChi(Address);
+        setanh(user.photoUrl);
+        // setttsp_moi(!ttsp_moi)
       });
     }
   }, [token]);
-
-  const changeFile = (e) => {
-    setFile(e.target.files[0]);
-  };
 
   const [show, setShow] = useState(false);
 
@@ -109,6 +130,7 @@ export default function Edituser(props) {
   const updatedata = (e) => {
     e.preventDefault();
     let body = {
+      photoUrl: anh,
       id,
       phone,
       address: {
@@ -119,15 +141,54 @@ export default function Edituser(props) {
       },
       dob,
       gender,
+      // setttsp_moi(!ttsp_moi)
     };
     updateUser(body).then((res) => {
-      navigate("/profile")
+      navigate("/profile");
+      console.log(res.data);
     });
   };
   function validateNiceNumber(Number) {
     return Number < 10 ? "0" + Number : Number;
     //                     true             false
   }
+
+  const submit = () => {
+    const body = {
+      oldPassword,
+      newPassword,
+    };
+    console.log(body, newPasswordRepeat);
+    if (
+      oldPassword.length === 0 ||
+      newPassword === 0 ||
+      newPasswordRepeat === 0
+    ) {
+      seterr("Phải nhập đủ 3 mật khẩu");
+    } else if (
+      oldPassword.length < 8 ||
+      oldPassword.length > 30 ||
+      newPassword.length > 30 ||
+      newPassword.length < 8
+    ) {
+      seterr("Mật khẩu không hợp lệ");
+    } else if (newPassword != newPasswordRepeat) {
+      seterr("Mật khẩu mới không khớp");
+    } else {
+      changePwd(body).then((res) => {
+        if (res.data.message === "Wrong password") {
+          seterr("Mật khẩu sai");
+        } else if (res.data.message === "Change password successfully") {
+          seterr("Đổi mật khẩu thành công");
+          setTimeout(() => {
+            handleClosePass();
+            navigate("/profile")
+          }, 2000);
+          
+        }
+      });
+    }
+  };
 
   const date = new Date(sinhNhat);
   const day = validateNiceNumber(date.getDate());
@@ -141,8 +202,27 @@ export default function Edituser(props) {
     const ok = `${d}-${c}-${b}`;
     return ok;
   };
+
+  const upanh = (e) => {
+    const ok = e.target.files[0];
+    console.log(ok);
+    let storageRef = ref(storage, `anh/${ok.name}`);
+    let uploadTask = uploadBytesResumable(storageRef, ok);
+    uploadTask.on(
+      (error) => console.log(error),
+      () => {
+        getDownloadURL(uploadTask.snapshot.ref).then((downloadURL) => {
+          console.log(downloadURL);
+          setanh(downloadURL);
+        });
+      }
+    );
+  };
   return (
     <div>
+      <Helmet>
+        <title>Sửa thông tin</title>
+      </Helmet>
       {token ? (
         <div>
           <div className="windown layer1">
@@ -325,6 +405,12 @@ export default function Edituser(props) {
                       <LocationSearching className="userShowIcon" />
                       <span className="userShowInfoTitle">{diaChi}</span>
                     </div>
+                    <button
+                      className="userUpdateButton"
+                      onClick={handleShowPass}
+                    >
+                      Đổi mật khẩu
+                    </button>
                   </div>
                 </div>
                 <div className="userUpdate">
@@ -334,9 +420,9 @@ export default function Edituser(props) {
                       <div className="userUpdateItem">
                         <label>Giới tính</label>
                         <input
-                          type="text"
+                          type="test"
                           value={gender}
-                          onChange={(e) => setPhone(e.target.value)}
+                          onChange={(e) => setgender(e.target.value)}
                           placeholder="+1 123 456 67"
                           className="userUpdateInput"
                         />
@@ -351,6 +437,31 @@ export default function Edituser(props) {
                           className="userUpdateInput"
                         />
                       </div>
+                      <div className="userUpdateItem">
+                        <label>Sinh nhật</label>
+                        <input
+                          type="date"
+                          value={ngay(dob)}
+                          onChange={(e) => {
+                            setdob(new Date(e.target.value));
+                          }}
+                          placeholder="Sinh Nhật"
+                          className="userUpdateInput"
+                        />
+                      </div>
+                      <div className="userUpdateItem">
+                        <label>Nhận thông tin sản phẩm mới</label>
+                        <input
+                          style={{ marginTop: "10px" }}
+                          type="checkbox"
+                          checked={ttsp_moi}
+                          onChange={() => {
+                            setttsp_moi(!ttsp_moi);
+                          }}
+                        />
+                      </div>
+                    </div>
+                    <div>
                       <div className="userUpdateItem">
                         <label>Thành phố/Tỉnh</label>
                         <input
@@ -391,31 +502,18 @@ export default function Edituser(props) {
                           className="userUpdateInput"
                         />
                       </div>
-                      <div className="userUpdateItem">
-                        <label>Sinh nhật</label>
-                        <input
-                          type="date"
-                          value={ngay(dob)}
-                          onChange={(e) => {
-                            setdob(new Date(e.target.value));
-                          }}
-                          placeholder="Số nhà"
-                          className="userUpdateInput"
-                        />
-                      </div>
                     </div>
                     <div className="userUpdateRight">
                       <div className="userUpdateUpload">
-                        <img className="userShowImg1" src={Avatar} />
+                        <img alt="" className="userShowImg1" src={anh} />
                         <label htmlFor="file">
                           <Publish className="userUpdateIcon" />
                         </label>
                         <input
-                          id="file"
-                          onChange={changeFile}
-                          accept="image/png, image/jpeg"
                           type="file"
+                          id="file"
                           style={{ display: "none" }}
+                          onChange={upanh}
                         />
                       </div>
                       <button className="userUpdateButton" onClick={updatedata}>
@@ -427,46 +525,6 @@ export default function Edituser(props) {
               </div>
             </div>
 
-            <div className="newslettler">
-              <Form>
-                <Form.Group
-                  as={Row}
-                  className="mb-3"
-                  controlId="formHorizontalEmail"
-                >
-                  <Form.Label style={{ color: "black" }} column sm={10}>
-                    <div style={{ fontSize: "1.3rem" }}>Cập nhật tin tức</div>
-                    <div style={{ fontSize: "0.7rem" }}>
-                      Đăng ký để nhận các ưu đãi khuyến mại mới nhất từ Voucher
-                      Hunter
-                    </div>
-                  </Form.Label>
-                  <Col sm={9}>
-                    <div style={{ display: "flex" }}>
-                      <Form.Control
-                        style={{ width: "45vw" }}
-                        type="email"
-                        placeholder="Email"
-                      />
-                      <input
-                        style={{
-                          width: "90px",
-                          textAlign: "center",
-                          backgroundColor: "rgb(251, 38, 38)",
-                          borderColor: "rgb(251, 38, 38)",
-                          color: "#ffffff",
-                          outline: "none",
-                          cursor: "pointer",
-                          borderRadius: "0px 10px 10px 0px",
-                        }}
-                        value="ĐĂNG KÝ"
-                        readOnly={true}
-                      />
-                    </div>
-                  </Col>
-                </Form.Group>
-              </Form>
-            </div>
             <div className="footer1">
               <div className="footer_flex">Menu</div>
               <div className="footer_flex">Thanh Toán</div>
@@ -522,6 +580,67 @@ export default function Edituser(props) {
               </Link>
             </div>
           </div>
+          <Modal show={showPass} onHide={handleClosePass}>
+            <Modal.Header closeButton>
+              <Modal.Title>Đổi mật khẩu</Modal.Title>
+            </Modal.Header>
+            <Modal.Body>
+              <div className="text_login">Mật khẩu hiện tại: </div>
+              <label className="signup-password">
+                <input
+                  className="login"
+                  type={passwordShown1 ? "text" : "password"}
+                  onChange={(e) => {
+                    setoldPassword(e.target.value);
+                  }}
+                  placeholder="Mật khẩu"
+                />
+                <FontAwesomeIcon
+                  className="fa-icons"
+                  icon={faEye}
+                  onClick={togglePasswordVisibility1}
+                />
+              </label>
+              <div className="text_login">Mật khẩu mới: </div>
+              <label className="signup-password">
+                <input
+                  className="login"
+                  type={passwordShown2 ? "text" : "password"}
+                  onChange={(e) => {
+                    setnewPassword(e.target.value);
+                  }}
+                  placeholder="Mật khẩu"
+                />
+                <FontAwesomeIcon
+                  className="fa-icons"
+                  icon={faEye}
+                  onClick={togglePasswordVisibility2}
+                />
+              </label>
+              <div className="text_login">Lặp lại mật khẩu mới </div>
+              <label className="signup-password">
+                <input
+                  className="login"
+                  type={passwordShown3 ? "text" : "password"}
+                  onChange={(e) => {
+                    setnewPasswordRepeat(e.target.value);
+                  }}
+                  placeholder="Mật khẩu"
+                />
+                <FontAwesomeIcon
+                  className="fa-icons"
+                  icon={faEye}
+                  onClick={togglePasswordVisibility3}
+                />
+              </label>
+              <div className="check_loi">{err}</div>
+            </Modal.Body>
+            <Modal.Footer>
+              <Button variant="primary" onClick={submit}>
+                Đổi mật khẩu
+              </Button>
+            </Modal.Footer>
+          </Modal>
         </div>
       ) : null}
     </div>

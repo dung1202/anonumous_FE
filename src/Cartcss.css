@@ -1,5 +1,5 @@
 .cart {
-  margin: 3.5vh 5vw 0px 5vw;
+  margin: 3.5vh 5vw 159px 5vw;
 }
 .sp {
   padding: 10px 30px;
@@ -131,4 +131,5 @@
   margin-left: 5vw;
   margin-right: 5vw;
   /* width: 100vw; */
+  margin-bottom: 20px;
 }
