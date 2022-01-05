@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, Link } from "react-router-dom";
 import "./Profilecss.css";
 import jwt_decode from "jwt-decode";
 import { Helmet } from "react-helmet";
@@ -11,7 +11,7 @@ import {
   Button,
 } from "react-bootstrap";
 import "bootstrap/dist/css/bootstrap.min.css";
-import { Link } from "react-scroll";
+import * as Scroll from "react-scroll";
 import { getUserById } from "./Axios";
 
 export default function Proflie(props) {
@@ -61,11 +61,6 @@ export default function Proflie(props) {
     // getInvoice().then((res)=>{
     //   console.log(res.data);
     // })
-    fetchApi();
-  }, [token]);
-
-  const fetchApi = React.useCallback(() => {
-    // setLoading(true);
     fetch("https://voucherhunter.herokuapp.com/auth/invoice", {
       method: "GET",
       headers: {
@@ -79,7 +74,7 @@ export default function Proflie(props) {
         console.log(json.data);
         setInvoice(json.data);
       });
-  }, []);
+  }, [token]);
 
   const numberFormat = new Intl.NumberFormat(
     "vi-VN",
@@ -130,7 +125,7 @@ export default function Proflie(props) {
     navigate("/");
   };
 
-  const hienInvoice = (item) => {
+  const hienInvoice = (item, index) => {
     let status = "";
     if (item.status === "pending") status = "Đang xử lý";
     const ngaDate = new Date(item.createdAt);
@@ -138,57 +133,63 @@ export default function Proflie(props) {
     const thang = validateNiceNumber(ngaDate.getMonth() + 1);
     const nam = ngaDate.getFullYear();
     return (
-      <div className="invoice_to">
-        <div style={{ display: "flex" }}>
-          <img alt="" src="" className="anh_invoice" />
-          <div>
-            <div className="display">
-              <div>Trạng thái:</div>
-              <div
-                style={{
-                  marginLeft: "10px",
-                  fontWeight: "600",
-                  color: "orange",
-                }}
-              >
-                {status}
+      <Link to={"/detail-checkout/" + item._id}>
+        <div className="invoice_to">
+          <div style={{ display: "flex" }}>
+            <img alt="" src="" className="anh_invoice" />
+            <div>
+              <div className="display">
+                <div>Trạng thái:</div>
+                <div
+                  style={{
+                    marginLeft: "10px",
+                    fontWeight: "600",
+                    color: "orange",
+                  }}
+                >
+                  {status}
+                </div>
               </div>
-            </div>
 
-            <div className="display">
-              <div>Tên các sản phẩm:</div>
-              <div style={{ marginLeft: "10px", fontWeight: "600" }}>
-                {/* {item.products.length} */}
+              <div className="display">
+                <div>Tên các sản phẩm:</div>
+                <div style={{ marginLeft: "10px", fontWeight: "600" }}>
+                  {/* {item.products.length} */}
+                </div>
               </div>
-            </div>
 
-            <div className="display">
-              <div>Số lượng sản phẩm:</div>
-              <div style={{ marginLeft: "10px", fontWeight: "600" }}>
-                {item.products.length}
+              <div className="display">
+                <div>Số lượng sản phẩm:</div>
+                <div style={{ marginLeft: "10px", fontWeight: "600" }}>
+                  {item.products.length}
+                </div>
               </div>
-            </div>
 
-            <div className="display">
-              <div>Số tiền thanh toán:</div>
-              <div
-                style={{ marginLeft: "10px", fontWeight: "600", color: "red" }}
-              >
-                {numberFormat.format(
-                  item.totalDiscountPrice
-                    ? item.totalDiscountPrice
-                    : item.totalListPrice
-                )}
+              <div className="display">
+                <div>Số tiền thanh toán:</div>
+                <div
+                  style={{
+                    marginLeft: "10px",
+                    fontWeight: "600",
+                    color: "red",
+                  }}
+                >
+                  {numberFormat.format(
+                    item.totalDiscountPrice
+                      ? item.totalDiscountPrice
+                      : item.totalListPrice
+                  )}
+                </div>
               </div>
-            </div>
-            <div className="display">
-              <div>Ghi chú:</div>
-              <div style={{ marginLeft: "10px" }}>{item.note}</div>
+              <div className="display">
+                <div>Ghi chú:</div>
+                <div style={{ marginLeft: "10px" }}>{item.note}</div>
+              </div>
             </div>
           </div>
+          <div style={{ marginLeft: "10px" }}>{`${ngay}/${thang}/${nam}`}</div>
         </div>
-        <div style={{ marginLeft: "10px" }}>{`${ngay}/${thang}/${nam}`}</div>
-      </div>
+      </Link>
     );
   };
 
@@ -207,7 +208,7 @@ export default function Proflie(props) {
             <div className="header" id="header_top">
               <div className="ok1">
                 <img
-                  src="menu.png"
+                  src="/menu.png"
                   className="menu1"
                   onClick={handleShow}
                   alt=""
@@ -225,7 +226,7 @@ export default function Proflie(props) {
                         type="text"
                         placeholder="Search"
                       />
-                      <img className="layer" src="Layer.png" alt="" />
+                      <img className="layer" src="/Layer.png" alt="" />
                     </div>
                     <div className="text_header1" onClick={gotoHome}>
                       Trang Chủ
@@ -245,12 +246,12 @@ export default function Proflie(props) {
                   <div>
                     <img
                       className="logo"
-                      src="./logo-removebg-preview (1).png"
+                      src="/logo-removebg-preview (1).png"
                       alt=""
                     />
                   </div>
                   <div style={{ width: "80px", opacity: "0.8" }}>
-                    <img className="logo-chu" src="./logo-chu.png" alt="" />
+                    <img className="logo-chu" src="/logo-chu.png" alt="" />
                   </div>
                 </div>
               </div>
@@ -262,7 +263,7 @@ export default function Proflie(props) {
                       placement="bottom"
                       overlay={<Tooltip id="tooltip-bottom">Giỏ hàng</Tooltip>}
                     >
-                      <img className="shop" src="Shop.png" alt="" />
+                      <img className="shop" src="/Shop.png" alt="" />
                     </OverlayTrigger>
                     <div className="donhang">
                       {props.soluong ? props.soluong : 0}
@@ -313,7 +314,7 @@ export default function Proflie(props) {
                   />
                 </div>
                 <div>
-                  <img className="layer" src="Layer.png" alt="" />
+                  <img className="layer" src="/Layer.png" alt="" />
                 </div>
                 <div style={{ display: "flex" }} onClick={gotoCart}>
                   <OverlayTrigger
@@ -321,7 +322,7 @@ export default function Proflie(props) {
                     placement="bottom"
                     overlay={<Tooltip id="tooltip-bottom">Giỏ hàng</Tooltip>}
                   >
-                    <img className="shop" src="Shop.png" alt="" />
+                    <img className="shop" src="/Shop.png" alt="" />
                   </OverlayTrigger>
                   <div className="donhang">
                     {props.soluong ? props.soluong : 0}
@@ -453,16 +454,16 @@ export default function Proflie(props) {
                 </div>
               </div>
               <div className="footer_flex">
-                <img src="tt1.png" className="img_footer" alt="" />
+                <img src="/tt1.png" className="img_footer" alt="" />
                 <div>
-                  <img src="tt2.png" className="img_footer_1" alt="" />
+                  <img src="/tt2.png" className="img_footer_1" alt="" />
                 </div>
               </div>
               <div className="footer_flex"></div>
               <div className="footer_flex">
-                <img src="app1.png" className="img_footer app" alt="" />
+                <img src="/app1.png" className="img_footer app" alt="" />
                 <div>
-                  <img src="app2.png" className="img_footer app" alt="" />
+                  <img src="/app2.png" className="img_footer app" alt="" />
                 </div>
               </div>
             </div>
@@ -473,17 +474,17 @@ export default function Proflie(props) {
             style={{ zIndex: scrollTop > 40 ? "2" : "0" }}
           >
             <div className="on_top1">
-              <Link activeClass="active" to="header_top">
+              <Scroll.Link activeClass="active" to="header_top">
                 <div className="img_left">
                   <OverlayTrigger
                     key="right"
                     placement="right"
                     overlay={<Tooltip id="tooltip-right">To the top</Tooltip>}
                   >
-                    <img src="onTop.png" alt="" />
+                    <img src="/onTop.png" alt="" />
                   </OverlayTrigger>
                 </div>
-              </Link>
+              </Scroll.Link>
             </div>
           </div>
           <Modal show={showXoaAll} onHide={handleCloseXoaAll}>

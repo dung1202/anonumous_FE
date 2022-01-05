@@ -12,9 +12,6 @@ import {
   OverlayTrigger,
   Tooltip,
   Offcanvas,
-  Form,
-  Row,
-  Col,
   Modal,
   Button,
 } from "react-bootstrap";
@@ -100,7 +97,7 @@ export default function DetailProduct(props) {
         let sltrc = 0;
         let k = 0;
         for (let i = 0; i < bien.length; i++) {
-          if (id != bien[i].product_id._id) {
+          if (id !== bien[i].product_id._id) {
             ktr++;
           } else {
             sltrc = bien[i].quantity;

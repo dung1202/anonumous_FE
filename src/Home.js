@@ -67,8 +67,6 @@ export default function Home(props) {
       setnews(mang);
     });
     getProduct().then((res) => {
-      const mang = [];
-      const gia = [];
       let d1 = 0;
       let d2 = 0;
       let d3 = 0;
@@ -131,9 +129,9 @@ export default function Home(props) {
 
     let q = "";
     if (item.sold >= 1000) {
-      ok = item.sold / 1000;
-      ok = ok.toFixed(1);
-      q = `${ok}k`;
+      let o = item.sold / 1000;
+      o = o.toFixed(1);
+      q = `${o}k`;
     } else {
       q = `${item.sold}`;
     }
@@ -148,9 +146,7 @@ export default function Home(props) {
             </div>
             <div className="sl">
               <div>{sao(item.vote)}</div>
-              <div>
-                {q === "0" ? "" : <div>Đã bán {q}</div>}
-              </div>
+              <div>{q === "0" ? "" : <div>Đã bán {q}</div>}</div>
             </div>
           </div>
           <div className="listedPrice">
@@ -177,9 +173,9 @@ export default function Home(props) {
 
     let q = "";
     if (item.sold >= 1000) {
-      ok = item.sold / 1000;
-      ok = ok.toFixed(1);
-      q = `${ok}k`;
+      let k = item.sold / 1000;
+      k = ok.toFixed(1);
+      q = `${k}k`;
     } else {
       q = `${item.sold}`;
     }
@@ -574,7 +570,7 @@ export default function Home(props) {
           <div className="bonus">Xem thêm -></div>
         </div>
         <div className="news-moom">{news.map(map_news)}</div>
-        
+
         <div className="footer1">
           <div className="footer_flex">Menu</div>
           <div className="footer_flex">Thanh Toán</div>

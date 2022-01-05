@@ -30,11 +30,10 @@ export default function CheckOut(props) {
   const handleShowMua = () => setShowMua(true);
 
   useEffect(() => {
-    let token = localStorage.getItem("accessToken");
-    if (token) {
+    let Token = localStorage.getItem("accessToken");
+    if (Token) {
       try {
-        console.log(props.muaDo);
-        const userID = jwt_decode(token)._id;
+        const userID = jwt_decode(Token)._id;
         setcart(props.muaDo);
         getUserById(userID).then((res) => {
           const user = res.data;
@@ -57,7 +56,7 @@ export default function CheckOut(props) {
         setAvatar("");
       }
     }
-  }, []);
+  }, [token, props.muaDo]);
 
   const [, setShow_acc] = useState(false);
   const handle_accShow = () => setShow_acc(true);

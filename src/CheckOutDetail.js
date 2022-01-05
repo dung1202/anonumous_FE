@@ -3,18 +3,12 @@ import { useNavigate, Link } from "react-router-dom";
 import "./Cartcss.css";
 import jwt_decode from "jwt-decode";
 import { Helmet } from "react-helmet";
-import {
-  OverlayTrigger,
-  Tooltip,
-  Offcanvas,
-  Modal,
-  Button,
-} from "react-bootstrap";
+import { OverlayTrigger, Tooltip, Offcanvas } from "react-bootstrap";
 import "bootstrap/dist/css/bootstrap.min.css";
 import * as Scroll from "react-scroll";
-import { getUserById, getCart, updateItemCart } from "./Axios";
+import { getUserById, getCart } from "./Axios";
 // import { Data } from "./Data";
-export default function Cart(props) {
+export default function CheckOutDetail(props) {
   // const [Data1, setData1] = useState(Data);
   const navigate = useNavigate();
   const [token, setToken] = useState("");
@@ -22,34 +16,8 @@ export default function Cart(props) {
   const [sl, setsl] = useState([]);
   const [Tong, setTong] = useState([]);
   const [tien, settien] = useState(0);
-  const [showXoa, setShowXoa] = useState(false);
-  const [xoaId, setxoaId] = useState("");
-
-  const handleCloseXoa = () => setShowXoa(false);
-  const handleShowXoa = () => setShowXoa(true);
   const [cart, setcart] = useState([]);
 
-  const input_sl = (e, index) => {
-    let newsl = sl;
-    if (Number(e.target.value) < cart[index].product_id.quantity) {
-      if (Number(e.target.value) === 0) {
-        newsl[index] = 1;
-      } else newsl[index] = Number(e.target.value);
-    } else if (Number(e.target.value) >= cart[index].product_id.quantity) {
-      newsl[index] = cart[index].product_id.quantity;
-    }
-    setsl([...newsl]);
-  };
-  const cong_sl = (index) => {
-    let newsl = sl;
-    if (newsl[index] < cart[index].product_id.quantity) newsl[index] += 1;
-    setsl([...newsl]);
-  };
-  const tru_sl = (index) => {
-    let newsl = sl;
-    if (newsl[index] >= 2) newsl[index] -= 1;
-    setsl([...newsl]);
-  };
   useEffect(() => {
     let Token = localStorage.getItem("accessToken");
     if (Token) {
@@ -87,25 +55,25 @@ export default function Cart(props) {
 
   const sao = (item) => {
     let anh = "";
-    if (item === 0) anh = "saorong.png";
-    if (item > 0 && item < 1) anh = "saoxin.png";
-    if (item >= 1) anh = "saodac.png";
+    if (item === 0) anh = "/saorong.png";
+    if (item > 0 && item < 1) anh = "/saoxin.png";
+    if (item >= 1) anh = "/saodac.png";
     let anh1 = "";
-    if (item < 2) anh1 = "saorong.png";
-    if (item > 1 && item < 2) anh1 = "saoxin.png";
-    if (item >= 2) anh1 = "saodac.png";
+    if (item < 2) anh1 = "/saorong.png";
+    if (item > 1 && item < 2) anh1 = "/saoxin.png";
+    if (item >= 2) anh1 = "/saodac.png";
     let anh2 = "";
-    if (item < 3) anh2 = "saorong.png";
-    if (item > 2 && item < 3) anh2 = "saoxin.png";
-    if (item >= 3) anh2 = "saodac.png";
+    if (item < 3) anh2 = "/saorong.png";
+    if (item > 2 && item < 3) anh2 = "/saoxin.png";
+    if (item >= 3) anh2 = "/saodac.png";
     let anh3 = "";
-    if (item < 4) anh3 = "saorong.png";
-    if (item > 3 && item < 4) anh3 = "saoxin.png";
-    if (item >= 4) anh3 = "saodac.png";
+    if (item < 4) anh3 = "/saorong.png";
+    if (item > 3 && item < 4) anh3 = "/saoxin.png";
+    if (item >= 4) anh3 = "/saodac.png";
     let anh4 = "";
-    if (item < 5) anh4 = "saorong.png";
-    if (item > 4 && item < 5) anh4 = "saoxin.png";
-    if (item >= 5) anh4 = "saodac.png";
+    if (item < 5) anh4 = "/saorong.png";
+    if (item > 4 && item < 5) anh4 = "/saoxin.png";
+    if (item >= 5) anh4 = "/saodac.png";
     return (
       <div style={{ display: "flex" }}>
         <img src={anh} className="sao1" alt=""></img>
@@ -124,53 +92,6 @@ export default function Cart(props) {
     }
     settien(tong);
   }, [Tong]);
-
-  const xoa_item = React.useCallback(
-    async (xoaId) => {
-      console.log(xoaId);
-      const controller = new AbortController();
-      const signal = controller.signal;
-      await fetch("https://voucherhunter.herokuapp.com/cart/auth/removeitem", {
-        signal: signal,
-        method: "DELETE",
-        headers: {
-          Accept: "application/json",
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${token}`,
-        },
-        body: JSON.stringify({ id: xoaId }),
-      })
-        .then((response) => response.json())
-        .then((json) => {
-          // setItemCart([...itemCart,json.cart.items])
-          setcart(json.cart.items);
-          // dispatch(removeFromCart(json.cart.items))
-          // setLoading(false);
-          props.them();
-          handleCloseXoa();
-        })
-        .catch((err) => {
-          if (err.name === "AbortError") {
-            console.log("Success Abort");
-          } else {
-            console.error(err);
-          }
-        });
-      // return () => {
-      //   // cancel the request before component unmounts
-      //   controller.abort();
-      // };
-    },
-    [token, props]
-  );
-
-  const updateSL = (id, sl) => {
-    const body = {
-      id: id,
-      quantity: sl,
-    };
-    updateItemCart(body).then((res) => {});
-  };
 
   const map_cart = (item, index) => {
     let string_name = "";
@@ -218,53 +139,13 @@ export default function Cart(props) {
             </div>
           )}
         </div>
-
-        <div style={{ flex: "2.5" }}>
-          <button
-            className="button_1"
-            onClick={() => {
-              tru_sl(index);
-              tinh_tien(
-                item.product_id.discountPrice > 0
-                  ? item.product_id.discountPrice * sl[index]
-                  : item.product_id.listedPrice * sl[index],
-                index
-              );
-              updateSL(item._id, sl[index]);
-            }}
-          >
-            -
-          </button>
+        <div style={{ flex: "2.2" }}>
           <input
             className="input_sl"
             type="number"
-            onChange={(e) => {
-              input_sl(e, index);
-              tinh_tien(
-                item.product_id.discountPrice > 0
-                  ? item.product_id.discountPrice * sl[index]
-                  : item.product_id.listedPrice * sl[index],
-                index
-              );
-              updateSL(item._id, sl[index]);
-            }}
+            readOnly={true}
             value={sl[index]}
           ></input>
-          <button
-            className="button_1"
-            onClick={() => {
-              cong_sl(index);
-              tinh_tien(
-                item.product_id.discountPrice > 0
-                  ? item.product_id.discountPrice * sl[index]
-                  : item.product_id.listedPrice * sl[index],
-                index
-              );
-              updateSL(item._id, sl[index]);
-            }}
-          >
-            +
-          </button>
         </div>
         <div className="thanhTien">
           {phay(
@@ -274,26 +155,8 @@ export default function Cart(props) {
           )}
           <div className="d">đ</div>
         </div>
-
-        <div>
-          <img
-            className="anh"
-            alt=""
-            src="/xoa-item.png"
-            onClick={() => {
-              setxoaId(item._id);
-              handleShowXoa();
-            }}
-          />
-        </div>
       </div>
     );
-  };
-
-  const tinh_tien = (x, index) => {
-    let t = Tong;
-    t[index] = x;
-    setTong([...t]);
   };
 
   const phay = (x) => {
@@ -325,6 +188,10 @@ export default function Cart(props) {
     navigate("/");
   };
 
+  const gotoCart = () => {
+    navigate("/cart");
+  };
+
   const gotoProfile = () => {
     navigate("/profile");
   };
@@ -341,7 +208,7 @@ export default function Cart(props) {
   return (
     <div>
       <Helmet>
-        <title>Giỏ hàng</title>
+        <title>{`Chi tiết đơn hàng`}</title>
       </Helmet>
       {token ? (
         <div>
@@ -349,7 +216,7 @@ export default function Cart(props) {
             <div className="header" id="header_top">
               <div className="ok1">
                 <img
-                  src="menu.png"
+                  src="/menu.png"
                   className="menu1"
                   onClick={handleShow}
                   alt=""
@@ -367,7 +234,7 @@ export default function Cart(props) {
                         type="text"
                         placeholder="Search"
                       />
-                      <img className="layer" src="Layer.png" alt="" />
+                      <img className="layer" src="/Layer.png" alt="" />
                     </div>
                     <div className="text_header1" onClick={gotoHome}>
                       Trang Chủ
@@ -388,24 +255,24 @@ export default function Cart(props) {
                   <div>
                     <img
                       className="logo"
-                      src="./logo-removebg-preview (1).png"
+                      src="/logo-removebg-preview (1).png"
                       alt=""
                     />
                   </div>
                   <div style={{ width: "80px", opacity: "0.8" }}>
-                    <img className="logo-chu" src="./logo-chu.png" alt="" />
+                    <img className="logo-chu" src="/logo-chu.png" alt="" />
                   </div>
                 </div>
               </div>
               <div>
                 <div className="ok1">
-                  <div style={{ display: "flex" }}>
+                  <div style={{ display: "flex" }} onClick={gotoCart}>
                     <OverlayTrigger
                       key="bottom"
                       placement="bottom"
                       overlay={<Tooltip id="tooltip-bottom">Giỏ hàng</Tooltip>}
                     >
-                      <img className="shop" src="Shop.png" alt="" />
+                      <img className="shop" src="/Shop.png" alt="" />
                     </OverlayTrigger>
                     <div className="donhang">
                       {props.soluong ? props.soluong : 0}
@@ -432,7 +299,7 @@ export default function Cart(props) {
                         <img
                           className="shop shop1"
                           onClick={handle_accShow}
-                          src="acc.png"
+                          src="/acc.png"
                           alt=""
                         />
                       )}
@@ -465,15 +332,15 @@ export default function Cart(props) {
                   />
                 </div>
                 <div>
-                  <img className="layer" src="Layer.png" alt="" />
+                  <img className="layer" src="/Layer.png" alt="" />
                 </div>
-                <div style={{ display: "flex" }}>
+                <div style={{ display: "flex" }} onClick={gotoCart}>
                   <OverlayTrigger
                     key="bottom"
                     placement="bottom"
                     overlay={<Tooltip id="tooltip-bottom">Giỏ hàng</Tooltip>}
                   >
-                    <img className="shop" src="Shop.png" alt="" />
+                    <img className="shop" src="/Shop.png" alt="" />
                   </OverlayTrigger>
                   <div className="donhang">
                     {props.soluong ? props.soluong : 0}
@@ -500,7 +367,7 @@ export default function Cart(props) {
                       <img
                         className="shop shop1"
                         onClick={handle_accShow}
-                        src="acc.png"
+                        src="/acc.png"
                         alt=""
                       />
                     )}
@@ -514,10 +381,10 @@ export default function Cart(props) {
                   <div style={{ flex: "0.7" }}>Stt</div>
                   <div style={{ flex: "1" }}>Ảnh</div>
                   <div style={{ flex: "2" }}>Tên sản phẩm</div>
-                  <div style={{ flex: "2.2" }}>Đơn giá</div>
+                  <div style={{ flex: "2" }}>Đơn giá</div>
                   <div style={{ flex: "2" }}>Số lượng</div>
                   <div className="mua" onClick={mua}>
-                    Mua hàng
+                    Tiền
                     <div className="thanhTienTo">
                       {phay(tien)}
                       <div className="d">đ</div>
@@ -554,16 +421,16 @@ export default function Cart(props) {
                 </div>
               </div>
               <div className="footer_flex">
-                <img src="tt1.png" className="img_footer" alt="" />
+                <img src="/tt1.png" className="img_footer" alt="" />
                 <div>
-                  <img src="tt2.png" className="img_footer_1" alt="" />
+                  <img src="/tt2.png" className="img_footer_1" alt="" />
                 </div>
               </div>
               <div className="footer_flex"></div>
               <div className="footer_flex">
-                <img src="app1.png" className="img_footer app" alt="" />
+                <img src="/app1.png" className="img_footer app" alt="" />
                 <div>
-                  <img src="app2.png" className="img_footer app" alt="" />
+                  <img src="/app2.png" className="img_footer app" alt="" />
                 </div>
               </div>
             </div>
@@ -580,7 +447,7 @@ export default function Cart(props) {
                 <div style={{ flex: "2.2" }}>Đơn giá</div>
                 <div style={{ flex: "2" }}>Số lượng</div>
                 <div className="mua" onClick={mua}>
-                  Mua hàng
+                  tien
                   <div className="thanhTienTo">
                     {phay(tien)}
                     <div className="d">đ</div>
@@ -601,7 +468,7 @@ export default function Cart(props) {
                     placement="right"
                     overlay={<Tooltip id="tooltip-right">To the top</Tooltip>}
                   >
-                    <img src="onTop.png" alt="" />
+                    <img src="/onTop.png" alt="" />
                   </OverlayTrigger>
                 </div>
               </Scroll.Link>
@@ -609,21 +476,6 @@ export default function Cart(props) {
           </div>
         </div>
       ) : null}
-
-      <Modal show={showXoa} onHide={handleCloseXoa}>
-        <Modal.Header closeButton>
-          <Modal.Title>Bạn có muốn xóa sản phẩm này? </Modal.Title>
-        </Modal.Header>
-
-        <Modal.Footer>
-          <Button variant="secondary" onClick={handleCloseXoa}>
-            Hủy
-          </Button>
-          <Button variant="primary" onClick={() => xoa_item(xoaId)}>
-            Xóa
-          </Button>
-        </Modal.Footer>
-      </Modal>
     </div>
   );
 }

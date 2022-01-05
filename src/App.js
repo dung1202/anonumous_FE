@@ -7,6 +7,7 @@ import Proflie from "./Profile";
 import DetailProduct from "./DetailProduct";
 import Edituser from "./Edituser";
 import CheckOut from "./CheckOut";
+import CheckOutDetail from "./CheckOutDetail";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 import { getCart, checkToken } from "./Axios";
 function App() {
@@ -67,6 +68,10 @@ function App() {
         <Route
           path="/checkout"
           element={<CheckOut soluong={cart} them={cartAdd} muaDo={checkOut} />}
+        />
+        <Route
+          path="/detail-checkout/:id"
+          element={<CheckOutDetail soluong={cart} />}
         />
       </Routes>
     </BrowserRouter>

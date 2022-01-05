@@ -172,7 +172,7 @@ export default function Edituser(props) {
       newPassword.length < 8
     ) {
       seterr("Mật khẩu không hợp lệ");
-    } else if (newPassword != newPasswordRepeat) {
+    } else if (newPassword !== newPasswordRepeat) {
       seterr("Mật khẩu mới không khớp");
     } else {
       changePwd(body).then((res) => {
@@ -182,9 +182,8 @@ export default function Edituser(props) {
           seterr("Đổi mật khẩu thành công");
           setTimeout(() => {
             handleClosePass();
-            navigate("/profile")
+            navigate("/profile");
           }, 2000);
-          
         }
       });
     }
@@ -416,51 +415,6 @@ export default function Edituser(props) {
                 <div className="userUpdate">
                   <span className="userUpdateTitle">Thông tin chỉnh sửa</span>
                   <form className="userUpdateForm">
-                    <div className="userUpdateLeft">
-                      <div className="userUpdateItem">
-                        <label>Giới tính</label>
-                        <input
-                          type="test"
-                          value={gender}
-                          onChange={(e) => setgender(e.target.value)}
-                          placeholder="+1 123 456 67"
-                          className="userUpdateInput"
-                        />
-                      </div>
-                      <div className="userUpdateItem">
-                        <label>Số điện thoại</label>
-                        <input
-                          type="text"
-                          value={phone}
-                          onChange={(e) => setPhone(e.target.value)}
-                          placeholder="+1 123 456 67"
-                          className="userUpdateInput"
-                        />
-                      </div>
-                      <div className="userUpdateItem">
-                        <label>Sinh nhật</label>
-                        <input
-                          type="date"
-                          value={ngay(dob)}
-                          onChange={(e) => {
-                            setdob(new Date(e.target.value));
-                          }}
-                          placeholder="Sinh Nhật"
-                          className="userUpdateInput"
-                        />
-                      </div>
-                      <div className="userUpdateItem">
-                        <label>Nhận thông tin sản phẩm mới</label>
-                        <input
-                          style={{ marginTop: "10px" }}
-                          type="checkbox"
-                          checked={ttsp_moi}
-                          onChange={() => {
-                            setttsp_moi(!ttsp_moi);
-                          }}
-                        />
-                      </div>
-                    </div>
                     <div>
                       <div className="userUpdateItem">
                         <label>Thành phố/Tỉnh</label>
@@ -501,6 +455,51 @@ export default function Edituser(props) {
                           placeholder="Số nhà"
                           className="userUpdateInput"
                         />
+                      </div>
+                    </div>
+                    <div className="userUpdateLeft">
+                      <div className="userUpdateItem">
+                        <label>Giới tính</label>
+                        <input
+                          type="test"
+                          value={gender}
+                          onChange={(e) => setgender(e.target.value)}
+                          placeholder="+1 123 456 67"
+                          className="userUpdateInput"
+                        />
+                      </div>
+                      <div className="userUpdateItem">
+                        <label>Số điện thoại</label>
+                        <input
+                          type="text"
+                          value={phone}
+                          onChange={(e) => setPhone(e.target.value)}
+                          placeholder="+1 123 456 67"
+                          className="userUpdateInput"
+                        />
+                      </div>
+                      <div className="userUpdateItem">
+                        <label>Sinh nhật</label>
+                        <input
+                          type="date"
+                          value={ngay(dob)}
+                          onChange={(e) => {
+                            setdob(new Date(e.target.value));
+                          }}
+                          placeholder="Sinh Nhật"
+                          className="userUpdateInput"
+                        />
+                      </div>
+                      <div className="userUpdateItem1">
+                        <input
+                          style={{ marginRight: "10px" }}
+                          type="checkbox"
+                          checked={ttsp_moi}
+                          onChange={() => {
+                            setttsp_moi(!ttsp_moi);
+                          }}
+                        />
+                        <label>Nhận thông tin sản phẩm mới</label>
                       </div>
                     </div>
                     <div className="userUpdateRight">

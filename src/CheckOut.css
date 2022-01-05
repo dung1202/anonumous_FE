@@ -1,21 +1,21 @@
-.hoadon{
-    margin: 2vh 20vw 20px 20vw;
-    background-color: white;
-    padding: 10px 20px 10px 20px;
+.hoadon {
+  margin: 2vh 20vw 20px 20vw;
+  background-color: white;
+  padding: 10px 20px 10px 20px;
 }
-.tenhd{
-    text-align: center;
-    font-size: 1.5rem;
-    font-weight: 600;
-    margin-bottom: 20px;
+.tenhd {
+  text-align: center;
+  font-size: 1.5rem;
+  font-weight: 600;
+  margin-bottom: 20px;
 }
 
-.kingpin{
-    background-color: red;
-    padding: 10px;
-    border-radius: 10px;
-    width: 95px;
-    color: wheat;
-    cursor: pointer;
-    margin-left: 45%;
+.kingpin {
+  background-color: red;
+  padding: 10px;
+  border-radius: 10px;
+  width: 95px;
+  color: wheat;
+  cursor: pointer;
+  margin-left: 45%;
 }
