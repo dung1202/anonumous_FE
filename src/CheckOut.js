@@ -17,6 +17,7 @@ import * as Scroll from "react-scroll";
 import { getUserById, createInvoice, deleteCart } from "./Axios";
 export default function CheckOut(props) {
   const navigate = useNavigate();
+  const [checktt, setchecktt] = useState(false);
   const [token, setToken] = useState("");
   const [Avatar, setAvatar] = useState("");
   const [phone, setPhone] = useState("");
@@ -26,6 +27,7 @@ export default function CheckOut(props) {
   const [paylay, setpaylay] = useState("");
   const [showMua, setShowMua] = useState(false);
   const [note, setnote] = useState("");
+  const [TTtien, setTTtien] = useState("");
   const handleCloseMua = () => setShowMua(false);
   const handleShowMua = () => setShowMua(true);
 
@@ -35,6 +37,7 @@ export default function CheckOut(props) {
       try {
         const userID = jwt_decode(Token)._id;
         setcart(props.muaDo);
+        setTTtien(props.muaDo);
         getUserById(userID).then((res) => {
           const user = res.data;
           setAvatar(user.photoUrl);
@@ -49,7 +52,7 @@ export default function CheckOut(props) {
           setPhone(user.phone);
           setAddress(Address);
           setemail(user.email);
-          setToken(token);
+          setToken(Token);
         });
       } catch (error) {
         setToken("");
@@ -138,13 +141,17 @@ export default function CheckOut(props) {
     }
   };
   const mua = (tt) => {
-    let o = cart;
-    o.pop();
+    TTtien.pop();
+    setchecktt(true);
+    TTtien.map((item) => {
+      item.product_id = item.product_id._id;
+      return <></>;
+    });
     let body = {
       note,
       deliveryAddress: address,
       paymentMethod: tt,
-      items: o,
+      items: TTtien,
     };
     createInvoice(body)
       .then((res) => {
@@ -327,7 +334,7 @@ export default function CheckOut(props) {
             {cart.length > 0 ? (
               <div className="hoadon">
                 <div className="tenhd">Xác nhận mua hàng</div>
-                <div>{cart.map(thanhtoan)}</div>
+                <div>{checktt ? "" : cart.map(thanhtoan)}</div>
                 <hr></hr>
                 <div className="sptt">
                   <div>Tổng</div>
@@ -414,7 +421,7 @@ export default function CheckOut(props) {
                       </div>
                     </div>
                   </Tab>
-                  <Tab eventKey="paylay" title="Paylay">
+                  <Tab eventKey="paylay" title="Paylay" disabled>
                     <div>
                       <div
                         style={{
@@ -440,7 +447,7 @@ export default function CheckOut(props) {
                       </div>
                     </div>
                   </Tab>
-                  <Tab eventKey="stripe" title="Stripe">
+                  <Tab eventKey="stripe" title="Stripe" disabled>
                     <div>
                       <div onClick={() => mua("STRIPE")} className="kingpin">
                         Mua hàng

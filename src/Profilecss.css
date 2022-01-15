@@ -47,13 +47,13 @@
   justify-content: space-between;
 }
 
-.anh_invoice{
+.anh_invoice {
   width: 100px;
   height: 100px;
-
+  border-radius: 10%;
 }
 
-.display{
+.display {
   display: flex;
   margin-left: 10px;
 }

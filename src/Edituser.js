@@ -96,7 +96,7 @@ export default function Edituser(props) {
         setdienThoai(user.phone);
         setdiaChi(Address);
         setanh(user.photoUrl);
-        // setttsp_moi(!ttsp_moi)
+        setttsp_moi(user.subscribeToNewsLetter);
       });
     }
   }, [token]);
@@ -141,7 +141,7 @@ export default function Edituser(props) {
       },
       dob,
       gender,
-      // setttsp_moi(!ttsp_moi)
+      subscribeToNewsLetter: ttsp_moi,
     };
     updateUser(body).then((res) => {
       navigate("/profile");
@@ -460,13 +460,25 @@ export default function Edituser(props) {
                     <div className="userUpdateLeft">
                       <div className="userUpdateItem">
                         <label>Giới tính</label>
-                        <input
+                        <select
+                          className="userUpdateInput"
+                          value={gender}
+                          onChange={(e) => {
+                            setgender(e.target.value);
+                            console.log(e.target.value);
+                          }}
+                        >
+                          <option>Nam</option>
+                          <option>Nữ</option>
+                          <option>LGBT</option>
+                        </select>
+                        {/* <input
                           type="test"
                           value={gender}
-                          onChange={(e) => setgender(e.target.value)}
-                          placeholder="+1 123 456 67"
+                          
+                          placeholder="Giới tính"
                           className="userUpdateInput"
-                        />
+                        /> */}
                       </div>
                       <div className="userUpdateItem">
                         <label>Số điện thoại</label>

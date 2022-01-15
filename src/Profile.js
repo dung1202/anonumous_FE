@@ -71,6 +71,7 @@ export default function Proflie(props) {
     })
       .then((response) => response.json())
       .then((json) => {
+        json.data.reverse()
         console.log(json.data);
         setInvoice(json.data);
       });
@@ -126,8 +127,16 @@ export default function Proflie(props) {
   };
 
   const hienInvoice = (item, index) => {
-    let status = "";
-    if (item.status === "pending") status = "Đang xử lý";
+    let status =
+      item.paymentStatus === 3 ? "Đặt hàng thành công" : "Đang xử lý...";
+    // console.log(item.products[0].product_id.img);
+    let ten_sp = "";
+
+    item.products.map((e) => {
+      console.log(e.product_id.name);
+      ten_sp = ten_sp + e.product_id.name + ", ";
+      return <></>;
+    });
     const ngaDate = new Date(item.createdAt);
     const ngay = validateNiceNumber(ngaDate.getDate());
     const thang = validateNiceNumber(ngaDate.getMonth() + 1);
@@ -136,7 +145,11 @@ export default function Proflie(props) {
       <Link to={"/detail-checkout/" + item._id}>
         <div className="invoice_to">
           <div style={{ display: "flex" }}>
-            <img alt="" src="" className="anh_invoice" />
+            <img
+              alt=""
+              src={item.products[0].product_id.img}
+              className="anh_invoice"
+            />
             <div>
               <div className="display">
                 <div>Trạng thái:</div>
@@ -154,7 +167,7 @@ export default function Proflie(props) {
               <div className="display">
                 <div>Tên các sản phẩm:</div>
                 <div style={{ marginLeft: "10px", fontWeight: "600" }}>
-                  {/* {item.products.length} */}
+                  {ten_sp}
                 </div>
               </div>
 
