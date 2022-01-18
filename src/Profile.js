@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { useNavigate, Link } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import "./Profilecss.css";
 import jwt_decode from "jwt-decode";
 import { Helmet } from "react-helmet";
@@ -71,7 +71,7 @@ export default function Proflie(props) {
     })
       .then((response) => response.json())
       .then((json) => {
-        json.data.reverse()
+        json.data.reverse();
         console.log(json.data);
         setInvoice(json.data);
       });
@@ -126,14 +126,20 @@ export default function Proflie(props) {
     navigate("/");
   };
 
+  const chuyen = (detail) => {
+    props.sangDT(detail);
+    navigate("/detail-checkout");
+  };
+
   const hienInvoice = (item, index) => {
+    console.log(item.paymentStatus);
     let status =
-      item.paymentStatus === 3 ? "Đặt hàng thành công" : "Đang xử lý...";
+      item.paymentStatus === "done" ? "Đặt hàng thành công" : "Đang xử lý...";
     // console.log(item.products[0].product_id.img);
     let ten_sp = "";
 
     item.products.map((e) => {
-      console.log(e.product_id.name);
+      // console.log(e.product_id.name);
       ten_sp = ten_sp + e.product_id.name + ", ";
       return <></>;
     });
@@ -142,67 +148,65 @@ export default function Proflie(props) {
     const thang = validateNiceNumber(ngaDate.getMonth() + 1);
     const nam = ngaDate.getFullYear();
     return (
-      <Link to={"/detail-checkout/" + item._id}>
-        <div className="invoice_to">
-          <div style={{ display: "flex" }}>
-            <img
-              alt=""
-              src={item.products[0].product_id.img}
-              className="anh_invoice"
-            />
-            <div>
-              <div className="display">
-                <div>Trạng thái:</div>
-                <div
-                  style={{
-                    marginLeft: "10px",
-                    fontWeight: "600",
-                    color: "orange",
-                  }}
-                >
-                  {status}
-                </div>
-              </div>
-
-              <div className="display">
-                <div>Tên các sản phẩm:</div>
-                <div style={{ marginLeft: "10px", fontWeight: "600" }}>
-                  {ten_sp}
-                </div>
-              </div>
-
-              <div className="display">
-                <div>Số lượng sản phẩm:</div>
-                <div style={{ marginLeft: "10px", fontWeight: "600" }}>
-                  {item.products.length}
-                </div>
-              </div>
-
-              <div className="display">
-                <div>Số tiền thanh toán:</div>
-                <div
-                  style={{
-                    marginLeft: "10px",
-                    fontWeight: "600",
-                    color: "red",
-                  }}
-                >
-                  {numberFormat.format(
-                    item.totalDiscountPrice
-                      ? item.totalDiscountPrice
-                      : item.totalListPrice
-                  )}
-                </div>
-              </div>
-              <div className="display">
-                <div>Ghi chú:</div>
-                <div style={{ marginLeft: "10px" }}>{item.note}</div>
+      <div className="invoice_to" onClick={() => chuyen(item)}>
+        <div style={{ display: "flex" }}>
+          <img
+            alt=""
+            src={item.products[0].product_id.img}
+            className="anh_invoice"
+          />
+          <div>
+            <div className="display">
+              <div>Trạng thái:</div>
+              <div
+                style={{
+                  marginLeft: "10px",
+                  fontWeight: "600",
+                  color: "orange",
+                }}
+              >
+                {status}
               </div>
             </div>
+
+            <div className="display">
+              <div>Tên các sản phẩm:</div>
+              <div style={{ marginLeft: "10px", fontWeight: "600" }}>
+                {ten_sp}
+              </div>
+            </div>
+
+            <div className="display">
+              <div>Số lượng sản phẩm:</div>
+              <div style={{ marginLeft: "10px", fontWeight: "600" }}>
+                {item.products.length}
+              </div>
+            </div>
+
+            <div className="display">
+              <div>Số tiền thanh toán:</div>
+              <div
+                style={{
+                  marginLeft: "10px",
+                  fontWeight: "600",
+                  color: "red",
+                }}
+              >
+                {numberFormat.format(
+                  item.totalDiscountPrice
+                    ? item.totalDiscountPrice
+                    : item.totalListPrice
+                )}
+              </div>
+            </div>
+            <div className="display">
+              <div>Ghi chú:</div>
+              <div style={{ marginLeft: "10px" }}>{item.note}</div>
+            </div>
           </div>
-          <div style={{ marginLeft: "10px" }}>{`${ngay}/${thang}/${nam}`}</div>
         </div>
-      </Link>
+        <div style={{ marginLeft: "10px" }}>{`${ngay}/${thang}/${nam}`}</div>
+      </div>
     );
   };
 

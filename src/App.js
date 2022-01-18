@@ -15,6 +15,7 @@ function App() {
   // tiendung12345
   const [cart, setcart] = useState(0);
   const [checkOut, setcheckOut] = useState([]);
+  const [DTinvoice, setDTinvoice] = useState("");
 
   useEffect(() => {
     let Token = localStorage.getItem("accessToken");
@@ -46,6 +47,11 @@ function App() {
     console.log(add);
   };
 
+  const thongtin = (tt) => {
+    setDTinvoice(tt);
+    console.log(tt);
+  };
+
   return (
     <BrowserRouter>
       <Routes>
@@ -59,10 +65,15 @@ function App() {
           element={<DetailProduct soluong={cart} them={cartAdd} />}
         />
         <Route path="/register" element={<Register />} />
-        <Route path="/cart" element={<Cart soluong={cart} them={cartAdd} out={check} />} />
+        <Route
+          path="/cart"
+          element={<Cart soluong={cart} them={cartAdd} out={check} />}
+        />
         <Route
           path="/profile"
-          element={<Proflie soluong={cart} dangxuat={logout} />}
+          element={
+            <Proflie soluong={cart} dangxuat={logout} sangDT={thongtin} />
+          }
         />
         <Route path="/edit" element={<Edituser soluong={cart} />} />
         <Route
@@ -70,8 +81,8 @@ function App() {
           element={<CheckOut soluong={cart} them={cartAdd} muaDo={checkOut} />}
         />
         <Route
-          path="/detail-checkout/:id"
-          element={<CheckOutDetail soluong={cart} />}
+          path="/detail-checkout"
+          element={<CheckOutDetail soluong={cart} ttInvoice={DTinvoice} />}
         />
       </Routes>
     </BrowserRouter>

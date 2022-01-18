@@ -6,19 +6,20 @@ import { Helmet } from "react-helmet";
 import { OverlayTrigger, Tooltip, Offcanvas } from "react-bootstrap";
 import "bootstrap/dist/css/bootstrap.min.css";
 import * as Scroll from "react-scroll";
-import { getUserById, getCart } from "./Axios";
+import { getUserById } from "./Axios";
 // import { Data } from "./Data";
 export default function CheckOutDetail(props) {
   // const [Data1, setData1] = useState(Data);
   const navigate = useNavigate();
   const [token, setToken] = useState("");
   const [Avatar, setAvatar] = useState("");
-  const [sl, setsl] = useState([]);
-  const [Tong, setTong] = useState([]);
-  const [tien, settien] = useState(0);
-  const [cart, setcart] = useState([]);
+  // const [sl, setsl] = useState([]);
+  // const [Tong, setTong] = useState([]);
+  // const [tien, settien] = useState(0);
+  // const [cart, setcart] = useState([]);
 
   useEffect(() => {
+    console.log(props.ttInvoice);
     let Token = localStorage.getItem("accessToken");
     if (Token) {
       try {
@@ -27,28 +28,28 @@ export default function CheckOutDetail(props) {
           setToken(Token);
           setAvatar(res.data.photoUrl);
         });
-        getCart().then((res) => {
-          setcart(res.data.cart.items);
-          let mang = [];
-          let tong = [];
-          res.data.cart.items.map((item) => {
-            mang.push(item.quantity);
-            tong.push(
-              item.product_id.discountPrice
-                ? item.product_id.discountPrice * item.quantity
-                : item.product_id.listedPrice * item.quantity
-            );
-            return <div></div>;
-          });
-          setsl(mang);
-          setTong(tong);
-        });
+        // getCart().then((res) => {
+        //   setcart(res.data.cart.items);
+        //   let mang = [];
+        //   let tong = [];
+        //   res.data.cart.items.map((item) => {
+        //     mang.push(item.quantity);
+        //     tong.push(
+        //       item.product_id.discountPrice
+        //         ? item.product_id.discountPrice * item.quantity
+        //         : item.product_id.listedPrice * item.quantity
+        //     );
+        //     return <div></div>;
+        //   });
+        //   // setsl(mang);
+        //   setTong(tong);
+        // });
       } catch (error) {
         setToken("");
         setAvatar("");
       }
     }
-  }, [token]);
+  }, [token, props.ttInvoice]);
 
   const [, setShow_acc] = useState(false);
   const handle_accShow = () => setShow_acc(true);
@@ -85,13 +86,21 @@ export default function CheckOutDetail(props) {
     );
   };
 
-  useEffect(() => {
-    let tong = 0;
-    for (let i = 0; i < Tong.length; i++) {
-      tong += Tong[i];
-    }
-    settien(tong);
-  }, [Tong]);
+  // useEffect(() => {
+  //   let tong = 0;
+  //   for (let i = 0; i < Tong.length; i++) {
+  //     tong += Tong[i];
+  //   }
+  //   // settien(tong);
+  // }, [Tong]);
+
+  const numberFormat = new Intl.NumberFormat(
+    "vi-VN",
+    {
+      style: "currency",
+      currency: "VND",
+    } || undefined
+  );
 
   const map_cart = (item, index) => {
     let string_name = "";
@@ -107,7 +116,7 @@ export default function CheckOutDetail(props) {
     }
 
     return (
-      <div className="sp">
+      <div className="sp1">
         <div className="soluong">{index + 1}.</div>
 
         <div style={{ flex: "1.3" }}>
@@ -116,7 +125,7 @@ export default function CheckOutDetail(props) {
           </Link>
         </div>
 
-        <div style={{ flex: "2" }}>
+        <div style={{ flex: "3" }}>
           <div className="ten_cart">
             <Link to={"/detail-product/" + item.product_id._id}>
               {string_name.charAt(0).toUpperCase() + string_name.slice(1)}
@@ -124,7 +133,7 @@ export default function CheckOutDetail(props) {
           </div>
           <div>{sao(item.product_id.vote)}</div>
         </div>
-        <div style={{ flex: "2" }}>
+        <div style={{ flex: "1.5" }}>
           {item.product_id.discountPrice > 0 ? (
             <div className="discount">
               <div style={{ display: "flex" }}>
@@ -139,19 +148,20 @@ export default function CheckOutDetail(props) {
             </div>
           )}
         </div>
-        <div style={{ flex: "2.2" }}>
+        <div style={{ flex: "1.5" }}>
           <input
+            style={{ borderRadius: "10px" }}
             className="input_sl"
-            type="number"
+            type="text"
             readOnly={true}
-            value={sl[index]}
+            value={`x${item.quantity}`}
           ></input>
         </div>
         <div className="thanhTien">
           {phay(
             item.product_id.discountPrice > 0
-              ? item.product_id.discountPrice * sl[index]
-              : item.product_id.listedPrice * sl[index]
+              ? item.product_id.discountPrice * item.quantity
+              : item.product_id.listedPrice * item.quantity
           )}
           <div className="d">đ</div>
         </div>
@@ -195,16 +205,16 @@ export default function CheckOutDetail(props) {
   const gotoProfile = () => {
     navigate("/profile");
   };
+  function validateNiceNumber(Number) {
+    return Number < 10 ? "0" + Number : Number;
+    //                     true             false
+  }
 
-  const mua = () => {
-    let doMua = [];
-    for (let i = 0; i < cart.length; i++) {
-      doMua.push(cart[i]);
-    }
-    doMua.push(tien);
-    props.out(doMua);
-    navigate("/checkout");
-  };
+  const ngaDate = new Date(props.ttInvoice.createdAt);
+  const ngay = validateNiceNumber(ngaDate.getDate());
+  const thang = validateNiceNumber(ngaDate.getMonth() + 1);
+  const nam = ngaDate.getFullYear();
+
   return (
     <div>
       <Helmet>
@@ -375,29 +385,84 @@ export default function CheckOutDetail(props) {
                 </div>
               </div>
             </div>
-            {cart.length ? (
-              <div>
-                <div className="tieude">
-                  <div style={{ flex: "0.7" }}>Stt</div>
-                  <div style={{ flex: "1" }}>Ảnh</div>
-                  <div style={{ flex: "2" }}>Tên sản phẩm</div>
-                  <div style={{ flex: "2" }}>Đơn giá</div>
-                  <div style={{ flex: "2" }}>Số lượng</div>
-                  <div className="mua" onClick={mua}>
-                    Tiền
-                    <div className="thanhTienTo">
-                      {phay(tien)}
-                      <div className="d">đ</div>
-                    </div>
+            <div className="userTitleContainer">
+              <h1 className="userTitle">Chi tiết đơn hàng</h1>
+            </div>
+
+            <div
+              style={{ display: "flex", justifyContent: "space-between" }}
+              className="cart"
+            >
+              <div className="ttI">
+                <div className="display">
+                  <div>Thời gian mua:</div>
+                  <div
+                    style={{ marginLeft: "10px" }}
+                  >{`${ngay}/${thang}/${nam}`}</div>
+                </div>
+                <div className="display">
+                  <div>ID đơn hàng:</div>
+                  <div style={{ marginLeft: "10px", fontWeight: "600" }}>
+                    {props.ttInvoice._id}
                   </div>
                 </div>
-                <div className="cart">{cart.map(map_cart)}</div>
+
+                <div className="display">
+                  <div>Địa chỉ:</div>
+                  <div style={{ marginLeft: "10px", fontWeight: "600" }}>
+                    {props.ttInvoice.deliveryAddress}
+                  </div>
+                </div>
+                <div className="display">
+                  <div>Số tiền thanh toán:</div>
+                  <div
+                    style={{
+                      marginLeft: "10px",
+                      fontWeight: "600",
+                      color: "red",
+                    }}
+                  >
+                    {numberFormat.format(
+                      props.ttInvoice.totalDiscountPrice
+                        ? props.ttInvoice.totalDiscountPrice
+                        : props.ttInvoice.totalListPrice
+                    )}
+                  </div>
+                </div>
+                <div className="display">
+                  <div>Trạng thái:</div>
+                  <div
+                    style={{
+                      marginLeft: "10px",
+                      fontWeight: "600",
+                      color: "orange",
+                    }}
+                  >
+                    {props.ttInvoice.paymentStatus === "done"
+                      ? "Đặt hàng thành công"
+                      : "Đang xử lý..."}
+                  </div>
+                </div>
+                {props.ttInvoice.log}
               </div>
-            ) : (
-              <div className="rong-to">
-                <img className="rong" alt="" src="/empty-cart.png" />
+
+              <div style={{ width: "800px" }}>
+                <div>{props.ttInvoice.products.map(map_cart)}</div>
+                <div
+                  className="display"
+                  style={{
+                    backgroundColor: "white",
+                    marginLeft: "0px",
+                    padding: "10px",
+                  }}
+                >
+                  <div>Ghi chú:</div>
+                  <div style={{ marginLeft: "10px", fontWeight: "600" }}>
+                    {props.ttInvoice.note}
+                  </div>
+                </div>
               </div>
-            )}
+            </div>
 
             <div className="footer1">
               <div className="footer_flex">Menu</div>
@@ -435,27 +500,7 @@ export default function CheckOutDetail(props) {
               </div>
             </div>
           </div>
-          {cart.length ? (
-            <div
-              className="hienTieuDe"
-              style={{ zIndex: scrollTop > 40 ? "2" : "0" }}
-            >
-              <div className="tieude_sau">
-                <div style={{ flex: "0.7" }}>Stt</div>
-                <div style={{ flex: "1" }}>Ảnh</div>
-                <div style={{ flex: "2" }}>Tên sản phẩm</div>
-                <div style={{ flex: "2.2" }}>Đơn giá</div>
-                <div style={{ flex: "2" }}>Số lượng</div>
-                <div className="mua" onClick={mua}>
-                  tien
-                  <div className="thanhTienTo">
-                    {phay(tien)}
-                    <div className="d">đ</div>
-                  </div>
-                </div>
-              </div>
-            </div>
-          ) : null}
+
           <div
             className="layer3"
             style={{ zIndex: scrollTop > 40 ? "2" : "0" }}

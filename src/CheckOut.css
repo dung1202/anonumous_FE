@@ -19,3 +19,18 @@
   cursor: pointer;
   margin-left: 45%;
 }
+
+.sp1 {
+  padding: 10px 30px;
+  background-color: white;
+  width: 100%;
+  display: flex;
+  /* margin-bottom: 20px; */
+  align-items: center;
+  /* border-radius: 10px; */
+}
+
+.ttI {
+  background-color: white;
+  padding: 10px;
+}
