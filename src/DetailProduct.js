@@ -5,8 +5,9 @@ import "bootstrap/dist/css/bootstrap.min.css";
 import jwt_decode from "jwt-decode";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faEye } from "@fortawesome/free-solid-svg-icons";
-import renderHTML from "react-render-html";
+// import renderHTML from "react-render-html";
 import { Helmet } from "react-helmet";
+// "react-render-html": "^0.6.0",
 import {
   Carousel,
   OverlayTrigger,
@@ -647,7 +648,7 @@ export default function DetailProduct(props) {
               </div>
             </div>
             <div style={{ marginTop: "5vh", fontWeight: "600" }}>Mô tả: </div>
-            <div>{renderHTML(sp.description)}</div>
+            {/* <div>{renderHTML(sp.description)}</div> */}
           </div>
         ) : null}
         <div className="chu_gt" id="sp_hot">
