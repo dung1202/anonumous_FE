@@ -134,7 +134,7 @@ export default function Proflie(props) {
   const hienInvoice = (item, index) => {
     console.log(item.paymentStatus);
     let status =
-      item.paymentStatus === "done" ? "Đặt hàng thành công" : "Đang xử lý...";
+      item.status === "delivered" ? "Đặt hàng thành công" : "Đang xử lý...";
     // console.log(item.products[0].product_id.img);
     let ten_sp = "";
 

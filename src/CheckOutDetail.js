@@ -438,7 +438,7 @@ export default function CheckOutDetail(props) {
                       color: "orange",
                     }}
                   >
-                    {props.ttInvoice.paymentStatus === "done"
+                    {props.ttInvoice.status === "delivered"
                       ? "Đặt hàng thành công"
                       : "Đang xử lý..."}
                   </div>
