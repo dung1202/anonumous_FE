@@ -175,28 +175,27 @@ export default function News(props) {
   };
   const [array_product, setarray_product] = useState([]);
   const [list, setlist] = useState([]);
-
+  const [sotrang, setsotrang] = useState("");
   useEffect(() => {
     getNews(1).then((res) => {
       setdata(res.data.data);
+      setsotrang(res.data.totalPage);
     });
   }, []);
   useEffect(() => {
-    getNews(1).then((res) => {
-      let mang = [];
-      for (let i = 0; i < res.data.totalPage; i++) {
-        mang.push(i + 1);
-      }
-      setarray_product(mang);
-      let mang1 = [];
-      let k = 5;
-      if (mang.length <= 5) k = mang.length;
-      for (let i = 0; i < k; i++) {
-        mang1.push(array_product[i]);
-      }
-      setlist(mang1);
-    });
-  });
+    let mang = [];
+    for (let i = 0; i < sotrang; i++) {
+      mang.push(i + 1);
+    }
+    setarray_product(mang);
+    let mang1 = [];
+    let k = 5;
+    if (mang.length <= 5) k = mang.length;
+    for (let i = 0; i < k; i++) {
+      mang1.push(array_product[i]);
+    }
+    setlist(mang1);
+  }, [sotrang, array_product]);
 
   const load = (i) => {
     setcurrentPage(i);
