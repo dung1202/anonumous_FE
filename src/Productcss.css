@@ -138,7 +138,7 @@ a {
   font-weight: 600;
 }
 
-.list2{
+.list2 {
   justify-content: space-between;
 }
 
@@ -171,6 +171,7 @@ a {
   border-radius: 20px;
   margin-bottom: 2vh;
   padding: 2vh;
+  display: flex;
 }
 
 .hastack {
@@ -181,7 +182,7 @@ a {
   margin-left: 60px;
 }
 .content {
-  margin-left: 60px;
+  /* margin-left: 60px; */
   font-size: 1.5rem;
   font-weight: bold;
 }
@@ -194,9 +195,9 @@ a {
 }
 
 .avatar_news {
-  width: 50px;
-  height: 50px;
-  border-radius: 50%;
+  width: 100px;
+  height: 100px;
+  border-radius: 10px;
 }
 
 .content_shop {
@@ -422,7 +423,7 @@ a {
 .giamgia {
   align-items: flex-end;
 }
-.flex{
+.flex {
   display: flex;
 }
 
@@ -568,7 +569,7 @@ a {
   }
   .content,
   .hastack {
-    margin-left: 40px;
+    /* margin-left: 40px; */
   }
   .hastack {
     font-size: 0.8rem;
@@ -677,7 +678,7 @@ a {
   }
   .content,
   .hastack {
-    margin-left: 40px;
+    /* margin-left: 40px; */
   }
 
   .hastack {
@@ -736,11 +737,11 @@ a {
   .news {
     margin-bottom: 10px;
   }
-  .hover{
+  .hover {
     margin-left: 0px;
     margin-right: 0px;
   }
-  .img_pro1{
+  .img_pro1 {
     width: 147px;
     height: 147px;
   }
@@ -750,12 +751,10 @@ a {
   .menu_sp {
     display: none;
   }
-  
 }
 
 @media only screen and (max-width: 1030px) and (min-width: 0px) {
- 
-  .product{
+  .product {
     padding-left: 0px;
     padding-right: 0px;
   }

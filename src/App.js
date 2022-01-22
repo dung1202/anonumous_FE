@@ -8,6 +8,8 @@ import DetailProduct from "./DetailProduct";
 import Edituser from "./Edituser";
 import CheckOut from "./CheckOut";
 import CheckOutDetail from "./CheckOutDetail";
+import News from "./News";
+import DetailNews from "./DetailNews";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 import { getCart, checkToken } from "./Axios";
 function App() {
@@ -84,6 +86,9 @@ function App() {
           path="/detail-checkout"
           element={<CheckOutDetail soluong={cart} ttInvoice={DTinvoice} />}
         />
+
+        <Route path="/news" element={<News soluong={cart} />} />
+        <Route path="/detail-news/:id" element={<DetailNews soluong={cart} />} />
       </Routes>
     </BrowserRouter>
   );

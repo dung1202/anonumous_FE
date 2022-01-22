@@ -178,6 +178,7 @@
   border-radius: 20px;
   margin-bottom: 2vh;
   padding: 2vh;
+  display: flex;
 }
 
 .hastack {
@@ -188,7 +189,7 @@
   margin-left: 60px;
 }
 .content {
-  margin-left: 60px;
+  /* margin-left: 60px; */
   font-size: 1.5rem;
   font-weight: bold;
 }
@@ -201,9 +202,9 @@
 }
 
 .avatar_news {
-  width: 50px;
-  height: 50px;
-  border-radius: 50%;
+  width: 100px;
+  height: 100px;
+  border-radius: 10px;
 }
 
 .content_shop {
@@ -572,7 +573,7 @@
   }
   .content,
   .hastack {
-    margin-left: 40px;
+    /* margin-left: 40px; */
   }
   .hastack {
     font-size: 0.8rem;
@@ -681,7 +682,7 @@
   }
   .content,
   .hastack {
-    margin-left: 40px;
+    /* margin-left: 40px; */
   }
 
   .hastack {

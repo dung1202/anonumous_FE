@@ -123,6 +123,10 @@ export default function Edituser(props) {
     navigate("/");
   };
 
+  const gotoNews = () => {
+    navigate("/news");
+  };
+
   const gotoProfile = () => {
     navigate("/profile");
   };
@@ -254,7 +258,7 @@ export default function Edituser(props) {
                     <div className="text_header1" onClick={gotoProduct}>
                       Sản Phẩm
                     </div>
-                    <div className="text_header1">Tin Tức</div>
+                    <div className="text_header1" onClick={gotoNews}>Tin Tức</div>
                     <div style={{ display: "flex" }}>
                       <div className="text_header1">Hỏi đáp</div>
                     </div>
@@ -320,7 +324,7 @@ export default function Edituser(props) {
                 <div className="text_header" onClick={gotoProduct}>
                   Sản Phẩm
                 </div>
-                <div className="text_header">Tin Tức</div>
+                <div className="text_header" onClick={gotoNews}>Tin Tức</div>
                 <div className="text_header">Hỏi đáp</div>
                 {/* <div className="Us">Us</div> */}
               </div>
@@ -551,7 +555,7 @@ export default function Edituser(props) {
                 <div className="menu" onClick={gotoProduct}>
                   Sản Phẩm
                 </div>
-                <div className="menu">Tin Tức</div>
+                <div className="menu" onClick={gotoNews} >Tin Tức</div>
                 <div className="menu us">
                   <div>Hỏi đáp</div>
                   {/* <div style={{ marginLeft: "2px" }}>us</div> */}

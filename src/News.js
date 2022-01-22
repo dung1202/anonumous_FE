@@ -2,7 +2,6 @@ import React, { useState, useEffect } from "react";
 import "./Productcss.css";
 import { Helmet } from "react-helmet";
 import {
-  Carousel,
   OverlayTrigger,
   Tooltip,
   Offcanvas,
@@ -15,20 +14,17 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faEye } from "@fortawesome/free-solid-svg-icons";
 import { useNavigate, Link } from "react-router-dom";
 import "bootstrap/dist/css/bootstrap.min.css";
-import { getProduct, Login, getUserById, checkToken } from "./Axios";
+import { getNews, Login, getUserById, checkToken } from "./Axios";
 import * as Scroll from "react-scroll";
 
-export default function Product(props) {
+export default function News(props) {
   const navigate = useNavigate();
   const [Avatar, setAvatar] = useState("");
+  const [data, setdata] = useState([]);
   const [token, setToken] = useState("");
-  const [array, setarray] = useState([]);
   const [username, setusername] = useState("");
   const [password, setpassword] = useState("");
-  const [sold, setsold] = useState([]);
-  const [giam, setgiam] = useState([]);
   const [currentPage, setcurrentPage] = useState(1);
-  const [Data, setdata] = useState([]);
   const [err, seterr] = useState("");
   const [passwordShown, setPasswordShown] = useState(false);
   const togglePasswordVisibility = () =>
@@ -97,145 +93,62 @@ export default function Product(props) {
   const gotoRegister = () => {
     navigate("/register");
   };
-  useEffect(() => {
-    getProduct().then((res) => {
-      const mang = [];
-      const gia = [];
-      setdata(res.data);
-      res.data.map((item) => {
-        let q = "";
-        let ok = 0;
-        let giamgia = 0;
 
-        if (item.sold >= 1000) {
-          ok = item.sold / 1000;
-          ok = ok.toFixed(1);
-          q = `${ok}k`;
-        } else {
-          q = `${item.sold}`;
-        }
-        mang.push(q);
-
-        giamgia = 100 - (item.discountPrice / item.listedPrice) * 100;
-        giamgia = giamgia.toFixed(0);
-        if (giamgia === 100 || giamgia > 99.9) giamgia = 99;
-        gia.push(giamgia);
-        return <div></div>;
-      });
-      setsold(mang);
-      setgiam(gia);
-      let d3 = 0;
-      let mangA = [];
-      for (let i = 0; i < res.data.length; i++) {
-        if (res.data[i].in_slider && d3 <= 4) {
-          mangA.push(res.data[i]);
-
-          d3++;
-        }
-        if (d3 === 5) {
-          setarray(mangA);
-          break;
-        }
-      }
-    });
-  }, []);
-
-  const ok = (item) => {
-    return (
-      <Carousel.Item>
-        <Link to={"/detail-product/" + item._id}>
-          <img alt="" className="d-block w-100" src={item.img} />
-        </Link>
-      </Carousel.Item>
-    );
-  };
-
+  function validateNiceNumber(Number) {
+    return Number < 10 ? "0" + Number : Number;
+    //                     true             false
+  }
   const pro = (item, index) => {
+    const date = new Date(item.createdAt);
+    const day = validateNiceNumber(date.getDate());
+    const ok = validateNiceNumber(date.getMonth() + 1);
+    const nam = date.getFullYear();
+
     let string_name = "";
     let d = 0;
-    for (let i = 0; i < item.name.length; i++) {
-      if (d <= 5) {
-        if (item.name[i] === " ") d++;
-        if (d < 6) string_name += item.name[i];
+    for (let i = 0; i < item.title.length; i++) {
+      if (d <= 9) {
+        if (item.title[i] === " ") d++;
+        if (d < 11) string_name += item.title[i];
       } else {
         string_name += "...";
         break;
       }
     }
     return (
-      <Link to={"/detail-product/" + item._id}>
-        <div className="hover">
-          <img alt="" className="img_pro1" src={item.img} />
+      <Link to={"/detail-news/" + item._id}>
+        <div className="news">
+          <div style={{ marginRight: "10px" }}>
+            <img src={item.image} className="avatar_news" alt="" />
+          </div>
+          <div style={{ display: "flex", justifyContent: "space-between" }}>
+            <div>
+              <div style={{ display: "flex" }}>
+                <div style={{ marginRight: "5px" }}>
+                  <div className="user_news" style={{ fontWeight: "600" }}>
+                    {item.creator}
+                  </div>
+                  <div className="user_news">
+                    {day}/{ok}/{nam}
+                  </div>
+                </div>
+              </div>
 
-          <div style={{ padding: "1vw 1vw 0vw 1vw" }}>
-            <div className="name_pro">
-              {string_name.charAt(0).toUpperCase() + string_name.slice(1)}
-            </div>
-            <div className="sl">
-              <div>{sao(item.vote)}</div>
-              <div>
-                {sold[index] === "0" ? "" : <div>Đã bán {sold[index]}</div>}
+              <div style={{ display: "flex", justifyContent: "space-between" }}>
+                <div>
+                  <div className="content">
+                    {string_name.charAt(0).toUpperCase() + string_name.slice(1)}
+                  </div>
+                  <div className="cont">
+                    {/* {ReactHtmlParser(item.content)} */}
+                  </div>
+                  {/* <div className="hastack">{item.tags.map(map_hastack)}</div> */}
+                </div>
               </div>
             </div>
           </div>
-
-          <div
-            className={
-              item.discountPrice > 0 ? "listedPrice list2" : "listedPrice"
-            }
-            style={{ color: item.discountPrice > 0 ? "red" : "black" }}
-          >
-            <div className="flex">
-              {phay(
-                item.discountPrice > 0 ? item.discountPrice : item.listedPrice
-              )}
-              <div className="d">đ</div>
-            </div>
-            {item.discountPrice > 0 ? (
-              <div className="giamgia giam">-{giam[index]}%</div>
-            ) : null}
-          </div>
         </div>
       </Link>
-    );
-  };
-
-  const phay = (x) => {
-    x = x.toString();
-    var pattern = /(-?\d+)(\d{3})/;
-    while (pattern.test(x)) x = x.replace(pattern, "$1,$2");
-    return x;
-  };
-
-  const sao = (item) => {
-    let anh = "";
-    if (item === 0) anh = "/saorong.png";
-    if (item > 0 && item < 1) anh = "/saoxin.png";
-    if (item >= 1) anh = "/saodac.png";
-    let anh1 = "";
-    if (item < 2) anh1 = "/saorong.png";
-    if (item > 1 && item < 2) anh1 = "/saoxin.png";
-    if (item >= 2) anh1 = "/saodac.png";
-    let anh2 = "";
-    if (item < 3) anh2 = "/saorong.png";
-    if (item > 2 && item < 3) anh2 = "/saoxin.png";
-    if (item >= 3) anh2 = "/saodac.png";
-    let anh3 = "";
-    if (item < 4) anh3 = "/saorong.png";
-    if (item > 3 && item < 4) anh3 = "/saoxin.png";
-    if (item >= 4) anh3 = "/saodac.png";
-    let anh4 = "";
-    if (item < 5) anh4 = "/saorong.png";
-    if (item > 4 && item < 5) anh4 = "/saoxin.png";
-    if (item >= 5) anh4 = "/saodac.png";
-    return (
-      <div style={{ display: "flex" }}>
-        <img alt="" src={anh} className="sao"></img>
-        <img alt="" src={anh1} className="sao"></img>
-        <img alt="" src={anh2} className="sao"></img>
-        <img alt="" src={anh3} className="sao"></img>
-        <img alt="" src={anh4} className="sao"></img>
-      </div>
     );
   };
 
@@ -257,35 +170,37 @@ export default function Product(props) {
     navigate("/");
   };
 
-  const gotoNews = () => {
-    navigate("/news");
-  };
-
   const gotoProfile = () => {
     navigate("/profile");
   };
-  const [array_product] = useState(() => {
-    const dai = Math.ceil(Data.length / 12);
-    const mang = [];
-    for (let i = 1; i <= dai; i++) {
-      mang.push(i);
-    }
-    return mang;
+  const [array_product, setarray_product] = useState([]);
+  const [list, setlist] = useState([]);
+
+  useEffect(() => {
+    getNews(1).then((res) => {
+      setdata(res.data.data);
+    });
+  }, []);
+  useEffect(() => {
+    getNews(1).then((res) => {
+      let mang = [];
+      for (let i = 0; i < res.data.totalPage; i++) {
+        mang.push(i + 1);
+      }
+      setarray_product(mang);
+      let mang1 = [];
+      let k = 5;
+      if (mang.length <= 5) k = mang.length;
+      for (let i = 0; i < k; i++) {
+        mang1.push(array_product[i]);
+      }
+      setlist(mang1);
+    });
   });
-  const indexOfLastNews = currentPage * 12;
-  const indexOfFirstNews = indexOfLastNews - 12;
-  const currentTodos = Data.slice(indexOfFirstNews, indexOfLastNews);
-  const [list, setlist] = useState(() => {
-    let mang = [];
-    let k = 5;
-    if (array_product.length <= 5) k = array_product.length;
-    for (let i = 0; i < k; i++) {
-      mang.push(array_product[i]);
-    }
-    return mang;
-  });
+
   const load = (i) => {
     setcurrentPage(i);
+    console.log(i);
     let dau = 0;
     let cuoi = 0;
     if (i >= 4) {
@@ -301,6 +216,9 @@ export default function Product(props) {
       cuoi = 5;
     }
     setlist(array_product.slice(dau, cuoi));
+    getNews(i).then((res) => {
+      setdata(res.data.data);
+    });
     window.scrollTo(10, 0);
   };
   const wow = (item, index) => {
@@ -316,16 +234,16 @@ export default function Product(props) {
 
   const trc = () => {
     load(currentPage - 1);
-    window.scrollTo(0, 0);
+    window.scrollTo(10, 0);
   };
   const sau = () => {
     load(currentPage + 1);
-    window.scrollTo(0, 0);
+    window.scrollTo(10, 0);
   };
   return (
     <div>
       <Helmet>
-        <title>Sản phẩm</title>
+        <title>Tin tức</title>
       </Helmet>
       <div className="windown layer1">
         <div className="header" id="header_top">
@@ -361,7 +279,7 @@ export default function Product(props) {
                   Trang chủ
                 </div>
                 <div className="text_header1">Sản phẩm</div>
-                <div className="text_header1" onClick={gotoNews}>tin tức</div>
+                <div className="text_header1">tin tức</div>
                 <div className="text_header1">Hỏi đáp</div>
               </Offcanvas.Body>
             </Offcanvas>
@@ -432,7 +350,7 @@ export default function Product(props) {
               Trang chủ
             </div>
             <div className="text_header">Sản phẩm</div>
-            <div className="text_header" onClick={gotoNews}>Tin tức</div>
+            <div className="text_header">Tin tức</div>
             <div className="text_header">Hỏi đáp</div>
           </div>
           <div className="img_last">
@@ -486,54 +404,20 @@ export default function Product(props) {
             </div>
           </div>
         </div>
-        <div className="menu_product">
-          <div className="menu_sp">
-            <h6>Danh mục sản phẩm</h6>
-            <div className="danhmuc">
-              <div>Du lịch</div>
-              <div>Đồ ăn</div>
-              <div>Điện máy</div>
-            </div>
-            <hr />
-            <h6>Đánh giá</h6>
-            <div className="danhmuc">
-              <div style={{ display: "flex" }}>
-                <div style={{ marginTop: "5px" }}>{sao(5)}</div>
-                <div style={{ marginLeft: "5px" }}>từ 5 sao</div>
-              </div>
-              <div style={{ display: "flex" }}>
-                <div style={{ marginTop: "5px" }}>{sao(4)}</div>
-                <div style={{ marginLeft: "5px" }}>từ 4 sao</div>
-              </div>
-              <div style={{ display: "flex" }}>
-                <div style={{ marginTop: "5px" }}>{sao(3)}</div>
-                <div style={{ marginLeft: "5px" }}>từ 3 sao</div>
-              </div>
-            </div>
-            <hr />
-            <h6>Giá</h6>
-            <div className="danhmuc">
-              <div>Dưới 20.0000đ</div>
-              <div>Từ 20.0000đ đến 60.000đ</div>
-              <div>Từ 60.000đ đến 210.000đ</div>
-              <div>Trên 210.0000đ</div>
-            </div>
-          </div>
-          <div className="pro_slide">
-            <Carousel>{array.map(ok)}</Carousel>
-            <div className="product">{currentTodos.map(pro)}</div>
-            <div style={{ display: "flex", justifyContent: "space-evenly" }}>
-              <Pagination>
-                {currentPage > 1 ? <Pagination.Prev onClick={trc} /> : null}
 
-                {list.map(wow)}
+        <div style={{ padding: "30px 5vw 0px 5vw" }}>
+          {data ? data.map(pro) : null}
+        </div>
+        <div style={{ display: "flex", justifyContent: "space-evenly" }}>
+          <Pagination>
+            {currentPage > 1 ? <Pagination.Prev onClick={trc} /> : null}
 
-                {currentPage < array_product.length ? (
-                  <Pagination.Next onClick={sau} />
-                ) : null}
-              </Pagination>
-            </div>
-          </div>
+            {list.map(wow)}
+
+            {currentPage < array_product.length ? (
+              <Pagination.Next onClick={sau} />
+            ) : null}
+          </Pagination>
         </div>
 
         <div className="footer1">
@@ -549,7 +433,7 @@ export default function Product(props) {
               Trang chủ
             </div>
             <div className="menu">Sản phẩm</div>
-            <div className="menu" onClick={gotoNews} >Tin Tức</div>
+            <div className="menu">Tin Tức</div>
             <div className="menu us">
               <div>Hỏi đáp</div>
             </div>

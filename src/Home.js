@@ -263,6 +263,11 @@ export default function Home(props) {
   const gotoProfile = () => {
     navigate("/profile");
   };
+
+  const gotoNews = () => {
+    navigate("/news");
+  };
+
   const map_news = (item, index) => {
     // getUserById(item.creator_id).then((res) => {
     //   item.avater = res.data.avatar;
@@ -284,40 +289,39 @@ export default function Home(props) {
       }
     }
     return (
-      <div className="news">
-        <div style={{ display: "flex", justifyContent: "space-between" }}>
-          <div>
-            <div style={{ display: "flex" }}>
-              <div style={{ marginRight: "10px" }}>
-                {/* {item.avatar ? (
-                  
-                ) : null} */}
-                <img src={item.avatar} className="avatar_news" alt="" />
+      <Link to={"/detail-news/" + item._id}>
+        <div className="news">
+          <div style={{ marginRight: "10px" }}>
+            <img src={item.image} className="avatar_news" alt="" />
+          </div>
+          <div style={{ display: "flex", justifyContent: "space-between" }}>
+            <div>
+              <div style={{ display: "flex" }}>
+                <div style={{ marginRight: "5px" }}>
+                  <div className="user_news" style={{ fontWeight: "600" }}>
+                    {item.creator}
+                  </div>
+                  <div className="user_news">
+                    {day}/{ok}/{nam}
+                  </div>
+                </div>
               </div>
-              <div style={{ marginRight: "5px" }}>
-                <div className="user_news" style={{ fontWeight: "600" }}>
-                  {item.creator}
+
+              <div style={{ display: "flex", justifyContent: "space-between" }}>
+                <div>
+                  <div className="content">
+                    {string_name.charAt(0).toUpperCase() + string_name.slice(1)}
+                  </div>
+                  <div className="cont">
+                    {/* {ReactHtmlParser(item.content)} */}
+                  </div>
+                  {/* <div className="hastack">{item.tags.map(map_hastack)}</div> */}
                 </div>
-                <div className="user_news">
-                  {day}/{ok}/{nam}
-                </div>
-              </div>
-            </div>
-            <div style={{ display: "flex", justifyContent: "space-between" }}>
-              <div>
-                <div className="content">
-                  {string_name.charAt(0).toUpperCase() + string_name.slice(1)}
-                </div>
-                <div className="cont">
-                  {/* {ReactHtmlParser(item.content)} */}
-                </div>
-                {/* <div className="hastack">{item.hastack.map(map_hastack)}</div> */}
               </div>
             </div>
           </div>
-          {/* <img className="img_news" src={item.img} alt="" /> */}
         </div>
-      </div>
+      </Link>
     );
   };
 
@@ -412,7 +416,7 @@ export default function Home(props) {
                 <div className="text_header1" onClick={gotoProduct}>
                   Sản Phẩm
                 </div>
-                <div className="text_header1">Tin Tức</div>
+                <div className="text_header1" onClick={gotoNews}>Tin Tức</div>
                 <div style={{ display: "flex" }}>
                   <div className="text_header1">Hỏi đáp</div>
                   {/* <div className="text_header1 Us1">Us</div> */}
@@ -482,7 +486,7 @@ export default function Home(props) {
             <div className="text_header" onClick={gotoProduct}>
               Sản phẩm
             </div>
-            <div className="text_header">Tin tức</div>
+            <div className="text_header" onClick={gotoNews}>Tin tức</div>
             <div className="text_header">Hỏi đáp</div>
           </div>
           <div className="img_last">
@@ -584,7 +588,9 @@ export default function Home(props) {
             <div className="menu" onClick={gotoProduct}>
               Sản phẩm
             </div>
-            <div className="menu">Tin tức</div>
+            <div className="menu" onClick={gotoNews}>
+              Tin Tức
+            </div>
             <div className="menu us">
               <div>Hỏi đáp</div>
               {/* <div style={{ marginLeft: "2px" }}>us</div> */}
