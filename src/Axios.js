@@ -2,7 +2,7 @@ import axios from "axios";
 
 const instance = axios.create({
   timeout: 20000,
-  baseURL: "https://anonymous-be.onrender.com/",
+  baseURL: "https://anonymous-be.onrender.com/"
 });
 
 instance.interceptors.request.use((req) => {
