@@ -2,8 +2,9 @@ import axios from "axios";
 
 const instance = axios.create({
   timeout: 20000,
-  baseURL: "https://voucherhunter.herokuapp.com",
+  // baseURL: "https://voucherhunter.herokuapp.com",
   // baseURL: "http://localhost:4000",
+  baseURL: "https://anonymous-be.onrender.com/",
 });
 
 instance.interceptors.request.use((req) => {
